@@ -2,6 +2,7 @@
 
 import { Menu, ArrowLeft } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import { ModeToggle } from './ModeToggle';
 
 export default function Header() {
     const pathname = usePathname();
@@ -12,7 +13,7 @@ export default function Header() {
     };
 
     return (
-        <header className="flex justify-between m-0 px-4 py-6 text-center content-center">
+        <header className="flex justify-between m-0 px-4 py-6 text-center content-center align-center">
             {isHomePage ? (
                 <Menu size={23} className='inline' />
             ) : (
@@ -23,7 +24,10 @@ export default function Header() {
             <h1 className="text-center text-lg not-italic font-bold leading-[22.5px] tracking-[-0.27px];">
                 Dosinia Hotel
             </h1>
-            <span className='font-bold leading-[1.5] '>EN</span>
+            <div className="flex gap-2 items-center">
+                <ModeToggle />
+                <span className='font-bold leading-[1.5] '>EN</span>
+            </div>
         </header>
     );
 }

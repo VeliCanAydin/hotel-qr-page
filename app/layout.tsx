@@ -10,7 +10,7 @@ const roboto = Roboto({
 });
 
 const manrope = Manrope({
-  weight: ["400", "700"],
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
 });
 
@@ -35,6 +35,7 @@ export default function RootLayout({
           disableTransitionOnChange>
           <Header />
           {children}
+          
         </ThemeProvider>
       </body>
     </html >
