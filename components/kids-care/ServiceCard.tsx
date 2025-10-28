@@ -19,15 +19,6 @@ interface AccordionItem {
     content: string;
 };
 
-type ServiceCardData = {
-    image: string;
-    imageAlt: string;
-    title: string;
-    description: string;
-    accordionItems: AccordionItem[];
-    schedule: DaySchedule[];
-};
-
 type ServiceCardProps = {
     data: {
         image: string;

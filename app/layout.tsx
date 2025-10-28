@@ -2,12 +2,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import Header from "@/components/Header";
-import { Roboto, Manrope } from "next/font/google";
-
-const roboto = Roboto({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-});
+import { Manrope } from "next/font/google";
 
 const manrope = Manrope({
   weight: ["400", "500", "700"],

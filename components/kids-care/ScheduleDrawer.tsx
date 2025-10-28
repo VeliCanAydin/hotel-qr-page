@@ -40,7 +40,7 @@ export default function ScheduleDrawer({ schedule }: ScheduleDrawerProps) {
                 <div className="flex flex-col gap-4 p-4 max-h-[90vh] overflow-auto">
                     <DrawerHeader>
                         <DrawerTitle>Weekly Activity Schedule</DrawerTitle>
-                        <DrawerDescription>Swipe to view each day's activities</DrawerDescription>
+                        <DrawerDescription>Swipe to view each day&apos;s activities</DrawerDescription>
                     </DrawerHeader>
                     <WeeklyScheduleCarousel schedule={schedule} />
                 </div>
