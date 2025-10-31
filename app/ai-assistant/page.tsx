@@ -22,7 +22,6 @@ export default function AIAssistantPage() {
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Scroll to bottom when new messages arrive
     useEffect(() => {
         if (scrollAreaRef.current) {
             const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -48,7 +47,6 @@ export default function AIAssistantPage() {
         setIsLoading(true);
 
         try {
-            // API endpoint'inizle değiştirin
             const response = await fetch('/api/ai-chat', {
                 method: 'POST',
                 headers: {
@@ -56,7 +54,6 @@ export default function AIAssistantPage() {
                 },
                 body: JSON.stringify({
                     message: userMessage.content,
-                    conversationHistory: messages,
                 }),
             });
 
@@ -70,7 +67,7 @@ export default function AIAssistantPage() {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
                 content: data.response || 'Üzgünüm, bir yanıt oluşturamadım.',
-                imagePath: data.imagePath || null,
+                imagePath: data.imagePath,
                 timestamp: new Date(),
             };
 
@@ -100,127 +97,130 @@ export default function AIAssistantPage() {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-64px)]">
-            {/* Chat Messages Area */}
-            <ScrollArea ref={scrollAreaRef} className="flex-1 px-4 py-6">
-                <div className="max-w-3xl mx-auto space-y-6">
-                    {messages.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full text-center space-y-4 py-12">
-                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                                <svg
-                                    className="w-8 h-8 text-primary"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                                    />
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-semibold mb-2">AI Asistan</h2>
-                                <p className="text-muted-foreground">
-                                    Merhaba! Size nasıl yardımcı olabilirim?
-                                </p>
-                            </div>
-                            <div className="flex flex-wrap gap-2 justify-center pt-4">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setInput('Oteliniz hakkında bilgi alabilir miyim?')}
-                                >
-                                    Otel hakkında bilgi
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setInput('Müsait odalarınız var mı?')}
-                                >
-                                    Müsaitlik sorgusu
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setInput('Restoranınız hakkında bilgi verir misiniz?')}
-                                >
-                                    Restoran bilgisi
-                                </Button>
-                            </div>
-                        </div>
-                    ) : (
-                        messages.map((message) => (
-                            <div
-                                key={message.id}
-                                className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'
-                                    }`}
-                            >
-                                {message.role === 'assistant' && (
-                                    <Avatar className="w-8 h-8 mt-1">
-                                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                                            AI
-                                        </AvatarFallback>
-                                    </Avatar>
-                                )}
-
-                                <div
-                                    className={`rounded-lg px-4 py-3 max-w-[80%] ${message.role === 'user'
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'bg-muted'
-                                        }`}
-                                >
-                                    {/* Görsel varsa göster */}
-                                    {message.imagePath && (
-                                        <div className="mb-3">
-                                            <img
-                                                src={message.imagePath}
-                                                alt="AI tarafından oluşturulan görsel"
-                                                className="rounded-lg max-w-full h-auto"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                    )}
-
-                                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                                    <span className="text-xs opacity-70 mt-2 block">
-                                        {message.timestamp.toLocaleTimeString('tr-TR', {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                        })}
-                                    </span>
+        <div className="fixed inset-0 top-16 flex flex-col">
+            {/* Chat Messages Area - Scrollable */}
+            <div className="flex-1 overflow-hidden">
+                <ScrollArea ref={scrollAreaRef} className="h-full">
+                    <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+                        {messages.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] text-center space-y-4">
+                                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <svg
+                                        className="w-8 h-8 text-primary"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                                        />
+                                    </svg>
                                 </div>
+                                <div>
+                                    <h2 className="text-2xl font-semibold mb-2">AI Asistan</h2>
+                                    <p className="text-muted-foreground">
+                                        Merhaba! Size nasıl yardımcı olabilirim?
+                                    </p>
+                                </div>
+                                <div className="flex flex-wrap gap-2 justify-center pt-4">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setInput('Oteliniz hakkında bilgi alabilir miyim?')}
+                                    >
+                                        Otel hakkında bilgi
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setInput('Müsait odalarınız var mı?')}
+                                    >
+                                        Müsaitlik sorgusu
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setInput('Restoranınız hakkında bilgi verir misiniz?')}
+                                    >
+                                        Restoran bilgisi
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                {messages.map((message) => (
+                                    <div
+                                        key={message.id}
+                                        className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'
+                                            }`}
+                                    >
+                                        {message.role === 'assistant' && (
+                                            <Avatar className="w-8 h-8 mt-1 shrink-0">
+                                                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                                                    AI
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        )}
 
-                                {message.role === 'user' && (
-                                    <Avatar className="w-8 h-8 mt-1">
-                                        <AvatarFallback className="bg-secondary text-secondary-foreground text-xs">
-                                            SİZ
-                                        </AvatarFallback>
-                                    </Avatar>
+                                        <div
+                                            className={`rounded-lg px-4 py-3 max-w-[80%] ${message.role === 'user'
+                                                    ? 'bg-primary text-primary-foreground'
+                                                    : 'bg-muted'
+                                                }`}
+                                        >
+                                            {message.imagePath && (
+                                                <div className="mb-3">
+                                                    <img
+                                                        src={message.imagePath}
+                                                        alt="AI tarafından oluşturulan görsel"
+                                                        className="rounded-lg max-w-full h-auto"
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                                            <span className="text-xs opacity-70 mt-2 block">
+                                                {message.timestamp.toLocaleTimeString('tr-TR', {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                })}
+                                            </span>
+                                        </div>
+
+                                        {message.role === 'user' && (
+                                            <Avatar className="w-8 h-8 mt-1 shrink-0">
+                                                <AvatarFallback className="bg-secondary text-secondary-foreground text-xs">
+                                                    SİZ
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        )}
+                                    </div>
+                                ))}
+
+                                {isLoading && (
+                                    <div className="flex gap-3 justify-start">
+                                        <Avatar className="w-8 h-8 mt-1 shrink-0">
+                                            <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                                                AI
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="rounded-lg px-4 py-3 bg-muted">
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                        </div>
+                                    </div>
                                 )}
-                            </div>
-                        ))
-                    )}
+                            </>
+                        )}
+                    </div>
+                </ScrollArea>
+            </div>
 
-                    {isLoading && (
-                        <div className="flex gap-3 justify-start">
-                            <Avatar className="w-8 h-8 mt-1">
-                                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                                    AI
-                                </AvatarFallback>
-                            </Avatar>
-                            <div className="rounded-lg px-4 py-3 bg-muted">
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </ScrollArea>
-
-            {/* Input Area */}
-            <div className="border-t bg-background">
+            {/* Input Area - Fixed at Bottom */}
+            <div className="border-t bg-background shrink-0">
                 <div className="max-w-3xl mx-auto px-4 py-4">
                     <form onSubmit={handleSubmit} className="flex gap-2">
                         <Textarea
