@@ -13,7 +13,7 @@ export default function Header() {
     const isAIAssistantPage = pathname === '/ai-assistant';
 
     const handleBackClick = () => {
-        router.back();
+        router.push("/");
     };
 
     return (

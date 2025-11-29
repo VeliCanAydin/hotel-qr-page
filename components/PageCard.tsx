@@ -12,7 +12,7 @@ export default function PageCard({ icon: Icon, title, description, href }: Pages
     return (
         <Link href={href} className="h-full">
             <div className='flex flex-col gap-3 p-4 h-full border rounded-3xl hover:bg-gray-50 transition ac'>
-                <Icon color='#EBB447' />
+                <Icon color='#45a7d7ff' />
                 <div className='flex flex-col gap-1'>
                     <h1 className='font-bold'>{title}</h1>
                     <p className='text-sm font-normal text-gray-600'>{description}</p>
