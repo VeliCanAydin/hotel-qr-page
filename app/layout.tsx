@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -9,11 +9,32 @@ const manrope = Manrope({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#1e3a5f",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "Dosinia Luxury Hotel",
   description: "Experience the best luxury stay at Dosinia Hotel.",
   keywords: ["hotel", "luxury", "stay", "Dosinia"],
   authors: [{ name: "Dosinia Team", url: "https://dosinia.com" }],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Dosinia",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: "/icons/icon-192x192.svg",
+    apple: "/icons/apple-touch-icon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -9,9 +9,9 @@ export const pages = [
     },
     {
         icon: Utensils,
-        title: "Restaurant & Bar",
+        title: "Restaurants",
         description: "Menus and dining options",
-        href: "/restaurant-bar",
+        href: "/restaurants",
     },
     {
         icon: Baby,
@@ -23,13 +23,19 @@ export const pages = [
         icon: TreePalm,
         title: "Beach",
         description: "Private beach access and info",
-        href: "/beach",
+        href: "/beach-pools",
     },
     {
         icon: Flower,
-        title: "Spa & Wellness",
+        title: "Spa",
         description: "Treatments and classes",
-        href: "/spa-wellness",
+        href: "/spa",
+    },
+    {
+        icon: Flower,
+        title: "Wellness",
+        description: "Treatments and classes",
+        href: "/wellness",
     },
     {
         icon: HandPlatter,
