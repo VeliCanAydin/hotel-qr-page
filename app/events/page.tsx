@@ -9,9 +9,6 @@ import { getEventsForDate, getDatesWithEvents } from "@/lib/data/events";
 export default function PageEvent() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-    // Get all dates that have events for calendar highlighting
-    const datesWithEvents = useMemo(() => getDatesWithEvents(), []);
-
     // Get events for the selected date
     // This is memoized to avoid recalculating on every render
     // When data comes from a database, this could be replaced with

@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import { HotelEvent } from "@/lib/data/events";
 import { EventCard } from "./EventCard";
-import { cn } from "@/lib/utils";
 
 interface TimelineProps {
   events: HotelEvent[];

@@ -14,10 +14,7 @@ interface DaySchedule {
     activities: Activity[];
 };
 
-interface AccordionItem {
-    trigger: string;
-    content: string;
-};
+
 
 type ServiceCardProps = {
     data: {

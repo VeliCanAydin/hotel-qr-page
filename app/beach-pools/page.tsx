@@ -47,27 +47,6 @@ const poolImages = [
     },
 ];
 
-const pools = [
-    {
-        name: "Main Pool",
-        description: "Our largest pool featuring a swim-up bar and spacious sunbathing areas.",
-        size: "1,200 m²",
-        depth: "1.2m - 1.8m",
-    },
-    {
-        name: "Relax Pool",
-        description: "Adults-only heated pool for a tranquil swimming experience.",
-        size: "400 m²",
-        depth: "1.4m",
-    },
-    {
-        name: "Kids Pool",
-        description: "Safe and fun pool area designed specifically for our younger guests.",
-        size: "200 m²",
-        depth: "0.3m - 0.6m",
-    },
-];
-
 // Gallery images - 24 photos for the artistic gallery
 const galleryImages = [
     // Sayısal isimlendirilmiş dosyalar
@@ -215,7 +194,7 @@ export default function BeachPage() {
 
                     <p className="text-center text-muted-foreground mt-6 max-w-2xl mx-auto">
                         Dive into our luxurious pools, designed for relaxation and enjoyment.
-                        Whether you're looking to swim laps or lounge by the water, our pools
+                        Whether you&apos;re looking to swim laps or lounge by the water, our pools
                         provide the perfect setting.
                     </p>
                 </div>
