@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: "/icons/icon-192x192.svg",
+    icon: "/icons/icon-128x128.png",
     apple: "/icons/apple-touch-icon.svg",
   },
 };

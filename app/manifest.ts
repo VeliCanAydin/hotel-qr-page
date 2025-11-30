@@ -6,14 +6,14 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Dosinia',
     description: 'Experience the best luxury stay at Dosinia Hotel.',
     start_url: '/',
-    display: 'standalone',
+    display: 'fullscreen',
     orientation: 'portrait',
     background_color: '#ffffff',
     theme_color: '#1e3a5f',
     icons: [
       {
-        src: '/icons/icon-192x192.svg',
-        sizes: '192x192',
+        src: '/icons/icon-128x128.png',
+        sizes: '128x128',
         type: 'image/svg+xml',
       },
       {
