@@ -98,7 +98,7 @@ export default function HotelInfoPage() {
                     <AccordionItem value="item-3">
                         <AccordionTrigger className="text-base">Cancellation Policy</AccordionTrigger>
                         <AccordionContent>
-                            Cancellations made within 24 hours of booking are fully refundable. For cancellations made after this period, a fee equivalent to one night's stay will be charged.
+                            Cancellations made within 24 hours of booking are fully refundable. For cancellations made after this period, a fee equivalent to one night&apos;s stay will be charged.
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
