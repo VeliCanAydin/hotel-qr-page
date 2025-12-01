@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Dosinia',
     description: 'Experience the best luxury stay at Dosinia Hotel.',
     start_url: '/',
-    display: 'fullscreen',
+    display: 'standalone',
     orientation: 'portrait',
     background_color: '#ffffff',
     theme_color: '#1e3a5f',
