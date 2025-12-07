@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, ArrowLeft, MessageSquare, ShoppingCart } from 'lucide-react';
+import { Menu, ArrowLeft, MessageSquare, ShoppingCart, CircleUserRound } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ModeToggle } from './ModeToggle';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ export default function Header() {
     const isHomePage = pathname === '/';
     const isAIAssistantPage = pathname === '/ai-assistant';
     const isRoomServiceRoute = pathname.startsWith('/room-service');
+    const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/auth');
     const totalItems = getTotalItems();
 
     const handleBackClick = () => {
@@ -88,6 +89,18 @@ export default function Header() {
                                 <MessageSquare className="h-5 w-5" />
                             </Button>
                         )
+                    )}
+
+                    {/* User icon - giriş sayfası hariç her yerde göster */}
+                    {!isAuthRoute && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => router.push('/login')}
+                            aria-label="Giriş Yap"
+                        >
+                            <CircleUserRound className="h-5 w-5" />
+                        </Button>
                     )}
 
                     <ModeToggle />
