@@ -102,7 +102,7 @@ export default function BeachPage() {
                     className="object-cover"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4">
                     <Badge variant="secondary" className="mb-4 text-sm">
                         Relax & Refresh
