@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, ArrowLeft, MessageSquare, ShoppingCart } from 'lucide-react';
+import { Menu, ArrowLeft, ShoppingCart, CircleUserRound } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ModeToggle } from './ModeToggle';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,7 @@ export default function Header() {
                         >
                             <ShoppingCart className="h-5 w-5" />
                             {totalItems > 0 && (
-                                <Badge 
+                                <Badge
                                     className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
                                     variant="destructive"
                                 >
@@ -77,17 +77,14 @@ export default function Header() {
                             <Menu className="h-5 w-5" />
                         </Button>
                     ) : (
-                        // Diğer sayfalarda AI Assistant'a git butonu
-                        !isHomePage && (
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => router.push('/ai-assistant')}
-                                aria-label="AI Asistan"
-                            >
-                                <MessageSquare className="h-5 w-5" />
-                            </Button>
-                        )
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => router.push('/login')}
+                            aria-label="Login"
+                        >
+                            <CircleUserRound />
+                        </Button>
                     )}
 
                     <ModeToggle />

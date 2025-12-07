@@ -1,5 +1,5 @@
-import PageCard from '../components/PageCard';
-import { pages } from '../lib/pages';
+import PageCard from '../../components/PageCard';
+import { pages } from '../../lib/pages';
 
 export default function HomePage() {
   return (

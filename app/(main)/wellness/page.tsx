@@ -121,7 +121,7 @@ export default function WellnessPage() {
                 <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4">
                     <Badge variant="secondary" className="mb-4 text-sm">
-                        Relax & Rejuvenate
+                        Fitness & Wellness
                     </Badge>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-center">
                         Dosinia Wellness

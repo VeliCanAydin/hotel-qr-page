@@ -2,9 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
-import Header from "@/components/Header";
 import { Manrope } from "next/font/google";
-import FooterWrapper from "@/components/FooterWrapper";
 
 const manrope = Manrope({
   weight: ["400", "500", "700"],
@@ -52,12 +50,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <CartProvider>
-            <Header />
             {children}
-            <FooterWrapper />
           </CartProvider>
         </ThemeProvider>
       </body>
-    </html >
+    </html>
   );
 }
