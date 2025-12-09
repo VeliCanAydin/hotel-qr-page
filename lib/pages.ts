@@ -1,4 +1,4 @@
-import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays} from "lucide-react";
+import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark} from "lucide-react";
 
 export const pages = [
     {
@@ -55,4 +55,10 @@ export const pages = [
         description: "Upcoming events at the hotel",
         href: "/events",
     },
+    {
+        icon: MessageCircleQuestionMark,
+        title: "Feedback",
+        description: "Share your experience",
+        href: "/feedback",
+    }
 ];
