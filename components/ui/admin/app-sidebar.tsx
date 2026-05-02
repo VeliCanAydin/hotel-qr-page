@@ -103,7 +103,7 @@ const data = {
         },
         {
           title: "Room Service",
-          url: "/dashboard/services/spa",
+          url: "/dashboard/services/room-service",
         }
       ],
     },
@@ -178,20 +178,8 @@ const data = {
       icon: CalendarDays,
       items: [
         {
-          title: "Create Event",
-          url: "/dashboard/events/create",
-        },
-        {
           title: "List Events",
           url: "/dashboard/events/list",
-        },
-        {
-          title: "Event Bookings",
-          url: "/dashboard/events",
-        },
-        {
-          title: "Send Invitations",
-          url: "/dashboard/events/invitations",
         },
       ],
     },
