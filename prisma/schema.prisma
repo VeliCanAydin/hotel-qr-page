@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String    @id @default(cuid())
+  email    String    @unique
+  password String
+  name     String?
+  role     Role      @default(STAFF)
+  accounts Account[]
+  sessions Session[]
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  access_token      String? @db.Text
+  refresh_token     String? @db.Text
+  expires_at        Int?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model HotelInfo {
+  id                 String   @id @default("singleton")
+  phone              String
+  email              String
+  whatsapp           String
+  wifiName           String
+  wifiPassword       String
+  checkInStart       String
+  checkInEnd         String
+  checkOut           String
+  cancellationPolicy String   @db.Text
+  aboutText          String   @db.Text
+  updatedAt          DateTime @updatedAt
+}
+
+model Restaurant {
+  id             String   @id
+  src            String
+  alt            String
+  title          String
+  description    String
+  hasReservation Boolean
+  openingHours   String
+  cuisine        String
+  highlights     String[]
+  order          Int      @default(0)
+  updatedAt      DateTime @updatedAt
+}
+
+model HotelEvent {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  location    String
+  date        String
+  startTime   String
+  endTime     String
+  category    EventCategory
+  color       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum EventCategory {
+  entertainment
+  dining
+  wellness
+  kids
+  sports
+  music
+}
