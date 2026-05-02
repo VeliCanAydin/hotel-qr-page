@@ -1,46 +1,47 @@
-'use client';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ServiceItemCard } from '@/components/room-service/ServiceItemCard'
+import { categoryLabels, type RoomServiceItem } from '@/lib/data/roomServiceData'
+import { db } from '@/lib/db'
+import { roomServiceItems } from '@/lib/db/schema'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ServiceItemCard } from '@/components/room-service/ServiceItemCard';
-import { roomServiceItems, categoryLabels, type RoomServiceItem } from '@/lib/data/roomServiceData';
+const CATEGORIES = ['food', 'beverages', 'other-services'] as const
 
-export default function RoomService() {
-    const categories = ['food', 'beverages', 'other-services'] as const;
+export default async function RoomService() {
+  const items = await db.select().from(roomServiceItems)
 
-    const getItemsByCategory = (category: RoomServiceItem['category']) => {
-        return roomServiceItems.filter(item => item.category === category);
-    };
+  const getByCategory = (category: string) =>
+    items.filter((item) => item.category === category)
 
-    return (
-        <div className="p-4">
-            <h2 className="text-3xl font-bold mb-4">Room Service</h2>
-            <p className="text-muted-foreground mb-6">
-                Order food, beverages, and request services to your room.
-            </p>
+  return (
+    <div className="p-4">
+      <h2 className="text-3xl font-bold mb-4">Room Service</h2>
+      <p className="text-muted-foreground mb-6">
+        Order food, beverages, and request services to your room.
+      </p>
 
-            <Tabs defaultValue="food" className="w-full">
-                <TabsList className="w-full grid grid-cols-3 mb-4">
-                    {categories.map(category => (
-                        <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">
-                            {categoryLabels[category]}
-                        </TabsTrigger>
-                    ))}
-                </TabsList>
+      <Tabs defaultValue="food" className="w-full">
+        <TabsList className="w-full grid grid-cols-3 mb-4">
+          {CATEGORIES.map((category) => (
+            <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">
+              {categoryLabels[category]}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-                {categories.map(category => (
-                    <TabsContent key={category} value={category}>
-                        <div className="space-y-0">
-                            {getItemsByCategory(category).map((item, index, array) => (
-                                <ServiceItemCard
-                                    key={item.id}
-                                    item={item}
-                                    showSeparator={index !== array.length - 1}
-                                />
-                            ))}
-                        </div>
-                    </TabsContent>
-                ))}
-            </Tabs>
-        </div>
-    );
+        {CATEGORIES.map((category) => (
+          <TabsContent key={category} value={category}>
+            <div className="space-y-0">
+              {getByCategory(category).map((item, index, array) => (
+                <ServiceItemCard
+                  key={item.id}
+                  item={item as RoomServiceItem}
+                  showSeparator={index !== array.length - 1}
+                />
+              ))}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
+  )
 }
