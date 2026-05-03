@@ -113,7 +113,7 @@ const data = {
       items: [
         {
           title: "Room Service Orders",
-          url: "/dashboard/orders/room-service",
+          url: "/dashboard/orders/room-service-orders",
         },
         {
           title: "Spa Bookings",

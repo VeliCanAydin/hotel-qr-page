@@ -108,3 +108,15 @@ export const adminUsers = pgTable('admin_users', {
   passwordHash: text('password_hash').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
+
+export const roomServiceOrders = pgTable('room_service_orders', {
+  id: serial('id').primaryKey(),
+  reservationCode: text('reservation_code').notNull(), // unique per stay — prevents cross-stay conflicts
+  roomNumber: text('room_number').notNull(),
+  guestSurname: text('guest_surname').notNull(),
+  items: text('items').notNull(), // JSON: OrderItem[]
+  totalAmount: real('total_amount').notNull(),
+  note: text('note').notNull().default(''),
+  status: text('status').notNull().default('pending'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})

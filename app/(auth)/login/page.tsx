@@ -1,7 +1,7 @@
 "use client"
 
-import { useActionState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useActionState, useEffect, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { login } from "@/lib/actions/auth"
 import { guestLogin } from "@/lib/actions/guest-auth"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,8 @@ import { AlertCircle, Loader2 } from "lucide-react"
 
 function GuestLoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectPath = searchParams.get('redirect') ?? ''
   const [state, formAction, isPending] = useActionState(guestLogin, { error: "" })
 
   useEffect(() => {
@@ -23,6 +25,7 @@ function GuestLoginForm() {
 
   return (
     <form action={formAction} className="space-y-4">
+      <input type="hidden" name="redirect" value={redirectPath} />
       <div className="space-y-2">
         <Label htmlFor="guest-room-number">Room Number</Label>
         <Input
@@ -125,7 +128,9 @@ export default function LoginPage() {
               <TabsTrigger value="staff">Staff</TabsTrigger>
             </TabsList>
             <TabsContent value="guest">
-              <GuestLoginForm />
+              <Suspense fallback={<div className="h-48" />}>
+                <GuestLoginForm />
+              </Suspense>
             </TabsContent>
             <TabsContent value="staff">
               <StaffLoginForm />

@@ -13,6 +13,7 @@ export async function guestLogin(
 ): Promise<GuestLoginState> {
   const roomNumber = (formData.get('roomNumber') as string)?.trim()
   const surname = (formData.get('surname') as string)?.trim()
+  const redirectPath = (formData.get('redirect') as string)?.trim() || '/portal'
 
   if (!roomNumber || !surname) {
     return { error: 'Room number and surname are required.' }
@@ -40,7 +41,7 @@ export async function guestLogin(
     path: '/',
   })
 
-  return { error: '', redirectTo: '/portal' }
+  return { error: '', redirectTo: redirectPath }
 }
 
 export async function guestLogout() {
