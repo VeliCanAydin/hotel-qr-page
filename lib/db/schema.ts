@@ -59,9 +59,13 @@ export const menuItems = pgTable('menu_items', {
   name: text('name').notNull(),
   description: text('description').notNull(),
   price: real('price').notNull(),
-  image: text('image').notNull().default(''),
   isVegetarian: boolean('is_vegetarian').notNull().default(false),
   category: text('category').notNull(),
+})
+
+export const menuItemImages = pgTable('menu_item_images', {
+  itemId: text('item_id').primaryKey(),
+  proxyUrl: text('proxy_url').notNull(),
 })
 
 export const roomServiceItems = pgTable('room_service_items', {
@@ -89,6 +93,12 @@ export const kidsActivities = pgTable('kids_activities', {
   day: text('day').notNull(),
   time: text('time').notNull(),
   event: text('event').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
+export const menuCategories = pgTable('menu_categories', {
+  id: text('id').primaryKey(),
+  label: text('label').notNull(),
   orderIndex: integer('order_index').notNull().default(0),
 })
 

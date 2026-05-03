@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/context/CartContext';
 import type { RoomServiceItem } from '@/lib/data/roomServiceData';
-import { Plus, Check } from 'lucide-react';
-import { useState } from 'react';
+import { Plus, Minus } from 'lucide-react';
 
 interface ServiceItemCardProps {
     item: RoomServiceItem;
@@ -13,14 +12,9 @@ interface ServiceItemCardProps {
 }
 
 export function ServiceItemCard({ item, showSeparator = true }: ServiceItemCardProps) {
-    const { addToCart } = useCart();
-    const [isAdded, setIsAdded] = useState(false);
-
-    const handleAddToCart = () => {
-        addToCart(item);
-        setIsAdded(true);
-        setTimeout(() => setIsAdded(false), 1500);
-    };
+    const { items, addToCart, updateQuantity } = useCart();
+    const cartItem = items.find((i) => i.id === item.id);
+    const quantity = cartItem?.quantity ?? 0;
 
     return (
         <>
@@ -36,25 +30,39 @@ export function ServiceItemCard({ item, showSeparator = true }: ServiceItemCardP
                         {item.description}
                     </p>
                 </div>
-                <div className="flex items-center">
-                    <Button
-                        size="sm"
-                        variant={isAdded ? "default" : "outline"}
-                        onClick={handleAddToCart}
-                        className="shrink-0"
-                    >
-                        {isAdded ? (
-                            <>
-                                <Check className="h-4 w-4 mr-1" />
-                                Added
-                            </>
-                        ) : (
-                            <>
-                                <Plus className="h-4 w-4 mr-1" />
-                                Add
-                            </>
-                        )}
-                    </Button>
+                <div className="flex items-center shrink-0">
+                    {quantity === 0 ? (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => addToCart(item)}
+                        >
+                            <Plus className="h-4 w-4 mr-1" />
+                            Add
+                        </Button>
+                    ) : (
+                        <div className="flex items-center gap-1">
+                            <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8"
+                                onClick={() => updateQuantity(item.id, quantity - 1)}
+                            >
+                                <Minus className="h-3.5 w-3.5" />
+                            </Button>
+                            <span className="w-6 text-center text-sm font-semibold tabular-nums">
+                                {quantity}
+                            </span>
+                            <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8"
+                                onClick={() => addToCart(item)}
+                            >
+                                <Plus className="h-3.5 w-3.5" />
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
             {showSeparator && <Separator />}

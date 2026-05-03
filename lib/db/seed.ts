@@ -20,7 +20,6 @@ async function seed() {
       name: item.name,
       description: item.description,
       price: item.price,
-      image: item.image,
       isVegetarian: item.isVegetarian ?? false,
       category: item.category,
     }))

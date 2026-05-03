@@ -40,7 +40,6 @@ const data = {
   user: {
     name: "Admin User",
     email: "admin@dosinia.com",
-    avatar: "/avatars/admin.jpg",
   },
 
   // If you manage multiple hotel locations or departments

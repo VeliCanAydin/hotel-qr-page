@@ -1,15 +1,30 @@
 export const dynamic = 'force-dynamic'
 
 import { db } from '@/lib/db'
-import { menuItems } from '@/lib/db/schema'
-import { type MenuItem } from '@/lib/data/aLaCarteMenu'
+import { menuItems, menuItemImages } from '@/lib/db/schema'
+import { type MenuItem, categories as staticCategories } from '@/lib/data/aLaCarteMenu'
+import { getMenuCategories } from '@/lib/actions/menu-items'
+import { eq } from 'drizzle-orm'
 import RestaurantClient from './restaurant-client'
 
 export default async function RestaurantPage() {
-  const items = await db.select().from(menuItems)
-  const typed: MenuItem[] = items.map((item) => ({
+  const [rows, images, dbCategories] = await Promise.all([
+    db.select().from(menuItems),
+    db.select().from(menuItemImages),
+    getMenuCategories().catch(() => []),
+  ])
+
+  const imageMap = Object.fromEntries(images.map((i) => [i.itemId, i.proxyUrl]))
+
+  const typed: MenuItem[] = rows.map((item) => ({
     ...item,
-    category: item.category as MenuItem['category'],
+    image: imageMap[item.id],
   }))
-  return <RestaurantClient initialMenuData={typed} />
+
+  const allCategories = [
+    ...staticCategories,
+    ...dbCategories.filter((c) => !staticCategories.some((s) => s.id === c.id)),
+  ]
+
+  return <RestaurantClient initialMenuData={typed} initialCategories={allCategories} />
 }
