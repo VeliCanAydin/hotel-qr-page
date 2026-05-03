@@ -7,7 +7,7 @@ import { verifyPassword, signToken, SESSION_COOKIE } from '@/lib/auth'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-export type LoginState = { error: string }
+export type LoginState = { error: string; redirectTo?: string }
 
 export async function login(prevState: LoginState, formData: FormData): Promise<LoginState> {
   const email = (formData.get('email') as string)?.trim().toLowerCase()
@@ -37,7 +37,7 @@ export async function login(prevState: LoginState, formData: FormData): Promise<
     path: '/',
   })
 
-  redirect('/dashboard')
+  return { error: '', redirectTo: '/dashboard' }
 }
 
 export async function logout() {

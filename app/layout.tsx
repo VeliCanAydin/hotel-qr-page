@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 import { Manrope } from "next/font/google";
+import { HMRBodyUnlocker } from "@/components/HMRBodyUnlocker";
 
 const manrope = Manrope({
   weight: ["400", "500", "700"],
@@ -53,6 +54,7 @@ export default function RootLayout({
             {children}
           </CartProvider>
         </ThemeProvider>
+        <HMRBodyUnlocker />
       </body>
     </html>
   );

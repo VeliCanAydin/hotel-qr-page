@@ -1,13 +1,28 @@
 'use client';
 
-import { Menu, ArrowLeft, ShoppingCart, CircleUserRound } from 'lucide-react';
+import { Menu, ArrowLeft, ShoppingCart, CircleUserRound, LayoutDashboard, LogOut } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ModeToggle } from './ModeToggle';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import { Badge } from '@/components/ui/badge';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { guestLogout } from '@/lib/actions/guest-auth';
 
-export default function Header() {
+interface GuestInfo {
+    guestName: string;
+    roomNumber: string;
+}
+
+export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
     const pathname = usePathname();
     const router = useRouter();
     const { getTotalItems } = useCart();
@@ -20,6 +35,15 @@ export default function Header() {
     const handleBackClick = () => {
         router.push("/");
     };
+
+    const guestInitials = guestInfo
+        ? guestInfo.guestName
+            .split(' ')
+            .filter((w) => /[A-Za-z]/.test(w[0]))
+            .map((w) => w[0].toUpperCase())
+            .slice(0, 2)
+            .join('')
+        : '';
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -44,8 +68,7 @@ export default function Header() {
 
                 {/* Right Section */}
                 <div className="flex items-center gap-2">
-                    {isRoomServiceRoute ? (
-                        // Room Service sayfalarında cart butonu göster
+                    {isRoomServiceRoute && (
                         <Button
                             variant="ghost"
                             size="icon"
@@ -63,19 +86,53 @@ export default function Header() {
                                 </Badge>
                             )}
                         </Button>
-                    ) : isAIAssistantPage ? (
-                        // AI Assistant sayfasındayken menü butonu göster
+                    )}
+
+                    {isAIAssistantPage && (
                         <Button
                             variant="ghost"
                             size="icon"
                             aria-label="Menü"
                             onClick={() => {
-                                // Buraya gelecek: Chat geçmişi, ayarlar vb.
                                 console.log('AI Assistant menu clicked');
                             }}
                         >
                             <Menu className="h-5 w-5" />
                         </Button>
+                    )}
+
+                    {guestInfo ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" aria-label="Guest menu">
+                                    <Avatar className="h-7 w-7">
+                                        <AvatarFallback className="text-xs">{guestInitials}</AvatarFallback>
+                                    </Avatar>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-52">
+                                <DropdownMenuLabel className="font-normal">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="font-medium text-sm">{guestInfo.guestName}</span>
+                                        <span className="text-xs text-muted-foreground">Room {guestInfo.roomNumber}</span>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => router.push('/portal')} className="cursor-pointer">
+                                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                                    My Stay
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild className="text-destructive focus:text-destructive cursor-pointer p-0">
+                                    <form action={guestLogout}>
+                                        <button type="submit" className="flex w-full items-center gap-2 px-2 py-1.5 text-sm">
+                                            <LogOut className="h-4 w-4" />
+                                            Sign Out
+                                        </button>
+                                    </form>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     ) : (
                         <Button
                             variant="ghost"

@@ -2,34 +2,59 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 
-export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
+const getSecret = () => new TextEncoder().encode(process.env.JWT_SECRET!)
 
-  // Only protect /dashboard routes — let everything else through
-  if (!pathname.startsWith('/dashboard')) {
-    return NextResponse.next()
-  }
-
-  const token = request.cookies.get('admin-session')?.value
-
-  if (!token) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('from', pathname)
-    return NextResponse.redirect(loginUrl)
-  }
-
+async function verifyJwt(token: string): Promise<Record<string, unknown> | null> {
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
-    await jwtVerify(token, secret)
-    return NextResponse.next()
+    const { payload } = await jwtVerify(token, getSecret())
+    return payload as Record<string, unknown>
   } catch {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('from', pathname)
-    return NextResponse.redirect(loginUrl)
+    return null
   }
 }
 
-export const proxyConfig = {
-  // Exclude Next.js internals and static files; run on all user-facing routes
-  matcher: ['/((?!_next/static|_next/image|favicon\\.ico).*)'],
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  if (pathname.startsWith('/portal')) {
+    const token = request.cookies.get('guest-session')?.value
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    const payload = await verifyJwt(token)
+    if (!payload || payload.type !== 'guest' || !payload.checkOut) {
+      const response = NextResponse.redirect(new URL('/login', request.url))
+      response.cookies.delete('guest-session')
+      return response
+    }
+    // Force-expire when reservation's checkout day has passed
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const checkOut = new Date(payload.checkOut as string)
+    checkOut.setHours(0, 0, 0, 0)
+    if (checkOut < today) {
+      const response = NextResponse.redirect(new URL('/login', request.url))
+      response.cookies.delete('guest-session')
+      return response
+    }
+  }
+
+  if (pathname.startsWith('/dashboard')) {
+    const token = request.cookies.get('admin-session')?.value
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    const payload = await verifyJwt(token)
+    if (!payload || payload.type === 'guest') {
+      const response = NextResponse.redirect(new URL('/login', request.url))
+      response.cookies.delete('admin-session')
+      return response
+    }
+  }
+
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/portal/:path*', '/dashboard/:path*'],
 }
