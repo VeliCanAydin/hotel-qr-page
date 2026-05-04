@@ -4,7 +4,7 @@ export default function RestaurantCardSkeleton() {
   return (
     <div className="flex flex-col gap-4 pb-4">
       {/* Resim Alanı Fallback */}
-      <div className="relative w-full h-[200px]">
+      <div className="relative w-full h-50">
         <Skeleton className="w-full h-full rounded-3xl" />
       </div>
 

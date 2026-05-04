@@ -1,8 +1,8 @@
 "use client"
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import {
     Drawer,
     DrawerClose,
@@ -38,11 +38,13 @@ export default function RestaurantCard({
     cuisine = "International Cuisine",
     highlights = ["Fresh ingredients", "Seasonal menu", "Vegetarian options available"]
 }: RestaurantCardProps) {
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isReservationOpen, setIsReservationOpen] = useState(false);
+    const router = useRouter();
 
     return (
         <div className="flex flex-col gap-4 pb-4">
-            <div className="relative w-full h-[200px] rounded-3xl overflow-hidden">
+            <div className="relative w-full h-50 rounded-3xl overflow-hidden">
                 <Image
                     src={src}
                     alt={alt}
@@ -53,7 +55,7 @@ export default function RestaurantCard({
             <h2 className="text-xl font-bold">{title}</h2>
             <p className="text-base font-normal text-[#887C63]">{description}</p>
             <div className="flex flex-row gap-3">
-                <Drawer>
+                <Drawer open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                     <DrawerTrigger asChild>
                         <Button variant="default" className="rounded-3xl font-bold px-5">
                             Details
@@ -99,8 +101,14 @@ export default function RestaurantCard({
                             </div>
                         </div>
                         <DrawerFooter>
-                            <Button asChild className="rounded-3xl font-bold">
-                                <Link href={`/restaurants/${id}`}>View Menu</Link>
+                            <Button
+                                className="rounded-3xl font-bold"
+                                onClick={() => {
+                                    setIsDetailsOpen(false);
+                                    setTimeout(() => router.push(`/restaurants/${id}`), 300);
+                                }}
+                            >
+                                View Menu
                             </Button>
                             {hasReservation && (
                                 <Button

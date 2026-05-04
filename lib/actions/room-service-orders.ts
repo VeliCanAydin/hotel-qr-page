@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { roomServiceOrders } from '@/lib/db/schema'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { cookies } from 'next/headers'
-import { desc } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
 export type OrderItem = {
@@ -69,5 +69,15 @@ export async function getRoomServiceOrders(): Promise<RoomServiceOrder[]> {
   return db
     .select()
     .from(roomServiceOrders)
+    .orderBy(desc(roomServiceOrders.createdAt))
+}
+
+export async function getGuestRoomServiceOrders(
+  reservationCode: string
+): Promise<RoomServiceOrder[]> {
+  return db
+    .select()
+    .from(roomServiceOrders)
+    .where(eq(roomServiceOrders.reservationCode, reservationCode))
     .orderBy(desc(roomServiceOrders.createdAt))
 }

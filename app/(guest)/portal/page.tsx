@@ -57,7 +57,7 @@ export default async function PortalPage() {
               <p className="font-semibold text-sm">{format(checkInDate, 'MMM d')}</p>
               <p className="text-xs text-muted-foreground">{format(checkInDate, 'EEE')} · 14:00</p>
             </div>
-            <div className="flex flex-col items-center justify-center gap-0.5 p-3 text-center bg-muted/40">
+            <div className="flex flex-col items-center justify-center gap-0.5 p-3 text-center">
               <p className="text-3xl font-bold leading-none">{totalNights}</p>
               <p className="text-[11px] text-muted-foreground">
                 {nightsRemaining > 0

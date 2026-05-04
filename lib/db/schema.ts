@@ -54,6 +54,16 @@ export const wellnessServices = pgTable('wellness_services', {
   orderIndex: integer('order_index').notNull().default(0),
 })
 
+export const restaurants = pgTable('restaurants', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  cuisine: text('cuisine').notNull().default(''),
+  hours: text('hours').notNull().default(''),
+  description: text('description').notNull().default(''),
+  reservation: boolean('reservation').notNull().default(false),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
 export const menuItems = pgTable('menu_items', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -61,6 +71,7 @@ export const menuItems = pgTable('menu_items', {
   price: real('price').notNull(),
   isVegetarian: boolean('is_vegetarian').notNull().default(false),
   category: text('category').notNull(),
+  restaurantId: text('restaurant_id').notNull().default('a-la-carte'),
 })
 
 export const menuItemImages = pgTable('menu_item_images', {
@@ -99,6 +110,25 @@ export const kidsActivities = pgTable('kids_activities', {
 export const menuCategories = pgTable('menu_categories', {
   id: text('id').primaryKey(),
   label: text('label').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
+export const menuTemplates = pgTable('menu_templates', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  restaurantId: text('restaurant_id').notNull().references(() => restaurants.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const menuTemplateItems = pgTable('menu_template_items', {
+  id: text('id').primaryKey(),
+  templateId: text('template_id').notNull().references(() => menuTemplates.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description').notNull().default(''),
+  category: text('category').notNull(),
+  price: real('price').notNull(),
+  isVegetarian: boolean('is_vegetarian').notNull().default(false),
+  imageUrl: text('image_url'),
   orderIndex: integer('order_index').notNull().default(0),
 })
 

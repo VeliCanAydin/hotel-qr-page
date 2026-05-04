@@ -4,7 +4,7 @@ loadEnvConfig(process.cwd())
 // Dynamic imports run after env is loaded
 async function seed() {
   const { db } = await import('./index')
-  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, hotelInfo, beachPoolsInfo, spaServices, wellnessServices } = await import('./schema')
+  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories } = await import('./schema')
   const { hashPassword } = await import('../auth')
   const { menuItems: menuData } = await import('../data/aLaCarteMenu')
   const { roomServiceItems: roomData } = await import('../data/roomServiceData')
@@ -12,6 +12,30 @@ async function seed() {
   const { weeklySchedule } = await import('../data/kidsClubData')
 
   console.log('Seeding database...')
+
+  // Restaurants (upsert — safe to re-seed)
+  await db
+    .insert(restaurants)
+    .values([
+      { id: 'a-la-carte', name: 'A-La-Carte Restaurant', cuisine: 'Mediterranean & Turkish', hours: '18:00 – 22:00', description: "Fine dining experience with premium Mediterranean and Turkish cuisine. Chef's signature dishes made with fresh, local ingredients.", reservation: true, orderIndex: 0 },
+      { id: 'main-restaurant', name: 'Main Restaurant', cuisine: 'International Buffet', hours: '07:00–10:00 · 12:30–14:00 · 19:00–21:00', description: 'Our main buffet restaurant offering an extensive selection of international cuisine for breakfast, lunch and dinner.', reservation: false, orderIndex: 1 },
+      { id: 'snack-restaurant', name: 'Snack Restaurant', cuisine: 'Fast Food & Snacks', hours: '11:00 – 17:00', description: 'Casual poolside dining with light bites, snacks, salads, and refreshing drinks.', reservation: false, orderIndex: 2 },
+    ])
+    .onConflictDoNothing()
+  console.log('Upserted 3 restaurants')
+
+  // Menu categories (upsert)
+  await db
+    .insert(menuCategories)
+    .values([
+      { id: 'appetizers', label: 'Appetizers', orderIndex: 0 },
+      { id: 'soups-salads', label: 'Soups & Salads', orderIndex: 1 },
+      { id: 'main-courses', label: 'Main Courses', orderIndex: 2 },
+      { id: 'sides', label: 'Sides', orderIndex: 3 },
+      { id: 'desserts', label: 'Desserts', orderIndex: 4 },
+    ])
+    .onConflictDoNothing()
+  console.log('Upserted 5 menu categories')
 
   await db.delete(menuItems)
   await db.insert(menuItems).values(
@@ -22,6 +46,7 @@ async function seed() {
       price: item.price,
       isVegetarian: item.isVegetarian ?? false,
       category: item.category,
+      restaurantId: 'a-la-carte',
     }))
   )
   console.log(`Inserted ${menuData.length} menu items`)
