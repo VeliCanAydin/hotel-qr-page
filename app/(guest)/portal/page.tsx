@@ -3,12 +3,7 @@ import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/data/mockReservations'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import {
-  CalendarCheck,
-  CalendarX,
-  Moon,
   Users,
   BedDouble,
   Building2,
@@ -18,18 +13,6 @@ import {
   UtensilsCrossed,
 } from 'lucide-react'
 import { differenceInDays, format, parseISO } from 'date-fns'
-
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: 'Confirmed',
-  'checked-in': 'Checked In',
-  'checked-out': 'Checked Out',
-}
-
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'outline'> = {
-  confirmed: 'outline',
-  'checked-in': 'default',
-  'checked-out': 'secondary',
-}
 
 const BOARD_LABELS: Record<string, string> = {
   'room-only': 'Room Only',
@@ -64,148 +47,95 @@ export default async function PortalPage() {
   const nightsRemaining = Math.max(0, differenceInDays(checkOutDate, today))
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Welcome, {reservation.guestName}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Dosinia Luxury Resort — Your stay overview
-          </p>
-        </div>
-        <Badge variant={STATUS_VARIANTS[reservation.status]}>
-          {STATUS_LABELS[reservation.status]}
-        </Badge>
-      </div>
+    <div className="space-y-4">
+      {/* Stay timeline */}
+      <Card>
+        <CardContent className="p-0">
+          <div className="grid grid-cols-3 divide-x">
+            <div className="flex flex-col items-center gap-0.5 p-3 text-center">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Check-In</p>
+              <p className="font-semibold text-sm">{format(checkInDate, 'MMM d')}</p>
+              <p className="text-xs text-muted-foreground">{format(checkInDate, 'EEE')} · 14:00</p>
+            </div>
+            <div className="flex flex-col items-center justify-center gap-0.5 p-3 text-center bg-muted/40">
+              <p className="text-3xl font-bold leading-none">{totalNights}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {nightsRemaining > 0
+                  ? `${nightsRemaining} night${nightsRemaining !== 1 ? 's' : ''} left`
+                  : 'Stay complete'}
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 p-3 text-center">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Check-Out</p>
+              <p className="font-semibold text-sm">{format(checkOutDate, 'MMM d')}</p>
+              <p className="text-xs text-muted-foreground">{format(checkOutDate, 'EEE')} · 12:00</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Stay Summary */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <CalendarCheck className="h-4 w-4" />
-              Check-In
-            </CardTitle>
+      {/* Room & Reservation details */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Card className='gap-3'>
+          <CardHeader className="px-4 pb-2">
+            <CardTitle className="text-l font-bold">Room Details</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{format(checkInDate, 'MMM d, yyyy')}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {format(checkInDate, 'EEEE')} · from 14:00
-            </p>
+          <CardContent className="px-4 pb-4 space-y-2">
+            <DetailRow icon={Hash} label="Room" value={reservation.roomNumber} />
+            <DetailRow icon={Building2} label="Type" value={ROOM_LABELS[reservation.roomType]} />
+            <DetailRow icon={Layers} label="Floor" value={String(reservation.floor)} />
+            <DetailRow icon={Eye} label="View" value={reservation.view} />
+            <DetailRow icon={BedDouble} label="Bed" value={reservation.bedType} />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <CalendarX className="h-4 w-4" />
-              Check-Out
-            </CardTitle>
+        <Card className='gap-3'>
+          <CardHeader className="px-4 pb-2">
+            <CardTitle className="text-l font-bold">Reservation</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{format(checkOutDate, 'MMM d, yyyy')}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {format(checkOutDate, 'EEEE')} · by 12:00
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Moon className="h-4 w-4" />
-              Nights
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalNights}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {nightsRemaining > 0
-                ? `${nightsRemaining} night${nightsRemaining !== 1 ? 's' : ''} remaining`
-                : 'Stay complete'}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Separator />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* Room Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Room Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Hash className="h-4 w-4" /> Room Number
-              </span>
-              <span className="font-medium">{reservation.roomNumber}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Building2 className="h-4 w-4" /> Room Type
-              </span>
-              <span className="font-medium">{ROOM_LABELS[reservation.roomType]}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Layers className="h-4 w-4" /> Floor
-              </span>
-              <span className="font-medium">{reservation.floor}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Eye className="h-4 w-4" /> View
-              </span>
-              <span className="font-medium">{reservation.view}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <BedDouble className="h-4 w-4" /> Bed Type
-              </span>
-              <span className="font-medium">{reservation.bedType}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Reservation Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Reservation Info</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Hash className="h-4 w-4" /> Code
-              </span>
-              <span className="font-mono font-medium">{reservation.reservationCode}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <UtensilsCrossed className="h-4 w-4" /> Board
-              </span>
-              <span className="font-medium">{BOARD_LABELS[reservation.boardType]}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Users className="h-4 w-4" /> Guests
-              </span>
-              <span className="font-medium">
-                {reservation.adults} adult{reservation.adults !== 1 ? 's' : ''}
-                {reservation.children > 0
-                  ? `, ${reservation.children} child${reservation.children !== 1 ? 'ren' : ''}`
-                  : ''}
-              </span>
-            </div>
+          <CardContent className="px-4 pb-4 space-y-2">
+            <DetailRow icon={Hash} label="Code" value={reservation.reservationCode} mono />
+            <DetailRow icon={UtensilsCrossed} label="Board" value={BOARD_LABELS[reservation.boardType]} />
+            <DetailRow
+              icon={Users}
+              label="Guests"
+              value={
+                reservation.adults +
+                (reservation.children > 0
+                  ? ` + ${reservation.children} child${reservation.children !== 1 ? 'ren' : ''}`
+                  : '')
+              }
+            />
             {reservation.notes && (
-              <div className="pt-2 border-t">
-                <p className="text-xs text-muted-foreground">{reservation.notes}</p>
-              </div>
+              <p className="pt-1 text-xs text-muted-foreground border-t">{reservation.notes}</p>
             )}
           </CardContent>
         </Card>
       </div>
+    </div>
+  )
+}
+
+function DetailRow({
+  icon: Icon,
+  label,
+  value,
+  mono,
+}: {
+  icon: React.ElementType
+  label: string
+  value: string | number
+  mono?: boolean
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2 text-sm">
+      <span className="flex items-center gap-1.5 text-muted-foreground shrink-0">
+        <Icon className="h-3.5 w-3.5" />
+        {label}
+      </span>
+      <span className={mono ? 'font-mono font-medium text-xs' : 'font-medium text-right'}>
+        {value}
+      </span>
     </div>
   )
 }

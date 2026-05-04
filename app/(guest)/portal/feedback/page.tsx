@@ -2,16 +2,11 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/data/mockReservations'
-import { Toaster } from '@/components/ui/sonner'
+import { GuestFeedbackForm } from '@/components/ui/guest/guest-feedback-form'
 
-export default async function GuestLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function GuestFeedbackPage() {
   const cookieStore = await cookies()
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
-
   if (!token) redirect('/login')
 
   const guestPayload = await verifyGuestToken(token)
@@ -21,9 +16,9 @@ export default async function GuestLayout({
   if (!reservation) redirect('/login')
 
   return (
-    <>
-      {children}
-      <Toaster richColors position="bottom-right" />
-    </>
+    <GuestFeedbackForm
+      guestName={reservation.guestName}
+      roomNumber={reservation.roomNumber}
+    />
   )
 }

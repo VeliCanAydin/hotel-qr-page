@@ -243,7 +243,7 @@ export default function ArtisticGallery({ images }: ArtisticGalleryProps) {
                                             pattern.rotate,
                                             pattern.translate,
                                             "hover:rotate-0 hover:translate-y-0 hover:scale-105 hover:shadow-2xl",
-                                            "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/30 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:z-10"
+                                            "before:absolute before:inset-0 before:bg-linear-to-t before:from-black/30 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:z-10"
                                         )}
                                     >
                                         <Image
@@ -255,7 +255,7 @@ export default function ArtisticGallery({ images }: ArtisticGalleryProps) {
                                         />
                                         
                                         {/* Shimmer effect on hover */}
-                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out z-20" />
+                                        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out z-20" />
                                         
                                         {/* Image number indicator */}
                                         <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
@@ -373,7 +373,7 @@ export default function ArtisticGallery({ images }: ArtisticGalleryProps) {
                                     setModalImage(index);
                                 }}
                                 className={cn(
-                                    "relative w-16 h-12 md:w-20 md:h-14 rounded-md overflow-hidden flex-shrink-0 transition-all duration-200",
+                                    "relative w-16 h-12 md:w-20 md:h-14 rounded-md overflow-hidden shrink-0 transition-all duration-200",
                                     modalImage === index 
                                         ? "ring-2 ring-white scale-110" 
                                         : "opacity-50 hover:opacity-100"

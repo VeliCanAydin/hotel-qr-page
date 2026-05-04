@@ -13,7 +13,7 @@ export async function guestLogin(
 ): Promise<GuestLoginState> {
   const roomNumber = (formData.get('roomNumber') as string)?.trim()
   const surname = (formData.get('surname') as string)?.trim()
-  const redirectPath = (formData.get('redirect') as string)?.trim() || '/portal'
+  const redirectPath = (formData.get('redirect') as string)?.trim() || '/'
 
   if (!roomNumber || !surname) {
     return { error: 'Room number and surname are required.' }
@@ -47,5 +47,5 @@ export async function guestLogin(
 export async function guestLogout() {
   const cookieStore = await cookies()
   cookieStore.delete(GUEST_SESSION_COOKIE)
-  redirect('/login')
+  redirect('/')
 }

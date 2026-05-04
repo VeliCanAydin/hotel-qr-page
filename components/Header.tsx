@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, ArrowLeft, ShoppingCart, CircleUserRound, LayoutDashboard, LogOut } from 'lucide-react';
+import { Menu, ArrowLeft, Home, ShoppingCart, CircleUserRound, LayoutDashboard, LogOut } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ModeToggle } from './ModeToggle';
 import { Button } from '@/components/ui/button';
@@ -27,14 +27,18 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
     const router = useRouter();
     const { getTotalItems } = useCart();
 
-    const isHomePage = pathname === '/';
+    const segments = pathname.split('/').filter(Boolean);
+    const isHomePage = segments.length === 0;
+    const isFirstLevel = segments.length === 1;
+    const isDeepLevel = segments.length >= 2;
     const isAIAssistantPage = pathname === '/ai-assistant';
     const isRoomServiceRoute = pathname.startsWith('/room-service');
     const totalItems = getTotalItems();
 
-    const handleBackClick = () => {
-        router.push("/");
-    };
+    const parentPath = isDeepLevel ? '/' + segments.slice(0, -1).join('/') : '/';
+
+    const handleBackClick = () => router.push(parentPath);
+    const handleHomeClick = () => router.push('/');
 
     const guestInitials = guestInfo
         ? guestInfo.guestName
@@ -50,7 +54,17 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
             <div className="container flex h-16 items-center justify-between px-4">
                 {/* Left Section */}
                 <div className="flex items-center gap-2">
-                    {!isHomePage && (
+                    {isFirstLevel && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleHomeClick}
+                            aria-label="Ana sayfa"
+                        >
+                            <Home className="h-5 w-5" />
+                        </Button>
+                    )}
+                    {isDeepLevel && (
                         <Button
                             variant="ghost"
                             size="icon"

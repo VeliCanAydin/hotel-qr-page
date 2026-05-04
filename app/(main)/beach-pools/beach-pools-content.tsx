@@ -78,12 +78,13 @@ const galleryImages = [
 export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }) {
   return (
     <div className="min-h-screen">
-      <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
+      <section className="relative h-[50vh] min-h-100 overflow-hidden">
         <Image
           src="/plaj.jpeg"
           alt="Beach & Pools Hero"
           fill
           className="object-cover"
+          loading="eager"
           priority
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />

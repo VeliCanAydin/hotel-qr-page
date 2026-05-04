@@ -1,7 +1,9 @@
 import React from "react"
+import Link from "next/link"
+import { cookies } from "next/headers"
 import { Button } from "@/components/ui/button"
 import { ItemSeparator } from "@/components/ui/item"
-import { Phone, Mail, MessageCircleMore, ChevronRight } from "lucide-react"
+import { Phone, Mail, MessageCircleMore, ChevronRight, Lock } from "lucide-react"
 import {
   Accordion,
   AccordionContent,
@@ -9,9 +11,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { getHotelInfo } from "@/lib/actions/hotel-info"
+import { verifyGuestToken, GUEST_SESSION_COOKIE } from "@/lib/auth"
 
 export default async function HotelInfoPage() {
   const info = await getHotelInfo()
+
+  const cookieStore = await cookies()
+  const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
+  const guestPayload = token ? await verifyGuestToken(token) : null
+  const isGuest = guestPayload !== null
 
   const contacts = [
     {
@@ -72,8 +80,25 @@ export default async function HotelInfoPage() {
           <AccordionItem value="wifi">
             <AccordionTrigger className="text-base">Wi-Fi Settings</AccordionTrigger>
             <AccordionContent>
-              <p><strong>Network Name (SSID):</strong> {info.wifiName}</p>
-              <p><strong>Password:</strong> {info.wifiPassword}</p>
+              {isGuest ? (
+                <>
+                  <p><strong>Network Name (SSID):</strong> {info.wifiName}</p>
+                  <p><strong>Password:</strong> {info.wifiPassword}</p>
+                </>
+              ) : (
+                <div className="flex items-center gap-3 py-1 text-muted-foreground">
+                  <Lock className="h-4 w-4 shrink-0" />
+                  <span className="text-sm">
+                    <Link
+                      href="/login?redirect=/hotel-info"
+                      className="text-foreground underline underline-offset-2 hover:text-primary"
+                    >
+                      Sign in
+                    </Link>
+                    {" "}with your room details to view Wi-Fi credentials.
+                  </span>
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="checkin">
