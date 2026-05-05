@@ -35,6 +35,19 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
+const EXISTING_ADMIN_ROUTES = new Set([
+  "/dashboard",
+  "/dashboard/content/hotel-info",
+  "/dashboard/content/kids-care",
+  "/dashboard/content/beach-pools",
+  "/dashboard/content/spa",
+  "/dashboard/content/wellness",
+  "/dashboard/services/restaurant",
+  "/dashboard/services/room-service",
+  "/dashboard/orders/room-service-orders",
+  "/dashboard/events/list",
+])
+
 // This is sample data.
 const data = {
   user: {
@@ -217,6 +230,14 @@ const data = {
   ],
 }
 
+const navMainWithAvailability = data.navMain.map((group) => ({
+  ...group,
+  items: group.items?.map((item) => ({
+    ...item,
+    disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
+  })),
+}))
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -224,7 +245,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMainWithAvailability} />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
