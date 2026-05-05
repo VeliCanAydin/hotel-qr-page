@@ -17,14 +17,18 @@ export const hotelInfo = pgTable('hotel_info', {
 export const beachPoolsInfo = pgTable('beach_pools_info', {
   id: integer('id').primaryKey().default(1),
   beachDescription: text('beach_description').notNull().default(''),
-  beachHours: text('beach_hours').notNull().default(''),
+  beachOpenTime: time('beach_open_time'),
+  beachCloseTime: time('beach_close_time'),
   beachNotes: text('beach_notes').notNull().default(''),
   mainPoolDescription: text('main_pool_description').notNull().default(''),
-  mainPoolHours: text('main_pool_hours').notNull().default(''),
+  mainPoolOpenTime: time('main_pool_open_time'),
+  mainPoolCloseTime: time('main_pool_close_time'),
   indoorPoolDescription: text('indoor_pool_description').notNull().default(''),
-  indoorPoolHours: text('indoor_pool_hours').notNull().default(''),
+  indoorPoolOpenTime: time('indoor_pool_open_time'),
+  indoorPoolCloseTime: time('indoor_pool_close_time'),
   kidsPoolDescription: text('kids_pool_description').notNull().default(''),
-  kidsPoolHours: text('kids_pool_hours').notNull().default(''),
+  kidsPoolOpenTime: time('kids_pool_open_time'),
+  kidsPoolCloseTime: time('kids_pool_close_time'),
   generalNotes: text('general_notes').notNull().default(''),
 })
 
@@ -104,6 +108,7 @@ export const events = pgTable('events', {
 
 export const kidsActivities = pgTable('kids_activities', {
   id: serial('id').primaryKey(),
+  serviceId: text('service_id').references(() => kidsServices.id, { onDelete: 'cascade' }),
   day: text('day').notNull(),
   time: text('time').notNull(),
   event: text('event').notNull(),
@@ -132,6 +137,23 @@ export const menuTemplateItems = pgTable('menu_template_items', {
   price: real('price').notNull(),
   isVegetarian: boolean('is_vegetarian').notNull().default(false),
   imageUrl: text('image_url'),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
+export const kidsServices = pgTable('kids_services', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description').notNull().default(''),
+  image: text('image').notNull().default(''),
+  imageAlt: text('image_alt').notNull().default(''),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
+export const kidsServiceItems = pgTable('kids_service_items', {
+  id: text('id').primaryKey(),
+  serviceId: text('service_id').notNull().references(() => kidsServices.id, { onDelete: 'cascade' }),
+  trigger: text('trigger').notNull(),
+  content: text('content').notNull(),
   orderIndex: integer('order_index').notNull().default(0),
 })
 

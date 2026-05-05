@@ -27,18 +27,18 @@ export default function HotelInfoClient({ initialData }: { initialData: HotelInf
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div className="flex items-center justify-between">
+    <div className="grid grid-cols-1 gap-4 max-w-5xl md:grid-cols-2">
+      <div className="flex items-center justify-between col-span-full">
         <div>
           <h1 className="text-2xl font-semibold">Hotel Info</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage contact information, WiFi settings, and hotel policies
           </p>
         </div>
-        <Button onClick={handleSave}>Save All Changes</Button>
+        {/* <Button onClick={handleSave}>Save All Changes</Button> */}
       </div>
 
-      <Card>
+      <Card >
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <FileText className="h-4 w-4" />
@@ -92,7 +92,7 @@ export default function HotelInfoClient({ initialData }: { initialData: HotelInf
           <CardDescription>Guest network credentials shown in hotel info</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4 align-items-end">
             <div className="space-y-2">
               <Label htmlFor="wifi-name">Network Name (SSID)</Label>
               <Input id="wifi-name" value={form.wifiName} onChange={set("wifiName")} />
@@ -144,7 +144,7 @@ export default function HotelInfoClient({ initialData }: { initialData: HotelInf
         </CardContent>
       </Card>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end col-span-full">
         <Button onClick={handleSave} size="lg">Save All Changes</Button>
       </div>
     </div>

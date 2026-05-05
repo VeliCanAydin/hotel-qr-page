@@ -119,18 +119,22 @@ async function seed() {
       id: 1,
       beachDescription:
         'Our private beach stretches 500 meters along the Mediterranean coast, offering crystal-clear waters and pristine white sand. Sunbeds and umbrellas are complimentary for all guests.',
-      beachHours: '07:00 – 19:00',
+      beachOpenTime: '07:00',
+      beachCloseTime: '19:00',
       beachNotes:
         'Beach towels available at the beach bar. Water sports equipment rental available from 09:00 to 17:00.',
       mainPoolDescription:
         'Our main outdoor pool is the heart of the resort, featuring a spacious swimming area, a children\'s splash zone, and a poolside bar.',
-      mainPoolHours: '07:00 – 20:00',
+      mainPoolOpenTime: '07:00',
+      mainPoolCloseTime: '20:00',
       indoorPoolDescription:
         'The indoor heated pool is available year-round and is perfect for early morning swims or cooler evenings.',
-      indoorPoolHours: '06:00 – 22:00',
+      indoorPoolOpenTime: '06:00',
+      indoorPoolCloseTime: '22:00',
       kidsPoolDescription:
         'A dedicated shallow pool for children with water features and slides, supervised by our trained staff.',
-      kidsPoolHours: '09:00 – 18:00',
+      kidsPoolOpenTime: '09:00',
+      kidsPoolCloseTime: '18:00',
       generalNotes:
         'Pool towels are available at the pool deck. Food and beverages can be ordered directly to your sunbed. Please shower before entering pools.',
     })

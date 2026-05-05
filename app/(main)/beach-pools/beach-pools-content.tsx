@@ -1,5 +1,3 @@
-"use client"
-
 import Image from "next/image"
 import { Camera } from "lucide-react"
 import {
@@ -75,6 +73,11 @@ const galleryImages = [
   { src: "/plaj.jpeg", alt: "Beautiful sandy beach view" },
 ]
 
+function formatHours(open: string | null, close: string | null) {
+  if (!open || !close) return null
+  return `${open.slice(0, 5)} – ${close.slice(0, 5)}`
+}
+
 export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }) {
   return (
     <div className="min-h-screen">
@@ -112,8 +115,8 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
           <div className="text-center mb-8">
             <Badge className="mb-2">Beach</Badge>
             <h2 className="text-2xl md:text-3xl font-semibold">Private Beach</h2>
-            {info.beachHours && (
-              <p className="text-sm text-muted-foreground mt-1">Hours: {info.beachHours}</p>
+            {formatHours(info.beachOpenTime, info.beachCloseTime) && (
+              <p className="text-sm text-muted-foreground mt-1">Hours: {formatHours(info.beachOpenTime, info.beachCloseTime)}</p>
             )}
           </div>
 
@@ -178,8 +181,8 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
               {info.indoorPoolDescription && (
                 <div className="text-center">
                   <h3 className="font-semibold mb-1">Indoor Pool</h3>
-                  {info.indoorPoolHours && (
-                    <p className="text-xs text-muted-foreground mb-2">Hours: {info.indoorPoolHours}</p>
+                  {formatHours(info.indoorPoolOpenTime, info.indoorPoolCloseTime) && (
+                    <p className="text-xs text-muted-foreground mb-2">Hours: {formatHours(info.indoorPoolOpenTime, info.indoorPoolCloseTime)}</p>
                   )}
                   <p className="text-sm text-muted-foreground">{info.indoorPoolDescription}</p>
                 </div>
@@ -187,8 +190,8 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
               {info.kidsPoolDescription && (
                 <div className="text-center">
                   <h3 className="font-semibold mb-1">Kids Pool</h3>
-                  {info.kidsPoolHours && (
-                    <p className="text-xs text-muted-foreground mb-2">Hours: {info.kidsPoolHours}</p>
+                  {formatHours(info.kidsPoolOpenTime, info.kidsPoolCloseTime) && (
+                    <p className="text-xs text-muted-foreground mb-2">Hours: {formatHours(info.kidsPoolOpenTime, info.kidsPoolCloseTime)}</p>
                   )}
                   <p className="text-sm text-muted-foreground">{info.kidsPoolDescription}</p>
                 </div>
