@@ -11,7 +11,8 @@ export type SpaServiceInput = {
   description: string
   image: string
   imageAlt: string
-  hours: string
+  openTime: string | null
+  closeTime: string | null
   isFree: boolean
   price: string
   requiresReservation: boolean

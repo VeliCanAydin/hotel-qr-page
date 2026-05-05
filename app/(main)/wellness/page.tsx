@@ -42,7 +42,9 @@ export default async function WellnessPage() {
                 imageAlt: service.imageAlt,
                 title: service.name,
                 description: service.description,
-                hours: service.hours,
+                hours: service.openTime && service.closeTime
+                  ? `${service.openTime.slice(0, 5)} – ${service.closeTime.slice(0, 5)}`
+                  : service.openTime?.slice(0, 5) || service.closeTime?.slice(0, 5) || '',
                 isPaid: service.isPaid,
                 reservationRequired: service.requiresReservation,
               }}

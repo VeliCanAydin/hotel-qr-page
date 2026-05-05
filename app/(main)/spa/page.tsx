@@ -43,7 +43,9 @@ export default async function SpaPage() {
                 imageAlt: service.imageAlt,
                 title: service.name,
                 description: service.description,
-                hours: service.hours,
+                hours: service.openTime && service.closeTime
+                  ? `${service.openTime.slice(0, 5)} – ${service.closeTime.slice(0, 5)}`
+                  : service.openTime?.slice(0, 5) || service.closeTime?.slice(0, 5) || '',
                 isPaid: !service.isFree,
                 reservationRequired: service.requiresReservation,
                 badges: service.tags ? service.tags.split(',').filter(Boolean).map((t) => t.trim()) : undefined,

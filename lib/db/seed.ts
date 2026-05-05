@@ -8,7 +8,7 @@ async function seed() {
   const { hashPassword } = await import('../auth')
   const { menuItems: menuData } = await import('../data/aLaCarteMenu')
   const { roomServiceItems: roomData } = await import('../data/roomServiceData')
-  const { hotelEvents } = await import('../data/events')
+  const { hotelEvents } = await import('./event-seed-data')
   const { weeklySchedule } = await import('../data/kidsClubData')
 
   console.log('Seeding database...')
@@ -17,9 +17,9 @@ async function seed() {
   await db
     .insert(restaurants)
     .values([
-      { id: 'a-la-carte', name: 'A-La-Carte Restaurant', cuisine: 'Mediterranean & Turkish', hours: '18:00 – 22:00', description: "Fine dining experience with premium Mediterranean and Turkish cuisine. Chef's signature dishes made with fresh, local ingredients.", reservation: true, orderIndex: 0 },
-      { id: 'main-restaurant', name: 'Main Restaurant', cuisine: 'International Buffet', hours: '07:00–10:00 · 12:30–14:00 · 19:00–21:00', description: 'Our main buffet restaurant offering an extensive selection of international cuisine for breakfast, lunch and dinner.', reservation: false, orderIndex: 1 },
-      { id: 'snack-restaurant', name: 'Snack Restaurant', cuisine: 'Fast Food & Snacks', hours: '11:00 – 17:00', description: 'Casual poolside dining with light bites, snacks, salads, and refreshing drinks.', reservation: false, orderIndex: 2 },
+      { id: 'a-la-carte', name: 'A-La-Carte Restaurant', cuisine: 'Mediterranean & Turkish', openTime: '18:00', closeTime: '22:00', description: "Fine dining experience with premium Mediterranean and Turkish cuisine. Chef's signature dishes made with fresh, local ingredients.", reservation: true, orderIndex: 0 },
+      { id: 'main-restaurant', name: 'Main Restaurant', cuisine: 'International Buffet', openTime: '07:00', closeTime: '21:00', description: 'Our main buffet restaurant offering an extensive selection of international cuisine for breakfast, lunch and dinner.', reservation: false, orderIndex: 1 },
+      { id: 'snack-restaurant', name: 'Snack Restaurant', cuisine: 'Fast Food & Snacks', openTime: '11:00', closeTime: '17:00', description: 'Casual poolside dining with light bites, snacks, salads, and refreshing drinks.', reservation: false, orderIndex: 2 },
     ])
     .onConflictDoNothing()
   console.log('Upserted 3 restaurants')
@@ -147,7 +147,7 @@ async function seed() {
         'Our Turkish Bath is waiting for you as a modern interpretation of traditional relaxation. Enjoy the steam and massage while resting on the hot stones. It is the perfect space for a deep relaxation and refresh experience.',
       image: '/spa/dosinia_luxury_resort_spa_turkish_bath-1.jpeg',
       imageAlt: 'Turkish Bath',
-      hours: '08:00 - 20:00',
+      openTime: '08:00', closeTime: '20:00',
       isFree: true,
       price: '',
       requiresReservation: false,
@@ -161,7 +161,7 @@ async function seed() {
         'Rejuvenating massage rituals combined with aromatic oils tailored to your needs. Ease tension, improve circulation, and unwind in a serene atmosphere.',
       image: '/spa/dosinia_luxury_resort_spa_massage_room-1.jpeg',
       imageAlt: 'Massage & Aromatherapy',
-      hours: '08:00 - 20:00',
+      openTime: '08:00', closeTime: '20:00',
       isFree: false,
       price: 'Starting from $60',
       requiresReservation: true,
@@ -175,7 +175,7 @@ async function seed() {
         'Our sauna and steam room are the address of relaxation and renewal. Relax your muscles in the warm environment of the sauna, experience a deep feeling of cleanliness in the steam room.',
       image: '/spa/dosinia_luxury_resort_spa_sauna-1.jpeg',
       imageAlt: 'Sauna & Steam Room',
-      hours: '09:00 - 18:00',
+      openTime: '09:00', closeTime: '18:00',
       isFree: true,
       price: '',
       requiresReservation: false,
@@ -189,7 +189,7 @@ async function seed() {
         'Our salt room offers a relaxing experience that supports your health. Experience a deep relaxation in its calming environment while cleansing your respiratory tract with the natural healing effect of salt.',
       image: '/spa/dosinia_luxury_resort_spa_salt_bath_2-1.jpeg',
       imageAlt: 'Salt Room Therapy',
-      hours: '08:00 - 19:30',
+      openTime: '08:00', closeTime: '19:30',
       isFree: false,
       price: 'Starting from $40',
       requiresReservation: true,
@@ -209,7 +209,7 @@ async function seed() {
         'For sports enthusiasts and anyone who wants to stay fit during their holiday, discover expert-designed training sessions at Dosinia Luxury Resort. With modern equipment and a spacious gym, enjoy every workout while boosting your energy and reaching your fitness goals.',
       image: '/wellness/EVG01681-Enhanced-NR-HDR-Edit.jpeg',
       imageAlt: 'Fitness',
-      hours: '07:00 - 22:00',
+      openTime: '07:00', closeTime: '22:00',
       isPaid: false,
       requiresReservation: false,
       orderIndex: 0,
@@ -221,7 +221,7 @@ async function seed() {
         'Yoga sessions are a perfect opportunity to balance both body and mind. With our expert instructors, reconnect with yourself in a peaceful atmosphere. Improve flexibility, leave stress behind, and reach a deeper sense of inner calm.',
       image: '/wellness/wellness-nedir-4.webp',
       imageAlt: 'Yoga',
-      hours: '08:30 - 09:30',
+      openTime: '08:30', closeTime: '09:30',
       isPaid: false,
       requiresReservation: true,
       orderIndex: 1,
@@ -233,7 +233,7 @@ async function seed() {
         'Start your day with energy through enjoyable sessions led by professional trainers. Refresh your body and mind, feel revitalized, and build a healthy daily ritual that helps you begin the day feeling strong and active.',
       image: '/wellness/sabah-jimnastigi.jpeg',
       imageAlt: 'Morning Gymnastics',
-      hours: '09:00 - 09:30',
+      openTime: '09:00', closeTime: '09:30',
       isPaid: false,
       requiresReservation: false,
       orderIndex: 2,
@@ -245,7 +245,7 @@ async function seed() {
         'Strengthen your body and unwind at the same time with fun and effective exercises in the pool. Enjoy the water while staying in shape, and refresh your energy with the relaxing effect of a water-based workout.',
       image: '/wellness/havuz-jimnastigi.jpeg',
       imageAlt: 'Pool Gymnastics',
-      hours: '11:00 - 11:30',
+      openTime: '11:00', closeTime: '11:30',
       isPaid: false,
       requiresReservation: false,
       orderIndex: 3,
@@ -257,7 +257,7 @@ async function seed() {
         'Aqua Spinning delivers a dynamic workout powered by the natural resistance of water. Pedal in the pool to burn calories and train your whole body with joint-friendly movement. A high-energy activity that is both fun and effective.',
       image: '/wellness/thumbnail_Aqua_spinning_class_aboard_a_cruise_ship.webp',
       imageAlt: 'Aqua Spinning',
-      hours: '16:00 - 16:45',
+      openTime: '16:00', closeTime: '16:45',
       isPaid: true,
       requiresReservation: true,
       orderIndex: 4,
@@ -269,7 +269,7 @@ async function seed() {
         'Enjoy a playful jumping experience on the water for an energetic and refreshing workout. Stay in shape while having fun, and feel the soothing, cooling effect of water.',
       image: '/wellness/aqua-jump-3.jpeg',
       imageAlt: 'Aqua Trampoline',
-      hours: '17:00 - 17:30',
+      openTime: '17:00', closeTime: '17:30',
       isPaid: true,
       requiresReservation: true,
       orderIndex: 5,
@@ -281,7 +281,7 @@ async function seed() {
         'Play with friends or family under the sun and combine fun with physical activity. Feel the spirit of the game on the beach and crown your holiday with lively memories and great energy.',
       image: '/wellness/woman-throwing-ball-beach-1.jpeg',
       imageAlt: 'Beach Volleyball',
-      hours: '10:30 - 12:00',
+      openTime: '10:30', closeTime: '12:00',
       isPaid: false,
       requiresReservation: false,
       orderIndex: 6,
@@ -293,7 +293,7 @@ async function seed() {
         'Kangoo Jump offers a fun and energetic workout using special rebound boots. Turn cardio into an enjoyable experience, activate your whole body, and burn calories while having a great time.',
       image: '/wellness/kangoo-jump.jpeg',
       imageAlt: 'Kangoo Jump',
-      hours: '18:00 - 18:45',
+      openTime: '18:00', closeTime: '18:45',
       isPaid: true,
       requiresReservation: true,
       orderIndex: 7,
@@ -305,7 +305,7 @@ async function seed() {
         'Water polo brings an energetic and exciting team challenge to the pool. Build team spirit, enjoy fast-paced moments, and create unforgettable memories in refreshing water.',
       image: '/wellness/EVG00355-rotated.jpeg',
       imageAlt: 'Water Polo',
-      hours: '15:00 - 15:45',
+      openTime: '15:00', closeTime: '15:45',
       isPaid: false,
       requiresReservation: false,
       orderIndex: 8,
@@ -317,7 +317,7 @@ async function seed() {
         'Dart games offer a fun and competitive experience. Enjoy quality time with friends or family while improving your aim and focus. Moments spent around the dartboard will add extra joy to your holiday.',
       image: '/wellness/3d-rendering-arrow-hitting-target.jpeg',
       imageAlt: 'Dart Games',
-      hours: '19:00 - 22:30',
+      openTime: '19:00', closeTime: '22:30',
       isPaid: false,
       requiresReservation: false,
       orderIndex: 9,

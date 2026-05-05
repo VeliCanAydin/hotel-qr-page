@@ -27,7 +27,7 @@ import {
 import { createMenuCategory } from "@/lib/actions/menu-items"
 
 type RestaurantRow = {
-  id: string; name: string; cuisine: string; hours: string
+  id: string; name: string; cuisine: string; openTime: string | null; closeTime: string | null
   description: string; reservation: boolean; orderIndex: number
 }
 type TemplateRow = {
@@ -124,13 +124,17 @@ export default function RestaurantClient({
   // ── Restaurant handlers ──
   function openAddRestaurant() {
     setIsAddMode(true)
-    setRestaurantForm({ id: '', name: '', cuisine: '', hours: '', description: '', reservation: false, orderIndex: restaurants.length })
+    setRestaurantForm({ id: '', name: '', cuisine: '', openTime: null, closeTime: null, description: '', reservation: false, orderIndex: restaurants.length })
     setRestaurantDialogOpen(true)
   }
 
   function openEditRestaurant(r: RestaurantRow) {
     setIsAddMode(false)
-    setRestaurantForm({ ...r })
+    setRestaurantForm({
+      ...r,
+      openTime: r.openTime?.slice(0, 5) ?? null,
+      closeTime: r.closeTime?.slice(0, 5) ?? null,
+    })
     setRestaurantDialogOpen(true)
   }
 
@@ -408,7 +412,7 @@ export default function RestaurantClient({
                   <CardContent className="space-y-3 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock className="h-3.5 w-3.5 shrink-0" />
-                      <span>{r.hours}</span>
+                      <span>{r.openTime && r.closeTime ? `${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` : r.openTime?.slice(0, 5) || r.closeTime?.slice(0, 5) || '—'}</span>
                     </div>
                     <div>
                       {r.reservation
@@ -532,7 +536,21 @@ export default function RestaurantClient({
               </div>
               <div className="space-y-2">
                 <Label>Opening Hours</Label>
-                <Input value={restaurantForm.hours} onChange={(e) => setRestaurantForm((p) => p && { ...p, hours: e.target.value })} placeholder="e.g. 18:00 – 22:00" />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="time"
+                    value={restaurantForm.openTime ?? ''}
+                    onChange={(e) => setRestaurantForm((p) => p && { ...p, openTime: e.target.value || null })}
+                    className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
+                  />
+                  <span className="text-muted-foreground text-sm shrink-0">–</span>
+                  <input
+                    type="time"
+                    value={restaurantForm.closeTime ?? ''}
+                    onChange={(e) => setRestaurantForm((p) => p && { ...p, closeTime: e.target.value || null })}
+                    className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Description</Label>

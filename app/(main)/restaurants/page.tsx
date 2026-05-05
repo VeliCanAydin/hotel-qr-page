@@ -30,12 +30,12 @@ export default async function RestaurantsPage() {
             title={r.name}
             description={r.description}
             hasReservation={r.reservation}
-            openingHours={r.hours}
+            openingHours={r.openTime && r.closeTime ? `${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` : r.openTime?.slice(0, 5) || r.closeTime?.slice(0, 5) || ''}
             cuisine={r.cuisine}
             highlights={[
               r.reservation ? 'Reservation required' : 'No reservation needed',
               r.cuisine,
-              `Open ${r.hours}`,
+              r.openTime && r.closeTime ? `Open ${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` : '',
             ].filter(Boolean)}
           />
         </Suspense>

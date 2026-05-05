@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, real, serial, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, real, serial, text, time, timestamp } from 'drizzle-orm/pg-core'
 
 export const hotelInfo = pgTable('hotel_info', {
   id: integer('id').primaryKey().default(1),
@@ -34,7 +34,8 @@ export const spaServices = pgTable('spa_services', {
   description: text('description').notNull(),
   image: text('image').notNull().default(''),
   imageAlt: text('image_alt').notNull().default(''),
-  hours: text('hours').notNull().default(''),
+  openTime: time('open_time'),
+  closeTime: time('close_time'),
   isFree: boolean('is_free').notNull().default(true),
   price: text('price').notNull().default(''),
   requiresReservation: boolean('requires_reservation').notNull().default(false),
@@ -48,7 +49,8 @@ export const wellnessServices = pgTable('wellness_services', {
   description: text('description').notNull(),
   image: text('image').notNull().default(''),
   imageAlt: text('image_alt').notNull().default(''),
-  hours: text('hours').notNull().default(''),
+  openTime: time('open_time'),
+  closeTime: time('close_time'),
   isPaid: boolean('is_paid').notNull().default(false),
   requiresReservation: boolean('requires_reservation').notNull().default(false),
   orderIndex: integer('order_index').notNull().default(0),
@@ -58,7 +60,8 @@ export const restaurants = pgTable('restaurants', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   cuisine: text('cuisine').notNull().default(''),
-  hours: text('hours').notNull().default(''),
+  openTime: time('open_time'),
+  closeTime: time('close_time'),
   description: text('description').notNull().default(''),
   reservation: boolean('reservation').notNull().default(false),
   orderIndex: integer('order_index').notNull().default(0),

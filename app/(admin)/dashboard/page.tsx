@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { db } from "@/lib/db"
+import { events } from "@/lib/db/schema"
 import { roomServiceItems } from "@/lib/data/roomServiceData"
 import { menuItems } from "@/lib/data/aLaCarteMenu"
-import { hotelEvents } from "@/lib/data/events"
 import { weeklySchedule } from "@/lib/data/kidsClubData"
 import {
   HandPlatter,
@@ -41,8 +42,8 @@ const stats = [
   },
   {
     title: "Hotel Events",
-    value: hotelEvents.length,
-    description: `Across ${new Set(hotelEvents.map((e) => e.date)).size} dates`,
+    value: 0,
+    description: "Across 0 dates",
     icon: CalendarDays,
     href: "/dashboard/events/list",
   },
@@ -100,7 +101,17 @@ const quickLinks = [
   },
 ]
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const eventRows = await db.select({ date: events.date }).from(events)
+  const eventCount = eventRows.length
+  const eventDateCount = new Set(eventRows.map((event) => event.date)).size
+
+  const resolvedStats = stats.map((stat) =>
+    stat.href === "/dashboard/events/list"
+      ? { ...stat, value: eventCount, description: `Across ${eventDateCount} dates` }
+      : stat
+  )
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -117,7 +128,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
+        {resolvedStats.map((stat) => (
           <Link key={stat.href} href={stat.href}>
             <Card className="hover:bg-accent/50 transition-colors cursor-pointer h-full">
               <CardHeader className="flex flex-row items-center justify-between pb-2">

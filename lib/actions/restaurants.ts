@@ -11,7 +11,8 @@ export type RestaurantInput = {
   id: string
   name: string
   cuisine: string
-  hours: string
+  openTime: string | null
+  closeTime: string | null
   description: string
   reservation: boolean
   orderIndex?: number

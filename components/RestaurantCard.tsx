@@ -44,12 +44,13 @@ export default function RestaurantCard({
 
     return (
         <div className="flex flex-col gap-4 pb-4">
-            <div className="relative w-full h-50 rounded-3xl overflow-hidden">
+            <div className="relative w-full h-[200px] rounded-3xl overflow-hidden">
                 <Image
                     src={src}
                     alt={alt}
                     fill
                     className="object-cover"
+                    loading="eager"
                 />
             </div>
             <h2 className="text-xl font-bold">{title}</h2>

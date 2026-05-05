@@ -11,7 +11,8 @@ export type WellnessServiceInput = {
   description: string
   image: string
   imageAlt: string
-  hours: string
+  openTime: string | null
+  closeTime: string | null
   isPaid: boolean
   requiresReservation: boolean
   orderIndex: number

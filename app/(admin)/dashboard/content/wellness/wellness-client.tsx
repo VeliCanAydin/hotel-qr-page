@@ -29,7 +29,8 @@ const EMPTY: Omit<WellnessService, 'id'> = {
   description: '',
   image: '',
   imageAlt: '',
-  hours: '',
+  openTime: null,
+  closeTime: null,
   isPaid: false,
   requiresReservation: false,
   orderIndex: 0,
@@ -49,7 +50,11 @@ export default function WellnessClient({ initialServices }: { initialServices: W
 
   function openEdit(service: WellnessService) {
     setEditingId(service.id)
-    setForm({ ...service })
+    setForm({
+      ...service,
+      openTime: service.openTime?.slice(0, 5) ?? null,
+      closeTime: service.closeTime?.slice(0, 5) ?? null,
+    })
     setDialogOpen(true)
   }
 
@@ -132,7 +137,9 @@ export default function WellnessClient({ initialServices }: { initialServices: W
             <CardContent className="space-y-1.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5" />
-                {service.hours}
+                {service.openTime && service.closeTime
+                  ? `${service.openTime.slice(0, 5)} – ${service.closeTime.slice(0, 5)}`
+                  : service.openTime?.slice(0, 5) || service.closeTime?.slice(0, 5) || '—'}
               </div>
               <div className="flex items-center gap-1.5">
                 <DollarSign className="h-3.5 w-3.5" />
@@ -185,12 +192,22 @@ export default function WellnessClient({ initialServices }: { initialServices: W
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Hours</Label>
-              <Input
-                value={form.hours}
-                onChange={(e) => setField('hours', e.target.value)}
-                placeholder="e.g. 07:00 - 22:00"
-              />
+              <Label>Opening Hours</Label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="time"
+                  value={form.openTime ?? ''}
+                  onChange={(e) => setField('openTime', e.target.value || null)}
+                  className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
+                />
+                <span className="text-muted-foreground text-sm shrink-0">–</span>
+                <input
+                  type="time"
+                  value={form.closeTime ?? ''}
+                  onChange={(e) => setField('closeTime', e.target.value || null)}
+                  className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
