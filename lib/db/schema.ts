@@ -177,3 +177,25 @@ export const roomServiceOrders = pgTable('room_service_orders', {
   cancelledBy: text('cancelled_by').notNull().default(''), // 'guest' | 'staff' | ''
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
+
+export const reservations = pgTable('reservations', {
+  id:              serial('id').primaryKey(),
+  reservationCode: text('reservation_code').notNull().unique(),
+  roomNumber:      text('room_number').notNull(),
+  surname:         text('surname').notNull(),
+  guestName:       text('guest_name').notNull(),
+  roomType:        text('room_type').notNull(),
+  boardType:       text('board_type').notNull(),
+  status:          text('status').notNull().default('confirmed'),
+  checkIn:         text('check_in').notNull(),
+  checkOut:        text('check_out').notNull(),
+  adults:          integer('adults').notNull().default(1),
+  children:        integer('children').notNull().default(0),
+  floor:           integer('floor').notNull(),
+  view:            text('view').notNull().default(''),
+  bedType:         text('bed_type').notNull().default(''),
+  email:           text('email').notNull().default(''),
+  phone:           text('phone').notNull().default(''),
+  notes:           text('notes').notNull().default(''),
+  createdAt:       timestamp('created_at').defaultNow().notNull(),
+})

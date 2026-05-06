@@ -46,6 +46,7 @@ const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard/services/room-service",
   "/dashboard/orders/room-service-orders",
   "/dashboard/events/list",
+  "/dashboard/guests/list",
 ])
 
 // This is sample data.
