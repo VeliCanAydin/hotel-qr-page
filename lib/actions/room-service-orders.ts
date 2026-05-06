@@ -62,6 +62,8 @@ export type RoomServiceOrder = {
   totalAmount: number
   note: string
   status: string
+  cancellationReason: string
+  cancelledBy: string
   createdAt: Date
 }
 
@@ -70,6 +72,62 @@ export async function getRoomServiceOrders(): Promise<RoomServiceOrder[]> {
     .select()
     .from(roomServiceOrders)
     .orderBy(desc(roomServiceOrders.createdAt))
+}
+
+export type OrderStatus = 'confirmed' | 'delivered' | 'cancelled'
+
+export async function updateOrderStatus(
+  orderId: number,
+  status: OrderStatus,
+  cancellationReason?: string,
+  cancelledBy: 'guest' | 'staff' = 'staff'
+): Promise<void> {
+  await db
+    .update(roomServiceOrders)
+    .set({
+      status,
+      ...(status === 'cancelled'
+        ? { cancellationReason: cancellationReason ?? '', cancelledBy }
+        : {}),
+    })
+    .where(eq(roomServiceOrders.id, orderId))
+
+  revalidatePath('/dashboard/orders/room-service-orders')
+}
+
+export async function cancelGuestOrder(
+  orderId: number,
+  reason?: string
+): Promise<{ success: true } | { error: string }> {
+  const cookieStore = await cookies()
+  const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
+
+  if (!token) return { error: 'Not authenticated' }
+
+  const guest = await verifyGuestToken(token)
+  if (!guest) return { error: 'Session expired' }
+
+  const [order] = await db
+    .select()
+    .from(roomServiceOrders)
+    .where(eq(roomServiceOrders.id, orderId))
+
+  if (!order) return { error: 'Order not found' }
+  if (order.reservationCode !== guest.reservationCode) return { error: 'Unauthorized' }
+  if (order.status !== 'pending') return { error: 'Only pending orders can be cancelled' }
+
+  await db
+    .update(roomServiceOrders)
+    .set({
+      status: 'cancelled',
+      cancellationReason: reason ?? '',
+      cancelledBy: 'guest',
+    })
+    .where(eq(roomServiceOrders.id, orderId))
+
+  revalidatePath('/portal/room-service')
+  revalidatePath('/dashboard/orders/room-service-orders')
+  return { success: true }
 }
 
 export async function getGuestRoomServiceOrders(

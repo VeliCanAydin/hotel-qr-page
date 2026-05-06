@@ -1,24 +1,10 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
-import {
-  getGuestRoomServiceOrders,
-  type OrderItem,
-} from '@/lib/actions/room-service-orders'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { getGuestRoomServiceOrders } from '@/lib/actions/room-service-orders'
+import { Card, CardContent } from '@/components/ui/card'
 import { UtensilsCrossed } from 'lucide-react'
-import { format } from 'date-fns'
-
-const STATUS_CONFIG: Record<
-  string,
-  { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }
-> = {
-  pending:   { label: 'Pending',   variant: 'outline' },
-  confirmed: { label: 'Confirmed', variant: 'default' },
-  delivered: { label: 'Delivered', variant: 'secondary' },
-  cancelled: { label: 'Cancelled', variant: 'destructive' },
-}
+import GuestOrderCard from './order-card'
 
 export default async function GuestRoomServicePage() {
   const cookieStore = await cookies()
@@ -50,56 +36,9 @@ export default async function GuestRoomServicePage() {
 
   return (
     <div className="space-y-3">
-      {orders.map((order) => {
-        const items = JSON.parse(order.items) as OrderItem[]
-        const status = STATUS_CONFIG[order.status] ?? { label: order.status, variant: 'outline' as const }
-
-        return (
-          <Card key={order.id}>
-            <CardHeader className="px-4 pt-4 pb-2">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-sm font-semibold">Order #{order.id}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {format(new Date(order.createdAt), 'MMM d, yyyy · HH:mm')}
-                  </p>
-                </div>
-                <Badge variant={status.variant} className="shrink-0 mt-0.5">
-                  {status.label}
-                </Badge>
-              </div>
-            </CardHeader>
-
-            <CardContent className="px-4 pb-4 space-y-3">
-              <ul className="space-y-1">
-                {items.map((item) => (
-                  <li key={item.id} className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {item.name}
-                      <span className="ml-1 font-medium text-foreground">× {item.quantity}</span>
-                    </span>
-                    <span className="font-medium tabular-nums">
-                      €{(item.price * item.quantity).toFixed(2)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {order.note && (
-                <p className="text-xs text-muted-foreground border-t pt-2 italic">
-                  "{order.note}"
-                </p>
-              )}
-
-              <div className="flex justify-end border-t pt-2">
-                <span className="text-sm font-semibold">
-                  Total: €{order.totalAmount.toFixed(2)}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        )
-      })}
+      {orders.map((order) => (
+        <GuestOrderCard key={order.id} order={order} />
+      ))}
     </div>
   )
 }

@@ -173,5 +173,7 @@ export const roomServiceOrders = pgTable('room_service_orders', {
   totalAmount: real('total_amount').notNull(),
   note: text('note').notNull().default(''),
   status: text('status').notNull().default('pending'),
+  cancellationReason: text('cancellation_reason').notNull().default(''),
+  cancelledBy: text('cancelled_by').notNull().default(''), // 'guest' | 'staff' | ''
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })

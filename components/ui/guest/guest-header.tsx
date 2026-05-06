@@ -41,7 +41,6 @@ export function GuestHeader({ reservation }: { reservation: GuestReservation }) 
         <span className="text-sm font-semibold">Dosinia Luxury Resort</span>
 
         <div className="flex items-center gap-1">
-          <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Guest menu">
@@ -69,6 +68,7 @@ export function GuestHeader({ reservation }: { reservation: GuestReservation }) 
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ModeToggle />
         </div>
       </div>
     </header>
