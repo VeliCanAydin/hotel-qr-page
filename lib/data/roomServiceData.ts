@@ -4,6 +4,7 @@ export interface RoomServiceItem {
     description: string;
     price: number;
     category: 'food' | 'beverages' | 'other-services';
+    allergens?: string[];
 }
 
 export const roomServiceItems: RoomServiceItem[] = [
@@ -14,6 +15,7 @@ export const roomServiceItems: RoomServiceItem[] = [
         description: 'Triple-decker with grilled chicken, bacon, lettuce, tomato, and mayo. Served with fries.',
         price: 18.00,
         category: 'food',
+        allergens: ['gluten','egg','dairy'],
     },
     {
         id: 'caesar-salad',
@@ -21,6 +23,7 @@ export const roomServiceItems: RoomServiceItem[] = [
         description: 'Fresh romaine lettuce, parmesan cheese, croutons, and our signature Caesar dressing.',
         price: 14.00,
         category: 'food',
+        allergens: ['dairy','egg','gluten'],
     },
     {
         id: 'margherita-pizza',
@@ -28,6 +31,7 @@ export const roomServiceItems: RoomServiceItem[] = [
         description: 'Classic pizza with tomato sauce, fresh mozzarella, and basil.',
         price: 20.00,
         category: 'food',
+        allergens: ['gluten','dairy'],
     },
     {
         id: 'grilled-chicken',
@@ -42,6 +46,7 @@ export const roomServiceItems: RoomServiceItem[] = [
         description: 'Traditional Italian meat sauce over al dente spaghetti with parmesan.',
         price: 19.00,
         category: 'food',
+        allergens: ['gluten','dairy'],
     },
     {
         id: 'cheese-burger',
@@ -49,6 +54,7 @@ export const roomServiceItems: RoomServiceItem[] = [
         description: 'Angus beef patty with cheddar, lettuce, tomato, onion, and special sauce. Served with fries.',
         price: 22.00,
         category: 'food',
+        allergens: ['gluten','dairy'],
     },
     {
         id: 'fruit-platter',
@@ -63,6 +69,7 @@ export const roomServiceItems: RoomServiceItem[] = [
         description: 'Warm chocolate cake with a molten center, served with vanilla ice cream.',
         price: 12.00,
         category: 'food',
+        allergens: ['gluten','dairy','egg'],
     },
 
     // Beverages

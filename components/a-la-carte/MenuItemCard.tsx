@@ -2,7 +2,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 import type { MenuItem } from "@/lib/data/aLaCarteMenu";
+import { ALLERGENS } from "@/lib/data/allergens";
 
 interface MenuItemCardProps {
     item: MenuItem;
@@ -10,6 +12,19 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) {
+    const [activeAllergen, setActiveAllergen] = useState<string | null>(null)
+
+    const allergens: string[] = (() => {
+        if (!item.allergens) return []
+        if (Array.isArray(item.allergens)) return item.allergens
+        try {
+            const parsed = JSON.parse(item.allergens as unknown as string)
+            return Array.isArray(parsed) ? parsed : []
+        } catch {
+            return []
+        }
+    })()
+
     return (
         <>
             <div className="flex gap-4 py-4">
@@ -37,6 +52,43 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
                         >
                             VEGETARIAN
                         </Badge>
+                    )}
+                    {allergens.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                            {allergens.map((a) => {
+                                const meta = ALLERGENS.find((x) => x.id === a)
+                                const isActive = activeAllergen === a
+                                return (
+                                    <Badge
+                                        key={a}
+                                        variant="outline"
+                                        className="inline-flex items-center gap-1 rounded-full px-1 py-1 text-[11px] font-medium"
+                                        title={meta?.label ?? a}
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={() => setActiveAllergen(isActive ? null : a)}
+                                            className="inline-flex h-5 w-5 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-border focus:outline-none focus:ring-2 focus:ring-ring/60"
+                                            aria-label={meta?.label ?? a}
+                                        >
+                                            <img
+                                                src={meta?.icon ?? '/api/allergen-icons/nuts'}
+                                                alt={meta?.label ?? a}
+                                                className="h-full w-full object-contain p-0.5"
+                                            />
+                                        </button>
+                                        <span
+                                            className={
+                                                "overflow-hidden whitespace-nowrap transition-all duration-200 " +
+                                                (isActive ? "max-w-24 opacity-100 ml-1" : "max-w-0 opacity-0 ml-0")
+                                            }
+                                        >
+                                            {meta?.label ?? a}
+                                        </span>
+                                    </Badge>
+                                )
+                            })}
+                        </div>
                     )}
                     <p className="text-sm text-muted-foreground leading-relaxed">
                         {item.description}

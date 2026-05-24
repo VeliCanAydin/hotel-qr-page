@@ -13,6 +13,7 @@ export type TemplateItemInput = {
   isVegetarian?: boolean
   imageUrl?: string | null
   orderIndex?: number
+  allergens?: string[]
 }
 
 export async function getMenuTemplates(restaurantId: string) {
@@ -65,6 +66,7 @@ export async function saveCurrentMenuAsTemplate(restaurantId: string, name: stri
         price: item.price,
         isVegetarian: item.isVegetarian,
         imageUrl: imageMap[item.id] ?? null,
+        allergens: Array.isArray(item.allergens) ? item.allergens : [],
         orderIndex: index,
       }))
     )
@@ -101,6 +103,7 @@ export async function loadMenuTemplate(templateId: string, restaurantId: string)
       category: ti.category,
       price: ti.price,
       isVegetarian: ti.isVegetarian,
+      allergens: Array.isArray(ti.allergens) ? ti.allergens : [],
       restaurantId,
     }))
     await db.insert(menuItems).values(newItems)
@@ -147,6 +150,7 @@ export async function addTemplateItem(templateId: string, item: TemplateItemInpu
     price: item.price,
     isVegetarian: item.isVegetarian ?? false,
     imageUrl: item.imageUrl ?? null,
+    allergens: item.allergens ?? [],
     orderIndex,
   })
   revalidatePath('/dashboard/services/restaurant')
@@ -154,7 +158,10 @@ export async function addTemplateItem(templateId: string, item: TemplateItemInpu
 }
 
 export async function updateTemplateItem(id: string, data: Partial<TemplateItemInput>) {
-  await db.update(menuTemplateItems).set(data).where(eq(menuTemplateItems.id, id))
+  await db.update(menuTemplateItems).set({
+    ...data,
+    allergens: data.allergens ?? [],
+  }).where(eq(menuTemplateItems.id, id))
   revalidatePath('/dashboard/services/restaurant')
 }
 

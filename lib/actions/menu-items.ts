@@ -13,16 +13,25 @@ type MenuItemInput = {
   isVegetarian?: boolean
   category: string
   restaurantId: string
+  allergens?: string[]
 }
 
 export async function createMenuItem(item: MenuItemInput) {
-  await db.insert(menuItems).values({ ...item, isVegetarian: item.isVegetarian ?? false })
+  await db.insert(menuItems).values({
+    ...item,
+    isVegetarian: item.isVegetarian ?? false,
+    allergens: item.allergens ?? [],
+  })
   revalidatePath(`/restaurants/${item.restaurantId}`)
   revalidatePath('/dashboard/services/restaurant')
 }
 
 export async function updateMenuItem(id: string, data: Omit<MenuItemInput, 'id'>) {
-  await db.update(menuItems).set({ ...data, isVegetarian: data.isVegetarian ?? false }).where(eq(menuItems.id, id))
+  await db.update(menuItems).set({
+    ...data,
+    isVegetarian: data.isVegetarian ?? false,
+    allergens: data.allergens ?? [],
+  }).where(eq(menuItems.id, id))
   revalidatePath(`/restaurants/${data.restaurantId}`)
   revalidatePath('/dashboard/services/restaurant')
 }

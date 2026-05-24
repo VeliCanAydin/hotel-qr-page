@@ -11,6 +11,7 @@ type RoomServiceItemInput = {
   description: string
   price: number
   category: string
+  allergens?: string[]
 }
 
 export async function createRoomServiceItem(item: RoomServiceItemInput) {

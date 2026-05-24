@@ -4,7 +4,7 @@ loadEnvConfig(process.cwd())
 // Dynamic imports run after env is loaded
 async function seed() {
   const { db } = await import('./index')
-  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories } = await import('./schema')
+  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, roles, permissions, rolePermissions, adminUserRoles } = await import('./schema')
   const { hashPassword } = await import('../auth')
   const { menuItems: menuData } = await import('../data/aLaCarteMenu')
   const { roomServiceItems: roomData } = await import('../data/roomServiceData')
@@ -46,6 +46,7 @@ async function seed() {
       price: item.price,
       isVegetarian: item.isVegetarian ?? false,
       category: item.category,
+      allergens: item.allergens ?? [],
       restaurantId: 'a-la-carte',
     }))
   )
@@ -59,6 +60,7 @@ async function seed() {
       description: item.description,
       price: item.price,
       category: item.category,
+      allergens: item.allergens ?? [],
     }))
   )
   console.log(`Inserted ${roomData.length} room service items`)
@@ -340,6 +342,68 @@ async function seed() {
     console.log('Created default admin user: admin@dosinia.com / admin123')
   } else {
     console.log('Admin user already exists, skipping')
+  }
+
+  // --- Seed default roles & permissions (idempotent) ---
+  // Define a set of permissions that map to dashboard routes
+  const defaultPermissions = [
+    { routeKey: 'dashboard', title: 'Dashboard' },
+    { routeKey: 'dashboard.content.hotel-info', title: 'Hotel Info' },
+    { routeKey: 'dashboard.content.kids-care', title: 'Kids Care' },
+    { routeKey: 'dashboard.content.beach-pools', title: 'Beach & Pools' },
+    { routeKey: 'dashboard.content.spa', title: 'Spa' },
+    { routeKey: 'dashboard.content.wellness', title: 'Wellness' },
+    { routeKey: 'dashboard.services.restaurant', title: 'Restaurant' },
+    { routeKey: 'dashboard.services.room-service', title: 'Room Service' },
+    { routeKey: 'dashboard.orders.room-service-orders', title: 'Room Service Orders' },
+    { routeKey: 'dashboard.events.list', title: 'Events' },
+    { routeKey: 'dashboard.guests.list', title: 'Guest List' },
+  ]
+
+  // Upsert permissions
+  for (const p of defaultPermissions) {
+    await db
+      .insert(permissions)
+      .values({ routeKey: p.routeKey, title: p.title, group: 'dashboard' })
+      .onConflictDoNothing()
+  }
+
+  // Ensure roles exist
+  const [fullAdminRole] = await db
+    .insert(roles)
+    .values({ name: 'full_admin', description: 'Full administrator with all permissions' })
+    .onConflictDoNothing()
+
+  const [contentRole] = await db
+    .insert(roles)
+    .values({ name: 'content_manager', description: 'Content management role' })
+    .onConflictDoNothing()
+
+  // Assign all permissions to full_admin (idempotent)
+  const permissionRows = await db.select().from(permissions)
+  const adminUserRow = await db.select().from(adminUsers).where(eq(adminUsers.email, 'admin@dosinia.com')).limit(1)
+  if (adminUserRow.length > 0) {
+    const userId = adminUserRow[0].id
+
+    // Find or create full_admin role id
+    const [fullRoleRow] = await db.select().from(roles).where(eq(roles.name, 'full_admin')).limit(1)
+    if (fullRoleRow) {
+      const roleId = fullRoleRow.id
+
+      // Link user -> role
+      await db
+        .insert(adminUserRoles)
+        .values({ userId, roleId })
+        .onConflictDoNothing()
+
+      // Link role -> permissions
+      for (const perm of permissionRows) {
+        await db
+          .insert(rolePermissions)
+          .values({ roleId, permissionId: perm.id })
+          .onConflictDoNothing()
+      }
+    }
   }
 
   console.log('Done!')
