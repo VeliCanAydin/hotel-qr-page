@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
+import { isDashboardPathAllowed } from '@/lib/permissions'
 
 const getSecret = () => new TextEncoder().encode(process.env.JWT_SECRET!)
 
@@ -49,6 +50,11 @@ export async function proxy(request: NextRequest) {
       const response = NextResponse.redirect(new URL('/login', request.url))
       response.cookies.delete('admin-session')
       return response
+    }
+
+    const roleName = payload.roleName as string | undefined
+    if (roleName && roleName !== 'Super Admin' && !isDashboardPathAllowed(pathname, roleName)) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 

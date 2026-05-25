@@ -1,5 +1,4 @@
-import { boolean, integer, jsonb, pgTable, real, serial, text, time, timestamp } from 'drizzle-orm/pg-core'
-import { sql } from 'drizzle-orm'
+import { boolean, integer, pgTable, real, serial, text, time, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 
 export const hotelInfo = pgTable('hotel_info', {
   id: integer('id').primaryKey().default(1),
@@ -79,7 +78,6 @@ export const menuItems = pgTable('menu_items', {
   price: real('price').notNull(),
   isVegetarian: boolean('is_vegetarian').notNull().default(false),
   category: text('category').notNull(),
-  allergens: jsonb('allergens').$type<string[]>().notNull().default(sql`'[]'::jsonb`),
   restaurantId: text('restaurant_id').notNull().default('a-la-carte'),
 })
 
@@ -94,7 +92,6 @@ export const roomServiceItems = pgTable('room_service_items', {
   description: text('description').notNull(),
   price: real('price').notNull(),
   category: text('category').notNull(),
-  allergens: jsonb('allergens').$type<string[]>().notNull().default(sql`'[]'::jsonb`),
 })
 
 export const events = pgTable('events', {
@@ -139,7 +136,6 @@ export const menuTemplateItems = pgTable('menu_template_items', {
   category: text('category').notNull(),
   price: real('price').notNull(),
   isVegetarian: boolean('is_vegetarian').notNull().default(false),
-  allergens: jsonb('allergens').$type<string[]>().notNull().default(sql`'[]'::jsonb`),
   imageUrl: text('image_url'),
   orderIndex: integer('order_index').notNull().default(0),
 })
@@ -161,42 +157,29 @@ export const kidsServiceItems = pgTable('kids_service_items', {
   orderIndex: integer('order_index').notNull().default(0),
 })
 
-export const adminUsers = pgTable('admin_users', {
-  id: serial('id').primaryKey(),
-  email: text('email').notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
-
-// --- Access control tables ---
-export const roles = pgTable('roles', {
+export const adminRoles = pgTable('admin_roles', {
   id: serial('id').primaryKey(),
   name: text('name').notNull().unique(),
   description: text('description').notNull().default(''),
-  tenantId: integer('tenant_id'), // optional: for multi-tenant (hotel) setups
+  isSystem: boolean('is_system').notNull().default(false),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
-export const permissions = pgTable('permissions', {
+export const adminRolePages = pgTable('admin_role_pages', {
   id: serial('id').primaryKey(),
-  routeKey: text('route_key').notNull().unique(),
-  title: text('title').notNull().default(''),
-  group: text('group').notNull().default(''),
-  description: text('description').notNull().default(''),
+  roleId: integer('role_id').notNull().references(() => adminRoles.id, { onDelete: 'cascade' }),
+  pageKey: text('page_key').notNull(),
+  isAllowed: boolean('is_allowed').notNull().default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+}, (table) => ({
+  rolePageUnique: uniqueIndex('admin_role_pages_role_id_page_key_unique').on(table.roleId, table.pageKey),
+}))
 
-export const rolePermissions = pgTable('role_permissions', {
+export const adminUsers = pgTable('admin_users', {
   id: serial('id').primaryKey(),
-  roleId: integer('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
-  permissionId: integer('permission_id').notNull().references(() => permissions.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
-
-export const adminUserRoles = pgTable('admin_user_roles', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id').notNull().references(() => adminUsers.id, { onDelete: 'cascade' }),
-  roleId: integer('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
+  roleId: integer('role_id').references(() => adminRoles.id, { onDelete: 'set null' }),
+  email: text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 

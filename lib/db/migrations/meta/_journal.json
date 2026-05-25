@@ -15,6 +15,13 @@
       "when": 1778000062229,
       "tag": "0001_allergen_jsonb",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778000063229,
+      "tag": "0002_access_control",
+      "breakpoints": true
     }
   ]
 }

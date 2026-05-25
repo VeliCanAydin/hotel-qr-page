@@ -1,11 +1,9 @@
 'use server'
 
-import { db } from '@/lib/db'
-import { adminUsers } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
-import { verifyPassword, signToken, SESSION_COOKIE } from '@/lib/auth'
+import { signToken, SESSION_COOKIE, verifyTempAdminCredentials } from '@/lib/auth'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getTempAdminUserByEmail } from '@/lib/permissions'
 
 export type LoginState = { error: string; redirectTo?: string }
 
@@ -17,17 +15,16 @@ export async function login(prevState: LoginState, formData: FormData): Promise<
     return { error: 'Email and password are required' }
   }
 
-  const [user] = await db
-    .select()
-    .from(adminUsers)
-    .where(eq(adminUsers.email, email))
-    .limit(1)
-
-  if (!user || !(await verifyPassword(password, user.passwordHash))) {
+  const tempUser = await verifyTempAdminCredentials(email, password)
+  if (!tempUser) {
     return { error: 'Invalid email or password' }
   }
 
-  const token = await signToken(user.id)
+  const token = await signToken({
+    userId: 0,
+    email: tempUser.email,
+    roleName: tempUser.roleName,
+  })
   const cookieStore = await cookies()
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,

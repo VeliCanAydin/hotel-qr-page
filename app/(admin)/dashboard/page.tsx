@@ -1,3 +1,4 @@
+import { cookies } from "next/headers"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { db } from "@/lib/db"
 import { events } from "@/lib/db/schema"
+import { verifyToken } from "@/lib/auth"
+import { isDashboardPathAllowed } from "@/lib/permissions"
 import { roomServiceItems } from "@/lib/data/roomServiceData"
 import { menuItems } from "@/lib/data/aLaCarteMenu"
 import { weeklySchedule } from "@/lib/data/kidsClubData"
@@ -102,15 +105,24 @@ const quickLinks = [
 ]
 
 export default async function DashboardPage() {
+  const cookieStore = await cookies()
+  const session = cookieStore.get("admin-session")?.value
+  const token = session ? await verifyToken(session) : null
+  const roleName = token?.roleName ?? ""
+
   const eventRows = await db.select({ date: events.date }).from(events)
   const eventCount = eventRows.length
   const eventDateCount = new Set(eventRows.map((event) => event.date)).size
 
-  const resolvedStats = stats.map((stat) =>
-    stat.href === "/dashboard/events/list"
-      ? { ...stat, value: eventCount, description: `Across ${eventDateCount} dates` }
-      : stat
-  )
+  const resolvedStats = stats
+    .filter((stat) => isDashboardPathAllowed(stat.href, roleName))
+    .map((stat) =>
+      stat.href === "/dashboard/events/list"
+        ? { ...stat, value: eventCount, description: `Across ${eventDateCount} dates` }
+        : stat
+    )
+
+  const visibleQuickLinks = quickLinks.filter((link) => isDashboardPathAllowed(link.href, roleName))
 
   return (
     <div className="space-y-8">
@@ -128,22 +140,30 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {resolvedStats.map((stat) => (
-          <Link key={stat.href} href={stat.href}>
-            <Card className="hover:bg-accent/50 transition-colors cursor-pointer h-full">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {stat.title}
-                </CardTitle>
-                <stat.icon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+        {resolvedStats.length ? (
+          resolvedStats.map((stat) => (
+            <Link key={stat.href} href={stat.href}>
+              <Card className="hover:bg-accent/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {stat.title}
+                  </CardTitle>
+                  <stat.icon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">{stat.value}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))
+        ) : (
+          <Card className="col-span-full border-dashed">
+            <CardContent className="flex min-h-32 items-center justify-center text-sm text-muted-foreground">
+              No dashboard metrics are assigned to your role yet.
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <Separator />
@@ -151,7 +171,7 @@ export default async function DashboardPage() {
       <div>
         <h2 className="text-lg font-medium mb-4">Content Management</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {quickLinks.map((link) => (
+          {visibleQuickLinks.map((link) => (
             <Card key={link.href} className="hover:bg-accent/50 transition-colors">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
@@ -174,6 +194,13 @@ export default async function DashboardPage() {
               </CardContent>
             </Card>
           ))}
+          {!visibleQuickLinks.length ? (
+            <Card className="border-dashed">
+              <CardContent className="flex min-h-32 items-center justify-center text-sm text-muted-foreground">
+                No dashboard sections are assigned to your role yet.
+              </CardContent>
+            </Card>
+          ) : null}
         </div>
       </div>
     </div>

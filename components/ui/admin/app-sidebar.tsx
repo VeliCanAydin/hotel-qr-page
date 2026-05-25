@@ -34,6 +34,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { getRolePreset } from "@/lib/permissions"
 
 const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard",
@@ -47,6 +48,7 @@ const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard/orders/room-service-orders",
   "/dashboard/events/list",
   "/dashboard/guests/list",
+  "/dashboard/settings/access-control",
 ])
 
 // This is sample data.
@@ -202,12 +204,8 @@ const data = {
       icon: Settings2,
       items: [
         {
-          title: "General",
-          url: "/dashboard/settings/general",
-        },
-        {
-          title: "Staff Management",
-          url: "/dashboard/settings/staff",
+          title: "Access Control",
+          url: "/dashboard/settings/access-control",
         },
         {
           title: "Notifications",
@@ -231,22 +229,45 @@ const data = {
   ],
 }
 
-const navMainWithAvailability = data.navMain.map((group) => ({
-  ...group,
-  items: group.items?.map((item) => ({
-    ...item,
-    disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
-  })),
-}))
+function buildVisibleNavMain(roleName: string) {
+  const rolePreset = getRolePreset(roleName)
+  const allowedRoutes = new Set(rolePreset?.allowedPageKeys ?? [])
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  return data.navMain
+    .map((group) => ({
+      ...group,
+      items: group.items
+        ?.filter((item) => allowedRoutes.has(item.url))
+        .map((item) => ({
+          ...item,
+          disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
+        })),
+    }))
+    .filter((group) => (group.items?.length ?? 0) > 0)
+}
+
+export function AppSidebar({ roleName, ...props }: React.ComponentProps<typeof Sidebar> & { roleName: string }) {
+  const navMain = React.useMemo(() => {
+    if (roleName === "Super Admin") {
+      return data.navMain.map((group) => ({
+        ...group,
+        items: group.items?.map((item) => ({
+          ...item,
+          disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
+        })),
+      }))
+    }
+
+    return buildVisibleNavMain(roleName)
+  }, [roleName])
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMainWithAvailability} />
+        <NavMain items={navMain} />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
