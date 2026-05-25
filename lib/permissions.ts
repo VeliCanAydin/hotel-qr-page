@@ -85,6 +85,13 @@ export const ADMIN_PAGE_PERMISSIONS: AdminPagePermission[] = [
     description: 'Guest profiles and operational guest records.',
   },
   {
+    href: '/dashboard/guests/feedback',
+    key: 'guest-feedback',
+    label: 'Guest Feedback',
+    section: 'Operations',
+    description: 'Daily guest ratings, review notes and follow-up tracking.',
+  },
+  {
     href: '/dashboard/settings/access-control',
     key: 'access-control',
     label: 'Access Control',
@@ -145,6 +152,7 @@ export const DEFAULT_ADMIN_ROLE_PRESETS: AdminRolePreset[] = [
       '/dashboard',
       '/dashboard/events/list',
       '/dashboard/guests/list',
+      '/dashboard/guests/feedback',
     ],
     isSystem: true,
   },

@@ -48,6 +48,7 @@ const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard/orders/room-service-orders",
   "/dashboard/events/list",
   "/dashboard/guests/list",
+  "/dashboard/guests/feedback",
   "/dashboard/settings/access-control",
 ])
 

@@ -32,10 +32,11 @@ export default async function RestaurantMenuPage({
     image: imageMap[item.id],
     // Normalize allergens: may be stored as JSON string or array or empty
     allergens: (() => {
-      if (!item.allergens) return []
-      if (Array.isArray(item.allergens)) return item.allergens
+      const raw = (item as any).allergens
+      if (!raw) return []
+      if (Array.isArray(raw)) return raw
       try {
-        const p = JSON.parse(item.allergens as unknown as string)
+        const p = JSON.parse(raw as unknown as string)
         return Array.isArray(p) ? p : []
       } catch {
         return []

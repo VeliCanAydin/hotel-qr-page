@@ -20,7 +20,7 @@ export async function createMenuItem(item: MenuItemInput) {
   await db.insert(menuItems).values({
     ...item,
     isVegetarian: item.isVegetarian ?? false,
-    allergens: item.allergens ?? [],
+    allergens: JSON.stringify(item.allergens ?? []),
   })
   revalidatePath(`/restaurants/${item.restaurantId}`)
   revalidatePath('/dashboard/services/restaurant')
@@ -30,7 +30,7 @@ export async function updateMenuItem(id: string, data: Omit<MenuItemInput, 'id'>
   await db.update(menuItems).set({
     ...data,
     isVegetarian: data.isVegetarian ?? false,
-    allergens: data.allergens ?? [],
+    allergens: JSON.stringify(data.allergens ?? []),
   }).where(eq(menuItems.id, id))
   revalidatePath(`/restaurants/${data.restaurantId}`)
   revalidatePath('/dashboard/services/restaurant')

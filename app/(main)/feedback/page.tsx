@@ -189,6 +189,7 @@ export default function FeedbackPage() {
   const [consent, setConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // Progressive disclosure - show more options if low rating
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
@@ -201,8 +202,8 @@ export default function FeedbackPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError("");
 
-    // Simulate API call
     const payload = {
       guest: {
         name,
@@ -228,13 +229,26 @@ export default function FeedbackPage() {
       consent,
     };
 
-    console.log("Submitting feedback:", payload);
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    // Simulate delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        throw new Error(result?.error ?? "Feedback submission failed");
+      }
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+      setIsSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Feedback kaydedilemedi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -551,6 +565,9 @@ export default function FeedbackPage() {
                 </>
               )}
             </Button>
+            {submitError ? (
+              <p className="text-sm text-destructive text-center">{submitError}</p>
+            ) : null}
           </>
         )}
       </form>
