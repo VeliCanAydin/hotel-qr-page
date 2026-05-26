@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Geçersiz feedback verisi.' },
+        { error: 'Invalid feedback data.' },
         { status: 400 }
       )
     }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     console.error('[feedback] submit error:', error)
 
     return NextResponse.json(
-      { error: 'Feedback kaydedilemedi. Lütfen tekrar deneyin.' },
+      { error: 'Feedback could not be saved. Please try again.' },
       { status: 500 }
     )
   }

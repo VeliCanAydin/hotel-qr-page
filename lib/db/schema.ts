@@ -232,6 +232,22 @@ export const guestFeedbacks = pgTable('guest_feedbacks', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
+export const guestSupportRequests = pgTable('guest_support_requests', {
+  id: serial('id').primaryKey(),
+  guestName: text('guest_name').notNull().default(''),
+  roomNumber: text('room_number').notNull().default(''),
+  requestType: text('request_type').notNull().default('support'), // 'support' | 'complaint'
+  issueCategory: text('issue_category').notNull().default('other'),
+  subject: text('subject').notNull().default(''),
+  message: text('message').notNull().default(''),
+  imageUrl: text('image_url').notNull().default(''),
+  status: text('status').notNull().default('open'),
+  staffResponse: text('staff_response').notNull().default(''),
+  staffResponseBy: text('staff_response_by').notNull().default(''),
+  staffResponseAt: timestamp('staff_response_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 export const reservations = pgTable('reservations', {
   id:              serial('id').primaryKey(),
   reservationCode: text('reservation_code').notNull().unique(),

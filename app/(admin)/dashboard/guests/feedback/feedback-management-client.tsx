@@ -18,7 +18,6 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import type { GuestFeedback } from '@/lib/actions/feedback'
 
@@ -36,14 +35,6 @@ function formatDateLabel(date: Date) {
 
 function formatDateTime(date: Date) {
   return `${format(date, 'dd/MM/yyyy')} · ${format(date, 'HH:mm')}`
-}
-
-function formatResponseTime(date: Date | null | undefined) {
-  if (!date) {
-    return ''
-  }
-
-  return format(date, 'dd/MM/yyyy · HH:mm')
 }
 
 function getInitials(name: string) {
@@ -73,10 +64,6 @@ function truncateText(value: string, maxLength: number) {
   return `${text.slice(0, maxLength - 1).trimEnd()}…`
 }
 
-function hasStaffResponse(feedback: GuestFeedback) {
-  return Boolean(feedback.staffActionNote.trim())
-}
-
 function renderStars(value: number) {
   return Array.from({ length: 5 }, (_, index) => (
     <Star
@@ -101,106 +88,11 @@ function scoreTone(value: number) {
   return 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:text-emerald-300'
 }
 
-function FeedbackResponseEditor({ feedback }: { feedback: GuestFeedback }) {
-  const [staffActionNote, setStaffActionNote] = useState(feedback.staffActionNote)
-  const [isSaving, setIsSaving] = useState(false)
-  const [error, setError] = useState('')
-
-  const responseSaved = hasStaffResponse(feedback)
-  const responseAuthor = feedback.staffResponseBy.trim()
-  const responseTime = formatResponseTime(feedback.staffResponseAt)
-
-  async function handleSave() {
-    const trimmedActionNote = staffActionNote.trim()
-
-    if (!trimmedActionNote) {
-      setError('Add an internal note before saving.')
-      return
-    }
-
-    setIsSaving(true)
-    setError('')
-
-    try {
-      const response = await fetch(`/api/admin/guest-feedback/${feedback.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          staffActionNote: trimmedActionNote,
-        }),
-      })
-
-      const payload = (await response.json().catch(() => null)) as
-        | { feedback?: GuestFeedback; error?: string }
-        | null
-
-      if (!response.ok || !payload?.feedback) {
-        throw new Error(payload?.error || 'Could not save response')
-      }
-
-      setStaffActionNote(payload.feedback.staffActionNote)
-      toast.success('Internal note saved')
-    } catch (saveError) {
-      setError(saveError instanceof Error ? saveError.message : 'Could not save response')
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
-  return (
-    <div className="space-y-3 rounded-xl border bg-muted/10 p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <div className="text-sm font-medium">Staff response (internal)</div>
-          <p className="text-xs text-muted-foreground">
-            Record an internal staff response and the action taken. This will not be sent to the guest.
-          </p>
-        </div>
-        <Badge variant={responseSaved ? 'secondary' : 'outline'}>
-          {responseSaved ? 'Saved' : 'Pending'}
-        </Badge>
-      </div>
-
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="space-y-2">
-          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Internal note
-          </div>
-          <Textarea
-            value={staffActionNote}
-            onChange={(event) => setStaffActionNote(event.target.value)}
-            rows={6}
-            placeholder="Example: Guest reported room AC instability. Maintenance ticket opened and duty engineer informed."
-          />
-        </div>
-
-      </div>
-
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-muted-foreground">
-          {responseAuthor || responseTime
-            ? `Last saved ${[responseAuthor, responseTime].filter(Boolean).join(' · ')}`
-            : 'This feedback has not been answered yet.'}
-        </p>
-        <div className="flex items-center gap-2">
-          {error ? <p className="text-xs text-destructive">{error}</p> : null}
-          <Button size="sm" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save internal note'}
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 function FeedbackRow({ feedback }: { feedback: GuestFeedback }) {
   const guestLabel = feedback.guestName || 'Anonymous guest'
   const contactLabel = [feedback.roomNumber && `Room ${feedback.roomNumber}`, feedback.email].filter(Boolean).join(' · ')
   const tripLabel = feedback.tripType ? TRIP_TYPE_LABELS[feedback.tripType] ?? feedback.tripType : 'Unspecified'
   const needsFollowUp = feedback.overallRating <= 3 || Boolean(feedback.negative.trim())
-  const replySaved = hasStaffResponse(feedback)
   const positivePreview = truncateText(feedback.positive, 110) || 'No positive note added.'
   const negativePreview = truncateText(feedback.negative, 110) || 'No issue reported.'
   const initials = getInitials(guestLabel)
@@ -227,7 +119,6 @@ function FeedbackRow({ feedback }: { feedback: GuestFeedback }) {
                     <UsersRound className="size-3.5" />
                     {feedback.consent ? 'Approved' : 'Private'}
                   </Badge>
-                  <Badge variant={replySaved ? 'secondary' : 'outline'}>{replySaved ? 'Responded' : 'Awaiting reply'}</Badge>
                   {needsFollowUp ? <Badge variant="destructive">Follow-up</Badge> : null}
                 </div>
 
@@ -322,8 +213,6 @@ function FeedbackRow({ feedback }: { feedback: GuestFeedback }) {
             </p>
           </div>
         </div>
-
-        <FeedbackResponseEditor feedback={feedback} />
       </CardContent>
     </details>
   )
@@ -347,9 +236,6 @@ export default function FeedbackManagementClient({ initialFeedbacks }: { initial
         feedback.tripType,
         feedback.positive,
         feedback.negative,
-        feedback.staffResponse,
-        feedback.staffActionNote,
-        feedback.staffResponseBy,
         feedback.stayFrom,
         feedback.stayTo,
       ]
@@ -388,7 +274,7 @@ export default function FeedbackManagementClient({ initialFeedbacks }: { initial
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold">Guest Feedback</h1>
           <p className="text-sm text-muted-foreground">
-            Daily ratings, guest notes and staff responses to complaints from the QR feedback form.
+            Daily ratings and guest notes from the QR feedback form.
           </p>
         </div>
 
