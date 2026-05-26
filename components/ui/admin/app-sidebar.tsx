@@ -247,7 +247,7 @@ function buildVisibleNavMain(roleName: string) {
     .filter((group) => (group.items?.length ?? 0) > 0)
 }
 
-export function AppSidebar({ roleName, allowedPageKeys, ...props }: React.ComponentProps<typeof Sidebar> & { roleName: string, allowedPageKeys?: string[] | undefined }) {
+export function AppSidebar({ roleName, allowedPageKeys, user, ...props }: React.ComponentProps<typeof Sidebar> & { roleName: string, allowedPageKeys?: string[] | undefined, user?: { name?: string; email?: string } }) {
   const navMain = React.useMemo(() => {
     // If allowedPageKeys are passed (DB snapshot), prefer them. Otherwise fall back to role presets.
     const effectiveAllowed = allowedPageKeys ? new Set(allowedPageKeys) : undefined
@@ -277,6 +277,8 @@ export function AppSidebar({ roleName, allowedPageKeys, ...props }: React.Compon
     return buildVisibleNavMain(roleName)
   }, [roleName, allowedPageKeys])
 
+  const navUser = user ? { name: user.name ?? user.email ?? '', email: user.email ?? '' } : data.user
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -287,7 +289,7 @@ export function AppSidebar({ roleName, allowedPageKeys, ...props }: React.Compon
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={navUser} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
