@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { format, isToday } from 'date-fns'
+import { format, isToday, parseISO, isValid } from 'date-fns'
 import {
   CalendarDays,
   ChevronDown,
@@ -35,6 +35,19 @@ function formatDateLabel(date: Date) {
 
 function formatDateTime(date: Date) {
   return `${format(date, 'dd/MM/yyyy')} · ${format(date, 'HH:mm')}`
+}
+
+function formatStayDate(value: string) {
+  if (!value.trim()) {
+    return '—'
+  }
+
+  const parsed = parseISO(value)
+  if (!isValid(parsed)) {
+    return value
+  }
+
+  return format(parsed, 'dd/MM/yyyy')
 }
 
 function getInitials(name: string) {
@@ -96,6 +109,8 @@ function FeedbackRow({ feedback }: { feedback: GuestFeedback }) {
   const positivePreview = truncateText(feedback.positive, 110) || 'No positive note added.'
   const negativePreview = truncateText(feedback.negative, 110) || 'No issue reported.'
   const initials = getInitials(guestLabel)
+  const stayFromLabel = formatStayDate(feedback.stayFrom)
+  const stayToLabel = formatStayDate(feedback.stayTo)
 
   return (
     <details className="group rounded-xl border border-border/70 bg-card/80 shadow-sm transition-shadow open:shadow-md">
@@ -124,9 +139,9 @@ function FeedbackRow({ feedback }: { feedback: GuestFeedback }) {
 
                 <CardDescription className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm">
                   {contactLabel ? <span>{contactLabel}</span> : null}
-                  {feedback.stayFrom || feedback.stayTo ? (
+                  {(feedback.stayFrom || feedback.stayTo) ? (
                     <span>
-                      Stay {feedback.stayFrom || '—'}{feedback.stayTo ? ` → ${feedback.stayTo}` : ''}
+                      Stay {stayFromLabel}{feedback.stayTo ? ` → ${stayToLabel}` : ''}
                     </span>
                   ) : null}
                 </CardDescription>

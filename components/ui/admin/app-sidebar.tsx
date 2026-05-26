@@ -49,6 +49,7 @@ const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard/events/list",
   "/dashboard/guests/list",
   "/dashboard/guests/feedback",
+  "/dashboard/guests/support-requests",
   "/dashboard/settings/access-control",
 ])
 
@@ -177,6 +178,10 @@ const data = {
         {
           title: "Feedback & Reviews",
           url: "/dashboard/guests/feedback",
+        },
+        {
+          title: "Support / Complaints",
+          url: "/dashboard/guests/support-requests",
         },
         {
           title: "Room Assignments",

@@ -1,6 +1,6 @@
-'use server'
+"use server"
 
-import { desc } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { guestSupportRequests } from '@/lib/db/schema'
 
@@ -33,5 +33,38 @@ export async function createGuestSupportRequest(input: GuestSupportRequestInput)
 }
 
 export async function getGuestSupportRequests(): Promise<GuestSupportRequest[]> {
-  return db.select().from(guestSupportRequests).orderBy(desc(guestSupportRequests.createdAt))
+  try {
+    return await db.select().from(guestSupportRequests).orderBy(desc(guestSupportRequests.createdAt))
+  } catch (err) {
+    // If the table doesn't exist (dev environment without migrations), return empty list
+    // and log error for visibility.
+    // Caller pages should tolerate empty arrays.
+    // eslint-disable-next-line no-console
+    console.error('[getGuestSupportRequests] failed:', err)
+    return []
+  }
+}
+
+export type GuestSupportRequestUpdateInput = {
+  staffResponse?: string
+  status?: string
+  staffResponseBy?: string
+}
+
+export async function updateGuestSupportRequest(
+  requestId: number,
+  input: GuestSupportRequestUpdateInput
+): Promise<GuestSupportRequest | null> {
+  const [updated] = await db
+    .update(guestSupportRequests)
+    .set({
+      staffResponse: (input.staffResponse ?? '').trim(),
+      status: input.status ?? 'open',
+      staffResponseBy: input.staffResponseBy?.trim() ?? '',
+      staffResponseAt: new Date(),
+    })
+    .where(eq(guestSupportRequests.id, requestId))
+    .returning()
+
+  return updated ?? null
 }
