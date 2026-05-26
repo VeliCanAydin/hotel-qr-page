@@ -247,8 +247,11 @@ function buildVisibleNavMain(roleName: string) {
     .filter((group) => (group.items?.length ?? 0) > 0)
 }
 
-export function AppSidebar({ roleName, ...props }: React.ComponentProps<typeof Sidebar> & { roleName: string }) {
+export function AppSidebar({ roleName, allowedPageKeys, ...props }: React.ComponentProps<typeof Sidebar> & { roleName: string, allowedPageKeys?: string[] | undefined }) {
   const navMain = React.useMemo(() => {
+    // If allowedPageKeys are passed (DB snapshot), prefer them. Otherwise fall back to role presets.
+    const effectiveAllowed = allowedPageKeys ? new Set(allowedPageKeys) : undefined
+
     if (roleName === "Super Admin") {
       return data.navMain.map((group) => ({
         ...group,
@@ -259,8 +262,20 @@ export function AppSidebar({ roleName, ...props }: React.ComponentProps<typeof S
       }))
     }
 
+    if (effectiveAllowed) {
+      return data.navMain
+        .map((group) => ({
+          ...group,
+          items: group.items?.filter((item) => effectiveAllowed.has(item.url)).map((item) => ({
+            ...item,
+            disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
+          })),
+        }))
+        .filter((group) => (group.items?.length ?? 0) > 0)
+    }
+
     return buildVisibleNavMain(roleName)
-  }, [roleName])
+  }, [roleName, allowedPageKeys])
 
   return (
     <Sidebar collapsible="icon" {...props}>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useRef } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
@@ -26,7 +26,7 @@ import {
   deleteMenuTemplate, getTemplateItems, addTemplateItem, updateTemplateItem, removeTemplateItem,
 } from "@/lib/actions/menu-templates"
 import { createMenuCategory } from "@/lib/actions/menu-items"
-import { ALLERGENS } from '@/lib/data/allergens'
+import { ALLERGENS as STATIC_ALLERGENS } from '@/lib/data/allergens'
 
 type RestaurantRow = {
   id: string; name: string; cuisine: string; openTime: string | null; closeTime: string | null
@@ -62,6 +62,17 @@ export default function RestaurantClient({
   const [categories, setCategories] = useState<Category[]>(initialCategories)
   const [templatesByRestaurant, setTemplatesByRestaurant] = useState<Record<string, TemplateRow[]>>(initialTemplatesByRestaurant)
   const [mainTab, setMainTab] = useState("info")
+
+  // Client-side allergen metadata (fetched from API, fallback to static)
+  const [allergensMeta, setAllergensMeta] = useState<{ id: string; label: string; icon: string }[]>(STATIC_ALLERGENS)
+  useEffect(() => {
+    let mounted = true
+    fetch('/api/allergens')
+      .then((r) => r.json())
+      .then((data) => { if (mounted && Array.isArray(data)) setAllergensMeta(data) })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [])
 
   // Restaurant dialog
   const [restaurantDialogOpen, setRestaurantDialogOpen] = useState(false)
@@ -113,6 +124,9 @@ export default function RestaurantClient({
     }
     return counts
   }, [initialMenuItems])
+
+  // Expose same variable name used previously for compatibility
+  const ALLERGENS = allergensMeta
 
   const filteredTemplateItems = useMemo(
     () => templateCategoryFilter === 'all' ? templateItems : templateItems.filter((i) => i.category === templateCategoryFilter),

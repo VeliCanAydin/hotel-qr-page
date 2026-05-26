@@ -1,6 +1,7 @@
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
 import { AppSidebar } from "@/components/ui/admin/app-sidebar"
+import { getAccessControlSnapshot } from '@/lib/access-store'
 import { AdminBreadcrumb } from "@/components/ui/admin/admin-breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { Toaster } from "@/components/ui/sonner"
@@ -19,10 +20,24 @@ export default async function AdminLayout({
     const session = cookieStore.get("admin-session")?.value
     const token = session ? await verifyToken(session) : null
     const roleName = token?.roleName ?? ""
+    // Attempt to load access control snapshot from DB so the sidebar shows
+    // role-specific links that were updated via the Access Control UI.
+    let allowedPageKeys: string[] | undefined = undefined
+    try {
+        const snapshot = await getAccessControlSnapshot()
+        const currentRole = snapshot.roles.find((r) => r.name === roleName)
+        if (currentRole) {
+            allowedPageKeys = Object.entries(currentRole.permissions)
+                .filter(([, allowed]) => allowed)
+                .map(([key]) => key)
+        }
+    } catch {
+        // ignore and fall back to in-memory presets inside the sidebar
+    }
 
     return (
         <SidebarProvider>
-            <AppSidebar roleName={roleName} />
+            <AppSidebar roleName={roleName} allowedPageKeys={allowedPageKeys} />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">

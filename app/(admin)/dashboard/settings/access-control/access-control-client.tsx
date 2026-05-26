@@ -28,7 +28,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Separator } from '@/components/ui/separator'
-import { ADMIN_PAGE_PERMISSIONS, TEMP_ADMIN_USERS } from '@/lib/permissions'
+import { ADMIN_PAGE_PERMISSIONS } from '@/lib/permissions'
 import {
   updateRoleAccess,
   updateStaffRole,
@@ -221,26 +221,25 @@ export default function AccessControlClient({ initialData }: AccessControlClient
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Temporary test accounts</CardTitle>
+          <CardTitle className="text-base">Staff accounts</CardTitle>
           <CardDescription>
-            Use these credentials to sign in and verify page access before the DB-backed auth flow is added.
+            These accounts are stored in the database and inherit the permissions of their assigned role.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-3">
-          {TEMP_ADMIN_USERS.map((user) => {
-            const role = roles.find((item) => item.name === user.roleName)
+          {staff.map((user) => {
+            const role = roles.find((item) => item.id === user.roleId)
 
             return (
               <div key={user.email} className="rounded-xl border p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="font-medium">{user.displayName}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <p className="font-medium">{user.email}</p>
+                    <p className="text-xs text-muted-foreground">{user.roleDescription ?? 'No role assigned'}</p>
                   </div>
-                  <Badge variant="outline">{user.roleName}</Badge>
+                  <Badge variant="outline">{user.roleName ?? 'Unassigned'}</Badge>
                 </div>
                 <div className="mt-3 space-y-1 text-sm">
-                  <p><span className="text-muted-foreground">Password:</span> {user.password}</p>
                   <p><span className="text-muted-foreground">Pages:</span> {role?.allowedCount ?? 0}/{ADMIN_PAGE_PERMISSIONS.length}</p>
                 </div>
               </div>

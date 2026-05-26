@@ -142,6 +142,14 @@ export const menuTemplateItems = pgTable('menu_template_items', {
   orderIndex: integer('order_index').notNull().default(0),
 })
 
+export const allergens = pgTable('allergens', {
+  id: text('id').primaryKey(),
+  label: text('label').notNull(),
+  iconPath: text('icon_path').notNull().default(''),
+  orderIndex: integer('order_index').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 export const kidsServices = pgTable('kids_services', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),

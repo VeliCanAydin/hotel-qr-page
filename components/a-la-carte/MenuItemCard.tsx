@@ -2,9 +2,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { MenuItem } from "@/lib/data/aLaCarteMenu";
-import { ALLERGENS } from "@/lib/data/allergens";
+import { ALLERGENS as STATIC_ALLERGENS } from "@/lib/data/allergens";
 
 interface MenuItemCardProps {
     item: MenuItem;
@@ -13,6 +13,20 @@ interface MenuItemCardProps {
 
 export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) {
     const [activeAllergen, setActiveAllergen] = useState<string | null>(null)
+    const [allergenMeta, setAllergenMeta] = useState<{ id: string; label: string; icon: string }[]>(STATIC_ALLERGENS)
+
+    useEffect(() => {
+        let mounted = true
+        fetch('/api/allergens')
+            .then((r) => r.json())
+            .then((data) => {
+                if (mounted && Array.isArray(data)) setAllergenMeta(data)
+            })
+            .catch(() => {
+                /* keep fallback */
+            })
+        return () => { mounted = false }
+    }, [])
 
     const allergens: string[] = (() => {
         if (!item.allergens) return []
@@ -56,7 +70,7 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
                     {allergens.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
                             {allergens.map((a) => {
-                                const meta = ALLERGENS.find((x) => x.id === a)
+                                const meta = allergenMeta.find((x) => x.id === a)
                                 const isActive = activeAllergen === a
                                 return (
                                     <Badge

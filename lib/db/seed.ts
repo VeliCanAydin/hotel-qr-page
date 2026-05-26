@@ -38,6 +38,18 @@ async function seed() {
     .onConflictDoNothing()
   console.log('Upserted 5 menu categories')
 
+  // Allergens (upsert from static list)
+  try {
+    const { ALLERGENS: staticAllergens } = await import('../data/allergens')
+    const { allergens: allergensTable } = await import('./schema')
+    await db.insert(allergensTable).values(
+      staticAllergens.map((a: any, idx: number) => ({ id: a.id, label: a.label, iconPath: a.icon, orderIndex: idx }))
+    ).onConflictDoNothing()
+    console.log(`Upserted ${staticAllergens.length} allergens`)
+  } catch (err) {
+    console.warn('Failed to seed allergens table, continuing without it', err)
+  }
+
   await db.delete(menuItems)
   await db.insert(menuItems).values(
     menuData.map((item) => ({
