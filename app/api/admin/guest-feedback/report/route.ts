@@ -1,6 +1,7 @@
+import { format } from 'date-fns'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import ExcelJS from 'exceljs'
 
 import { verifyToken, SESSION_COOKIE } from '@/lib/auth'
 import { isDashboardPathAllowed } from '@/lib/permissions'
@@ -23,213 +24,120 @@ export async function GET(request: Request) {
 
   const feedbacks = await getGuestFeedbacks()
 
-  const pdfDoc = await PDFDocument.create()
-  let currentPage = pdfDoc.addPage([842, 595]) // A4 landscape in points (approx)
-  const { width, height } = currentPage.getSize()
-  const margin = 36
+  const workbook = new ExcelJS.Workbook()
+  workbook.creator = 'Hotel QR Page'
+  workbook.lastModifiedBy = 'Hotel QR Page'
+  workbook.created = new Date()
+  workbook.modified = new Date()
+  workbook.properties.date1904 = false
 
-  const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica)
-  const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-
-  // Try to fetch and embed a Unicode TTF (Noto Sans) to support Turkish characters
-  // Fallback to standard fonts if fetching fails.
-  let unicodeFont: any = helvetica
-  let unicodeFontBold: any = helveticaBold
-  try {
-    const regUrl = 'https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf'
-    const boldUrl = 'https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSans/NotoSans-Bold.ttf'
-    const [regRes, boldRes] = await Promise.all([fetch(regUrl), fetch(boldUrl)])
-    if (regRes.ok && boldRes.ok) {
-      const [regBuf, boldBuf] = await Promise.all([regRes.arrayBuffer(), boldRes.arrayBuffer()])
-      unicodeFont = await pdfDoc.embedFont(regBuf)
-      unicodeFontBold = await pdfDoc.embedFont(boldBuf)
-    }
-  } catch (e) {
-    // ignore and keep standard fonts
-  }
-
-  // Header
-  currentPage.drawText('Guest Feedback Report', {
-    x: margin,
-    y: height - margin - 20,
-    size: 18,
-    font: helveticaBold,
-  })
-  currentPage.drawText(`Generated: ${new Date().toLocaleString()}`, {
-    x: margin,
-    y: height - margin - 40,
-    size: 9,
-    font: helvetica,
+  const worksheet = workbook.addWorksheet('Guest Feedback', {
+    views: [{ state: 'frozen', ySplit: 1 }],
+    pageSetup: {
+      orientation: 'landscape',
+      paperSize: 9,
+      fitToPage: true,
+      fitToWidth: 1,
+      fitToHeight: 0,
+    },
   })
 
-  // Helper: wrap text into lines given font and size
-  function wrapTextLines(text: string, font: any, fontSize: number, maxWidth: number) {
-    const words = String(text).split(/\s+/)
-    const lines: string[] = []
-    let line = ''
-    for (const word of words) {
-      const test = line ? `${line} ${word}` : word
-      const w = font.widthOfTextAtSize(test, fontSize)
-      if (w > maxWidth && line) {
-        lines.push(line)
-        line = word
-      } else {
-        line = test
-      }
-    }
-    if (line) lines.push(line)
-    return lines
-  }
-
-  // Table layout: show short columns first, then full-width text blocks for long text
-  const cols = [
-    { key: 'guest', label: 'Guest', width: 160 },
-    { key: 'contact', label: 'Contact', width: 200 },
-    { key: 'overall', label: 'Overall', width: 60 },
-    { key: 'cleanliness', label: 'Cleanliness', width: 70 },
-    { key: 'staff', label: 'Staff', width: 60 },
-    { key: 'comfort', label: 'Comfort', width: 70 },
-    { key: 'value', label: 'Value', width: 60 },
-    { key: 'food', label: 'Food', width: 60 },
-    { key: 'nps', label: 'NPS', width: 50 },
-    { key: 'positive', label: 'Positive', width: 220 },
-    { key: 'negative', label: 'Attention', width: 220 },
-    { key: 'internal', label: 'Internal note', width: 220 },
+  worksheet.columns = [
+    { header: 'Created At', key: 'createdAt', width: 19 },
+    { header: 'Guest', key: 'guest', width: 20 },
+    { header: 'Contact', key: 'contact', width: 28 },
+    { header: 'Trip', key: 'tripType', width: 12 },
+    { header: 'Consent', key: 'consent', width: 10 },
+    { header: 'Overall', key: 'overall', width: 10 },
+    { header: 'Cleanliness', key: 'cleanliness', width: 12 },
+    { header: 'Staff', key: 'staff', width: 10 },
+    { header: 'Comfort', key: 'comfort', width: 10 },
+    { header: 'Value', key: 'value', width: 10 },
+    { header: 'Food', key: 'food', width: 10 },
+    { header: 'NPS', key: 'nps', width: 8 },
+    { header: 'Positive', key: 'positive', width: 34 },
+    { header: 'Attention', key: 'negative', width: 34 },
+    { header: 'Internal note', key: 'internal', width: 34 },
   ]
 
-    // Scale column widths to available page width to avoid horizontal overflow
-    const availableWidth = width - margin * 2
-    const totalRequested = cols.reduce((s, c) => s + c.width, 0) + (cols.length - 1) * 6
-    const scale = Math.min(1, availableWidth / totalRequested)
-    for (const c of cols) {
-      c.width = Math.max(40, Math.floor(c.width * scale))
+  const headerRow = worksheet.getRow(1)
+  headerRow.height = 22
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } }
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF1F2937' },
     }
-
-    let cursorY = height - margin - 70
-
-    // Draw header row (column labels)
-    let headerX = margin
-    for (const c of cols) {
-      currentPage.drawText(c.label, { x: headerX, y: cursorY, size: 9, font: unicodeFontBold })
-      headerX += c.width + 6
+    cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }
+    cell.border = {
+      top: { style: 'thin', color: { argb: 'FF9CA3AF' } },
+      left: { style: 'thin', color: { argb: 'FF9CA3AF' } },
+      bottom: { style: 'thin', color: { argb: 'FF9CA3AF' } },
+      right: { style: 'thin', color: { argb: 'FF9CA3AF' } },
     }
+  })
 
-    cursorY -= 18
+  worksheet.addRows(
+    feedbacks.map((feedback) => {
+      const createdAt = feedback.createdAt ? format(feedback.createdAt, 'dd/MM/yyyy HH:mm') : '-'
+      const guest = feedback.guestName?.trim() || 'Anonymous'
+      const contact = [feedback.roomNumber ? `Room ${feedback.roomNumber}` : '', feedback.email].filter(Boolean).join(' · ')
+      return {
+        createdAt,
+        guest,
+        contact: contact || '-',
+        tripType: feedback.tripType || '-',
+        consent: feedback.consent ? 'Yes' : 'No',
+        overall: `${feedback.overallRating}/5`,
+        cleanliness: `${feedback.cleanlinessRating}/5`,
+        staff: `${feedback.staffRating}/5`,
+        comfort: `${feedback.comfortRating}/5`,
+        value: `${feedback.valueRating}/5`,
+        food: `${feedback.foodRating}/5`,
+        nps: feedback.npsScore != null ? `${feedback.npsScore}/10` : '-',
+        positive: feedback.positive?.trim() || '-',
+        negative: feedback.negative?.trim() || '-',
+        internal: feedback.staffActionNote?.trim() || '-',
+      }
+    })
+  )
 
-    // Row rendering
-    for (const fb of feedbacks) {
-      // prepare cell values
-      const vals: Record<string, string> = {
-        guest: normalizeForPdf(fb.guestName) || 'Anonymous',
-        contact: normalizeForPdf([fb.roomNumber ? `Room ${fb.roomNumber}` : '', fb.email].filter(Boolean).join(' · ')),
-        overall: `${fb.overallRating}/5`,
-        cleanliness: `${fb.cleanlinessRating}/5`,
-        staff: `${fb.staffRating}/5`,
-        comfort: `${fb.comfortRating}/5`,
-        value: `${fb.valueRating}/5`,
-        food: `${fb.foodRating}/5`,
-        nps: fb.npsScore != null ? `${fb.npsScore}/10` : '-',
-        positive: normalizeForPdf(fb.positive.trim() || '-'),
-        negative: normalizeForPdf(fb.negative.trim() || '-'),
-        internal: normalizeForPdf(fb.staffActionNote.trim() || '-'),
+  worksheet.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) return
+
+    let maxLines = 1
+    row.eachCell({ includeEmpty: true }, (cell) => {
+      cell.alignment = { vertical: 'top', horizontal: 'left', wrapText: true }
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FFD1D5DB' } },
+        left: { style: 'thin', color: { argb: 'FFD1D5DB' } },
+        bottom: { style: 'thin', color: { argb: 'FFD1D5DB' } },
+        right: { style: 'thin', color: { argb: 'FFD1D5DB' } },
       }
 
-      // Estimate row height by measuring wrapped lines for each cell
-      const cellHeights: number[] = []
-      for (const c of cols) {
-        const lines = wrapTextLines(vals[c.key], unicodeFont, 8, c.width)
-        // header line + content lines
-        cellHeights.push((1 + lines.length) * (8 + 2) + 6)
-      }
+      const value = String(cell.value ?? '')
+      const lineCount = Math.max(1, value.split(/\r?\n/).length, Math.ceil(value.length / 28))
+      if (lineCount > maxLines) maxLines = lineCount
+    })
 
-      const rowHeight = Math.max(...cellHeights)
+    row.height = Math.min(Math.max(18, maxLines * 15), 120)
+  })
 
-      if (cursorY - rowHeight < margin) {
-        const p = pdfDoc.addPage([842, 595])
-        currentPage = p
-        cursorY = currentPage.getSize().height - margin - 40
-        // redraw headers on new page
-        let hx = margin
-        for (const c of cols) {
-          currentPage.drawText(c.label, { x: hx, y: cursorY, size: 9, font: helveticaBold })
-          hx += c.width + 6
-        }
-        cursorY -= 18
-      }
-
-      // draw all columns values (including Positive/Attention/Internal) side-by-side
-      let x = margin
-      for (const c of cols) {
-        drawWrappedText(currentPage, unicodeFont, vals[c.key], x, cursorY - 12, c.width, 9)
-        x += c.width + 6
-      }
-
-      cursorY -= rowHeight
-      }
-
-    const pdfBytes = await pdfDoc.save()
-
-  function normalizeForPdf(input: string | null | undefined) {
-    if (!input) return ''
-    return String(input)
-      .replace(/İ/g, 'I')
-      .replace(/ı/g, 'i')
-      .replace(/İ/g, 'I')
-      .replace(/ş/g, 's')
-      .replace(/Ş/g, 'S')
-      .replace(/ğ/g, 'g')
-      .replace(/Ğ/g, 'G')
-      .replace(/ü/g, 'u')
-      .replace(/Ü/g, 'U')
-      .replace(/ö/g, 'o')
-      .replace(/Ö/g, 'O')
-      .replace(/ç/g, 'c')
-      .replace(/Ç/g, 'C')
-      .replace(/–/g, '-')
-      .replace(/—/g, '-')
-      .replace(/…/g, '...')
+  worksheet.autoFilter = {
+    from: 'A1',
+    to: 'O1',
   }
 
-  // Helper: split and draw wrapped text using font measurements
-  function drawWrappedText(page: any, font: any, text: string, x: number, y: number, maxWidth: number, fontSize: number) {
-    const words = String(text).split(/\s+/)
-    let line = ''
-    for (const word of words) {
-      const test = line ? `${line} ${word}` : word
-      const width = font.widthOfTextAtSize(test, fontSize)
-      if (width > maxWidth && line) {
-        page.drawText(line, { x, y, size: fontSize, font })
-        y -= fontSize + 2
-        line = word
-      } else {
-        line = test
-      }
-    }
-    if (line) {
-      page.drawText(line, { x, y, size: fontSize, font })
-      y -= fontSize + 2
-    }
-    return y
-  }
+  worksheet.views = [{ state: 'frozen', ySplit: 1 }]
 
-  const buffer = Buffer.from(pdfBytes)
-
-  // If any field contains characters unsupported by the standard fonts
-  // (like Turkish characters), we transliterate them to ASCII equivalents
-  // before drawing. This is a pragmatic fallback when no Unicode font
-  // is embedded.
-
-  // NOTE: the actual drawing used the raw values; to keep changes minimal,
-  // we normalize cell content here by converting the pdf bytes? Simpler:
-  // regenerate pdf with normalized content. For performance we apply normalize
-  // earlier when assembling cells. (Below we simply return bytes since
-  // normalization was applied at generation.)
+  const buffer = Buffer.from(await workbook.xlsx.writeBuffer())
 
   return new Response(buffer, {
     status: 200,
     headers: {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename=guest-feedback-report-${new Date().toISOString().slice(0,10)}.pdf`,
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename=guest-feedback-report-${new Date().toISOString().slice(0,10)}.xlsx`,
     },
   })
 }

@@ -412,18 +412,18 @@ export default function FeedbackManagementClient({ initialFeedbacks }: { initial
                 const url = URL.createObjectURL(blob)
                 const a = document.createElement('a')
                 a.href = url
-                a.download = `guest-feedback-report.pdf`
+                a.download = `guest-feedback-report.xlsx`
                 document.body.appendChild(a)
                 a.click()
                 a.remove()
                 URL.revokeObjectURL(url)
-                toast.success('Report downloaded')
+                toast.success('Excel report downloaded')
               } catch (err) {
                 toast.error((err as Error).message || 'Report generation failed')
               }
             }}
           >
-            Export PDF
+            Export Excel
           </Button>
         </div>
       </div>
