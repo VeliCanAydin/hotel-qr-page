@@ -186,7 +186,7 @@ const data = {
           url: "/dashboard/guests/list",
         },
         {
-          title: "Feedback & Reviews",
+          title: "Feedback & Support",
           url: "/dashboard/guests/feedback",
         },
         {

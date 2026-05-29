@@ -57,8 +57,8 @@ export const pages = [
     },
     {
         icon: MessageCircleQuestionMark,
-        title: "Feedback",
-        description: "Share your experience",
+        title: "Feedback & Support",
+        description: "Share feedback or report an issue",
         href: "/feedback",
     },
     {

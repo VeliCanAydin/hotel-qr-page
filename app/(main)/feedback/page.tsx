@@ -357,35 +357,37 @@ export default function FeedbackPage() {
 
   return (
     <div className="min-h-screen pb-8">
-      <section className="relative bg-linear-to-br from-primary/10 via-background to-accent/10 py-12 px-4">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="relative bg-linear-to-br from-primary/10 via-background to-accent/10 py-10 px-4">
+        <div className="mx-auto max-w-2xl text-center">
           <Badge variant="secondary" className="mb-4">
             <Sparkle className="size-3 mr-1" />
-            {mode === "support" ? "Guest Relations" : "Guest Experience"}
+            {mode === "support" ? "Guest Support" : mode === "rating" ? "Guest Rating" : "Guest Feedback"}
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            {mode === "support" ? "Support / Complaint Request" : "How Was Your Stay?"}
+            {mode === "support" ? "Report an Issue" : mode === "rating" ? "Rate Your Stay" : "Share Feedback"}
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="mx-auto max-w-xl text-muted-foreground text-lg">
             {mode === "support"
-              ? "Tell us what happened so our team can help quickly."
-              : "Your feedback helps us improve and serve you better."}
+              ? "Send a quick support or complaint request and our team will respond."
+              : mode === "rating"
+                ? "Tell us how your stay felt and add any notes you want our team to see."
+                : "Leave a rating or tell us what stood out during your stay."}
           </p>
         </div>
       </section>
 
       {!mode ? (
-        <div className="max-w-3xl mx-auto p-4 grid gap-4 md:grid-cols-2 mt-4">
+        <div className="mx-auto mt-4 grid max-w-2xl gap-4 p-4 md:grid-cols-2">
           <Card className="border-primary/30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Star className="size-5 text-yellow-500" />
-                Rate Us
+                Rate Your Stay
               </CardTitle>
-              <CardDescription>The same rating form as before. Share your experience in a few quick steps.</CardDescription>
+              <CardDescription>Leave a quick rating and optional comments about your stay.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" onClick={() => setMode("rating")}>Open Rating Form</Button>
+              <Button className="w-full" onClick={() => setMode("rating")}>Leave Feedback</Button>
             </CardContent>
           </Card>
 
@@ -393,12 +395,12 @@ export default function FeedbackPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="size-5 text-destructive" />
-                Support / Complaint Request
+                Report an Issue
               </CardTitle>
-              <CardDescription>Select a category, describe your issue, and upload an image. Your request will go to Guest Relations.</CardDescription>
+              <CardDescription>Send a support or complaint request with a category and photo.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="destructive" onClick={() => setMode("support")}>Create Request</Button>
+              <Button className="w-full" variant="destructive" onClick={() => setMode("support")}>Report Issue</Button>
             </CardContent>
           </Card>
         </div>
