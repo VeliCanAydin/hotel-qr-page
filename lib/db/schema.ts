@@ -107,6 +107,21 @@ export const events = pgTable('events', {
   color: text('color'),
 })
 
+export const nearbyGuideItems = pgTable('nearby_guide_items', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  distance: text('distance').notNull(),
+  eta: text('eta').notNull(),
+  note: text('note').notNull(),
+  phone: text('phone'),
+  mapQuery: text('map_query').notNull(),
+  tone: text('tone').notNull(),
+  section: text('section').notNull(),
+  iconKey: text('icon_key').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 export const kidsActivities = pgTable('kids_activities', {
   id: serial('id').primaryKey(),
   serviceId: text('service_id').references(() => kidsServices.id, { onDelete: 'cascade' }),

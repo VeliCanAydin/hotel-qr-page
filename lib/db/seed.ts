@@ -4,11 +4,12 @@ loadEnvConfig(process.cwd())
 // Dynamic imports run after env is loaded
 async function seed() {
   const { db } = await import('./index')
-  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories } = await import('./schema')
+  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, nearbyGuideItems: nearbyGuideItemsTable } = await import('./schema')
   const { hashPassword } = await import('../auth')
   const { ADMIN_PAGE_PERMISSIONS, DEFAULT_ADMIN_ROLE_PRESETS } = await import('../permissions')
   const { menuItems: menuData } = await import('../data/aLaCarteMenu')
   const { roomServiceItems: roomData } = await import('../data/roomServiceData')
+  const { nearbyGuideItems: nearbyGuideData } = await import('../data/nearbyGuide')
   const { hotelEvents } = await import('./event-seed-data')
   const { weeklySchedule } = await import('../data/kidsClubData')
 
@@ -378,6 +379,24 @@ async function seed() {
     },
   ])
   console.log('Inserted 10 wellness services')
+
+  await db.delete(nearbyGuideItemsTable)
+  await db.insert(nearbyGuideItemsTable).values(
+    nearbyGuideData.map((item) => ({
+      id: item.id,
+      name: item.name,
+      distance: item.distance,
+      eta: item.eta,
+      note: item.note,
+      phone: item.phone ?? null,
+      mapQuery: item.mapQuery,
+      tone: item.tone,
+      section: item.section,
+      iconKey: item.iconKey,
+      orderIndex: item.orderIndex,
+    }))
+  )
+  console.log(`Inserted ${nearbyGuideData.length} nearby guide items`)
 
   // Admin user (upsert — don't wipe on re-seed)
   const superAdmin = roleByName.get('Super Admin')

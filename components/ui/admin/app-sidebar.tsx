@@ -38,8 +38,10 @@ import { getRolePreset } from "@/lib/permissions"
 
 const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard",
+  "/dashboard/content",
   "/dashboard/content/hotel-info",
   "/dashboard/content/kids-care",
+  "/dashboard/content/nearby-guide",
   "/dashboard/content/beach-pools",
   "/dashboard/content/spa",
   "/dashboard/content/wellness",
@@ -88,6 +90,10 @@ const data = {
       isActive: true,
       items: [
         {
+          title: "Overview",
+          url: "/dashboard/content",
+        },
+        {
           title: "Hotel Info",
           url: "/dashboard/content/hotel-info",
         },
@@ -106,6 +112,10 @@ const data = {
         {
           title: "Wellness",
           url: "/dashboard/content/wellness",
+        },
+        {
+          title: "Nearby Guide",
+          url: "/dashboard/content/nearby-guide",
         }
       ],
     },

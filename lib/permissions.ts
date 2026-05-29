@@ -22,11 +22,25 @@ export const ADMIN_PAGE_PERMISSIONS: AdminPagePermission[] = [
     description: 'Phone, Wi-Fi and policy content for guests.',
   },
   {
+    href: '/dashboard/content',
+    key: 'content-overview',
+    label: 'Content Overview',
+    section: 'Content',
+    description: 'Central hub for managing all guest-facing content.',
+  },
+  {
     href: '/dashboard/content/kids-care',
     key: 'kids-care',
     label: 'Kids Care',
     section: 'Content',
     description: 'Kids club services, benefits and schedules.',
+  },
+  {
+    href: '/dashboard/content/nearby-guide',
+    key: 'nearby-guide',
+    label: 'Nearby Guide',
+    section: 'Content',
+    description: 'Nearby essentials and tourist attraction listings.',
   },
   {
     href: '/dashboard/content/beach-pools',
@@ -126,8 +140,10 @@ export const DEFAULT_ADMIN_ROLE_PRESETS: AdminRolePreset[] = [
     description: 'Maintains guest-facing content and media pages.',
     allowedPageKeys: [
       '/dashboard',
+      '/dashboard/content',
       '/dashboard/content/hotel-info',
       '/dashboard/content/kids-care',
+      '/dashboard/content/nearby-guide',
       '/dashboard/content/beach-pools',
       '/dashboard/content/spa',
       '/dashboard/content/wellness',

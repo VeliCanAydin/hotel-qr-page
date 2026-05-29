@@ -1,4 +1,4 @@
-import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark} from "lucide-react";
+import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark, MapPinned } from "lucide-react";
 
 export const pages = [
     {
@@ -60,5 +60,11 @@ export const pages = [
         title: "Feedback",
         description: "Share your experience",
         href: "/feedback",
+    },
+    {
+        icon: MapPinned,
+        title: "Nearby Guide",
+        description: "Nearest pharmacy, market, and bus stop",
+        href: "/nearby-guide",
     }
 ];
