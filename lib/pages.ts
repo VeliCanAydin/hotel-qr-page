@@ -1,4 +1,4 @@
-import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark, MapPinned } from "lucide-react";
+import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark, MapPinned, NotebookPen } from "lucide-react";
 
 export const pages = [
     {
@@ -54,6 +54,12 @@ export const pages = [
         title: "Events",
         description: "Upcoming events at the hotel",
         href: "/events",
+    },
+    {
+        icon: NotebookPen,
+        title: "Personalize Your Stay",
+        description: "Build a day-by-day event agenda",
+        href: "/personalized-stay",
     },
     {
         icon: MessageCircleQuestionMark,

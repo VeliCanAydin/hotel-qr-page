@@ -7,6 +7,7 @@ import { EventCard } from "./EventCard";
 interface TimelineProps {
   events: HotelEvent[];
   selectedDate: Date;
+  onEventClick: (event: HotelEvent) => void;
 }
 
 // Timeline hours from 6 AM to midnight (00:00)
@@ -14,7 +15,7 @@ const TIMELINE_START_HOUR = 6;
 const TIMELINE_END_HOUR = 24;
 const HOUR_HEIGHT = 60; // pixels per hour
 
-export function Timeline({ events, selectedDate }: TimelineProps) {
+export function Timeline({ events, selectedDate, onEventClick }: TimelineProps) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const timelineRef = useRef<HTMLDivElement>(null);
   const nowLineRef = useRef<HTMLDivElement>(null);
@@ -115,7 +116,7 @@ export function Timeline({ events, selectedDate }: TimelineProps) {
 
         {/* Events */}
         {events.map((event) => (
-          <EventCard key={event.id} event={event} style={getEventStyle(event)} />
+          <EventCard key={event.id} event={event} style={getEventStyle(event)} onClick={onEventClick} />
         ))}
 
         {/* "Now" line */}
