@@ -30,6 +30,18 @@ export default async function RestaurantMenuPage({
   const itemsWithImages: MenuItem[] = items.map((item) => ({
     ...item,
     image: imageMap[item.id],
+    // Normalize allergens: may be stored as JSON string or array or empty
+    allergens: (() => {
+      const raw = (item as any).allergens
+      if (!raw) return []
+      if (Array.isArray(raw)) return raw
+      try {
+        const p = JSON.parse(raw as unknown as string)
+        return Array.isArray(p) ? p : []
+      } catch {
+        return []
+      }
+    })(),
   }))
 
   // Only show categories that actually have items for this restaurant, preserving DB order

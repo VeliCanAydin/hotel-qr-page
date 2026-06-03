@@ -19,6 +19,7 @@ export default function AIAssistantPage() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [sessionId, setSessionId] = useState<string | null>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -54,6 +55,7 @@ export default function AIAssistantPage() {
                 },
                 body: JSON.stringify({
                     message: userMessage.content,
+                    sessionId: sessionId,
                 }),
             });
 
@@ -62,6 +64,10 @@ export default function AIAssistantPage() {
             }
 
             const data = await response.json();
+
+            if (data.sessionId) {
+                setSessionId(data.sessionId);
+            }
 
             const assistantMessage: Message = {
                 id: (Date.now() + 1).toString(),

@@ -34,11 +34,14 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { getRolePreset } from "@/lib/permissions"
 
 const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard",
+  "/dashboard/content",
   "/dashboard/content/hotel-info",
   "/dashboard/content/kids-care",
+  "/dashboard/content/nearby-guide",
   "/dashboard/content/beach-pools",
   "/dashboard/content/spa",
   "/dashboard/content/wellness",
@@ -47,6 +50,9 @@ const EXISTING_ADMIN_ROUTES = new Set([
   "/dashboard/orders/room-service-orders",
   "/dashboard/events/list",
   "/dashboard/guests/list",
+  "/dashboard/guests/feedback",
+  "/dashboard/guests/support-requests",
+  "/dashboard/settings/access-control",
 ])
 
 // This is sample data.
@@ -84,6 +90,10 @@ const data = {
       isActive: true,
       items: [
         {
+          title: "Overview",
+          url: "/dashboard/content",
+        },
+        {
           title: "Hotel Info",
           url: "/dashboard/content/hotel-info",
         },
@@ -102,6 +112,10 @@ const data = {
         {
           title: "Wellness",
           url: "/dashboard/content/wellness",
+        },
+        {
+          title: "Nearby Guide",
+          url: "/dashboard/content/nearby-guide",
         }
       ],
     },
@@ -172,8 +186,12 @@ const data = {
           url: "/dashboard/guests/list",
         },
         {
-          title: "Feedback & Reviews",
+          title: "Feedback & Support",
           url: "/dashboard/guests/feedback",
+        },
+        {
+          title: "Support / Complaints",
+          url: "/dashboard/guests/support-requests",
         },
         {
           title: "Room Assignments",
@@ -202,12 +220,8 @@ const data = {
       icon: Settings2,
       items: [
         {
-          title: "General",
-          url: "/dashboard/settings/general",
-        },
-        {
-          title: "Staff Management",
-          url: "/dashboard/settings/staff",
+          title: "Access Control",
+          url: "/dashboard/settings/access-control",
         },
         {
           title: "Notifications",
@@ -231,26 +245,66 @@ const data = {
   ],
 }
 
-const navMainWithAvailability = data.navMain.map((group) => ({
-  ...group,
-  items: group.items?.map((item) => ({
-    ...item,
-    disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
-  })),
-}))
+function buildVisibleNavMain(roleName: string) {
+  const rolePreset = getRolePreset(roleName)
+  const allowedRoutes = new Set(rolePreset?.allowedPageKeys ?? [])
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  return data.navMain
+    .map((group) => ({
+      ...group,
+      items: group.items
+        ?.filter((item) => allowedRoutes.has(item.url))
+        .map((item) => ({
+          ...item,
+          disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
+        })),
+    }))
+    .filter((group) => (group.items?.length ?? 0) > 0)
+}
+
+export function AppSidebar({ roleName, allowedPageKeys, user, ...props }: React.ComponentProps<typeof Sidebar> & { roleName: string, allowedPageKeys?: string[] | undefined, user?: { name?: string; email?: string } }) {
+  const navMain = React.useMemo(() => {
+    // If allowedPageKeys are passed (DB snapshot), prefer them. Otherwise fall back to role presets.
+    const effectiveAllowed = allowedPageKeys ? new Set(allowedPageKeys) : undefined
+
+    if (roleName === "Super Admin") {
+      return data.navMain.map((group) => ({
+        ...group,
+        items: group.items?.map((item) => ({
+          ...item,
+          disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
+        })),
+      }))
+    }
+
+    if (effectiveAllowed) {
+      return data.navMain
+        .map((group) => ({
+          ...group,
+          items: group.items?.filter((item) => effectiveAllowed.has(item.url)).map((item) => ({
+            ...item,
+            disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
+          })),
+        }))
+        .filter((group) => (group.items?.length ?? 0) > 0)
+    }
+
+    return buildVisibleNavMain(roleName)
+  }, [roleName, allowedPageKeys])
+
+  const navUser = user ? { name: user.name ?? user.email ?? '', email: user.email ?? '' } : data.user
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMainWithAvailability} />
+        <NavMain items={navMain} />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={navUser} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

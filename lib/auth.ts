@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
+import { getTempAdminUserByEmail } from '@/lib/permissions'
 
 const getSecret = () => new TextEncoder().encode(process.env.JWT_SECRET!)
 
@@ -11,19 +12,23 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash)
 }
 
-export async function signToken(userId: number): Promise<string> {
-  return new SignJWT({ userId, type: 'admin' })
+export async function signToken(payload: { userId: number; email: string; roleName: string }): Promise<string> {
+  return new SignJWT({ ...payload, type: 'admin' })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
     .sign(getSecret())
 }
 
-export async function verifyToken(token: string): Promise<{ userId: number } | null> {
+export async function verifyToken(token: string): Promise<{ userId: number; email: string; roleName: string } | null> {
   try {
     const { payload } = await jwtVerify(token, getSecret())
     if (payload.type === 'guest') return null
-    return { userId: payload.userId as number }
+    return {
+      userId: payload.userId as number,
+      email: payload.email as string,
+      roleName: payload.roleName as string,
+    }
   } catch {
     return null
   }
@@ -64,4 +69,13 @@ export async function verifyGuestToken(token: string): Promise<GuestTokenPayload
   } catch {
     return null
   }
+}
+
+export async function verifyTempAdminCredentials(email: string, password: string) {
+  const tempUser = getTempAdminUserByEmail(email)
+  if (!tempUser || tempUser.password !== password) {
+    return null
+  }
+
+  return tempUser
 }

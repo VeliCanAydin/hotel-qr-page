@@ -4,10 +4,12 @@ loadEnvConfig(process.cwd())
 // Dynamic imports run after env is loaded
 async function seed() {
   const { db } = await import('./index')
-  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories } = await import('./schema')
+  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, nearbyGuideItems: nearbyGuideItemsTable } = await import('./schema')
   const { hashPassword } = await import('../auth')
+  const { ADMIN_PAGE_PERMISSIONS, DEFAULT_ADMIN_ROLE_PRESETS } = await import('../permissions')
   const { menuItems: menuData } = await import('../data/aLaCarteMenu')
   const { roomServiceItems: roomData } = await import('../data/roomServiceData')
+  const { nearbyGuideItems: nearbyGuideData } = await import('../data/nearbyGuide')
   const { hotelEvents } = await import('./event-seed-data')
   const { weeklySchedule } = await import('../data/kidsClubData')
 
@@ -36,6 +38,18 @@ async function seed() {
     ])
     .onConflictDoNothing()
   console.log('Upserted 5 menu categories')
+
+  // Allergens (upsert from static list)
+  try {
+    const { ALLERGENS: staticAllergens } = await import('../data/allergens')
+    const { allergens: allergensTable } = await import('./schema')
+    await db.insert(allergensTable).values(
+      staticAllergens.map((a: any, idx: number) => ({ id: a.id, label: a.label, iconPath: a.icon, orderIndex: idx }))
+    ).onConflictDoNothing()
+    console.log(`Upserted ${staticAllergens.length} allergens`)
+  } catch (err) {
+    console.warn('Failed to seed allergens table, continuing without it', err)
+  }
 
   await db.delete(menuItems)
   await db.insert(menuItems).values(
@@ -90,6 +104,43 @@ async function seed() {
   )
   await db.insert(kidsActivities).values(activitiesToInsert)
   console.log(`Inserted ${activitiesToInsert.length} kids activities`)
+
+  // Access control roles and default permissions
+  await db
+    .insert(adminRoles)
+    .values(
+      DEFAULT_ADMIN_ROLE_PRESETS.map((preset) => ({
+        name: preset.name,
+        description: preset.description,
+        isSystem: preset.isSystem,
+      }))
+    )
+    .onConflictDoNothing()
+
+  const { eq } = await import('drizzle-orm')
+  const roles = await db.select().from(adminRoles)
+  const roleByName = new Map(roles.map((role) => [role.name, role]))
+  const existingPermissionRows = await db.select({ roleId: adminRolePages.roleId }).from(adminRolePages)
+  const roleIdsWithPermissions = new Set(existingPermissionRows.map((row) => row.roleId))
+
+  const permissionRows = DEFAULT_ADMIN_ROLE_PRESETS.flatMap((preset) => {
+    const role = roleByName.get(preset.name)
+    if (!role || roleIdsWithPermissions.has(role.id)) {
+      return []
+    }
+
+    return preset.allowedPageKeys.map((pageKey) => ({
+      roleId: role.id,
+      pageKey,
+      isAllowed: true,
+    }))
+  })
+
+  if (permissionRows.length > 0) {
+    await db.insert(adminRolePages).values(permissionRows).onConflictDoNothing()
+  }
+
+  console.log(`Seeded ${roles.length} access roles and ${ADMIN_PAGE_PERMISSIONS.length} page definitions`)
 
   // Hotel info (upsert singleton)
   await db
@@ -329,17 +380,74 @@ async function seed() {
   ])
   console.log('Inserted 10 wellness services')
 
+  await db.delete(nearbyGuideItemsTable)
+  await db.insert(nearbyGuideItemsTable).values(
+    nearbyGuideData.map((item) => ({
+      id: item.id,
+      name: item.name,
+      distance: item.distance,
+      eta: item.eta,
+      note: item.note,
+      phone: item.phone ?? null,
+      mapQuery: item.mapQuery,
+      tone: item.tone,
+      section: item.section,
+      iconKey: item.iconKey,
+      orderIndex: item.orderIndex,
+    }))
+  )
+  console.log(`Inserted ${nearbyGuideData.length} nearby guide items`)
+
   // Admin user (upsert — don't wipe on re-seed)
-  const { eq } = await import('drizzle-orm')
+  const superAdmin = roleByName.get('Super Admin')
+  const contentManager = roleByName.get('Content Manager')
+  const serviceManager = roleByName.get('Service Manager')
   const existing = await db.select().from(adminUsers).where(eq(adminUsers.email, 'admin@dosinia.com')).limit(1)
   if (existing.length === 0) {
     await db.insert(adminUsers).values({
+      roleId: superAdmin?.id ?? null,
       email: 'admin@dosinia.com',
       passwordHash: await hashPassword('admin123'),
     })
     console.log('Created default admin user: admin@dosinia.com / admin123')
   } else {
+    if (superAdmin) {
+      await db.update(adminUsers).set({ roleId: superAdmin.id }).where(eq(adminUsers.email, 'admin@dosinia.com'))
+    }
     console.log('Admin user already exists, skipping')
+  }
+
+  const testStaffUsers = [
+    {
+      email: 'content.manager@dosinia.com',
+      password: 'content123!',
+      roleId: contentManager?.id ?? null,
+      label: 'Content Manager',
+    },
+    {
+      email: 'service.manager@dosinia.com',
+      password: 'service123!',
+      roleId: serviceManager?.id ?? null,
+      label: 'Service Manager',
+    },
+  ]
+
+  for (const staffUser of testStaffUsers) {
+    const [existingUser] = await db.select().from(adminUsers).where(eq(adminUsers.email, staffUser.email)).limit(1)
+    if (existingUser) {
+      if (staffUser.roleId) {
+        await db.update(adminUsers).set({ roleId: staffUser.roleId }).where(eq(adminUsers.email, staffUser.email))
+      }
+      console.log(`Updated ${staffUser.label} test account: ${staffUser.email}`)
+      continue
+    }
+
+    await db.insert(adminUsers).values({
+      email: staffUser.email,
+      passwordHash: await hashPassword(staffUser.password),
+      roleId: staffUser.roleId,
+    })
+    console.log(`Created ${staffUser.label} test account: ${staffUser.email} / ${staffUser.password}`)
   }
 
   console.log('Done!')

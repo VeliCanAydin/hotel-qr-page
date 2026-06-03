@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, real, serial, text, time, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, real, serial, text, time, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 
 export const hotelInfo = pgTable('hotel_info', {
   id: integer('id').primaryKey().default(1),
@@ -77,6 +77,7 @@ export const menuItems = pgTable('menu_items', {
   description: text('description').notNull(),
   price: real('price').notNull(),
   isVegetarian: boolean('is_vegetarian').notNull().default(false),
+  allergens: text('allergens').notNull().default('[]'),
   category: text('category').notNull(),
   restaurantId: text('restaurant_id').notNull().default('a-la-carte'),
 })
@@ -104,6 +105,21 @@ export const events = pgTable('events', {
   endTime: text('end_time').notNull(),
   category: text('category').notNull(),
   color: text('color'),
+})
+
+export const nearbyGuideItems = pgTable('nearby_guide_items', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  distance: text('distance').notNull(),
+  eta: text('eta').notNull(),
+  note: text('note').notNull(),
+  phone: text('phone'),
+  mapQuery: text('map_query').notNull(),
+  tone: text('tone').notNull(),
+  section: text('section').notNull(),
+  iconKey: text('icon_key').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
 export const kidsActivities = pgTable('kids_activities', {
@@ -136,8 +152,17 @@ export const menuTemplateItems = pgTable('menu_template_items', {
   category: text('category').notNull(),
   price: real('price').notNull(),
   isVegetarian: boolean('is_vegetarian').notNull().default(false),
+  allergens: text('allergens').notNull().default('[]'),
   imageUrl: text('image_url'),
   orderIndex: integer('order_index').notNull().default(0),
+})
+
+export const allergens = pgTable('allergens', {
+  id: text('id').primaryKey(),
+  label: text('label').notNull(),
+  iconPath: text('icon_path').notNull().default(''),
+  orderIndex: integer('order_index').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
 export const kidsServices = pgTable('kids_services', {
@@ -157,8 +182,27 @@ export const kidsServiceItems = pgTable('kids_service_items', {
   orderIndex: integer('order_index').notNull().default(0),
 })
 
+export const adminRoles = pgTable('admin_roles', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull().unique(),
+  description: text('description').notNull().default(''),
+  isSystem: boolean('is_system').notNull().default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const adminRolePages = pgTable('admin_role_pages', {
+  id: serial('id').primaryKey(),
+  roleId: integer('role_id').notNull().references(() => adminRoles.id, { onDelete: 'cascade' }),
+  pageKey: text('page_key').notNull(),
+  isAllowed: boolean('is_allowed').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+  rolePageUnique: uniqueIndex('admin_role_pages_role_id_page_key_unique').on(table.roleId, table.pageKey),
+}))
+
 export const adminUsers = pgTable('admin_users', {
   id: serial('id').primaryKey(),
+  roleId: integer('role_id').references(() => adminRoles.id, { onDelete: 'set null' }),
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -175,6 +219,47 @@ export const roomServiceOrders = pgTable('room_service_orders', {
   status: text('status').notNull().default('pending'),
   cancellationReason: text('cancellation_reason').notNull().default(''),
   cancelledBy: text('cancelled_by').notNull().default(''), // 'guest' | 'staff' | ''
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const guestFeedbacks = pgTable('guest_feedbacks', {
+  id: serial('id').primaryKey(),
+  guestName: text('guest_name').notNull().default(''),
+  email: text('email').notNull().default(''),
+  roomNumber: text('room_number').notNull().default(''),
+  stayFrom: text('stay_from').notNull().default(''),
+  stayTo: text('stay_to').notNull().default(''),
+  tripType: text('trip_type').notNull().default(''),
+  overallRating: integer('overall_rating').notNull(),
+  cleanlinessRating: integer('cleanliness_rating').notNull(),
+  staffRating: integer('staff_rating').notNull(),
+  comfortRating: integer('comfort_rating').notNull(),
+  valueRating: integer('value_rating').notNull(),
+  foodRating: integer('food_rating').notNull(),
+  npsScore: integer('nps_score'),
+  positive: text('positive').notNull().default(''),
+  negative: text('negative').notNull().default(''),
+  staffResponse: text('staff_response').notNull().default(''),
+  staffActionNote: text('staff_action_note').notNull().default(''),
+  staffResponseBy: text('staff_response_by').notNull().default(''),
+  staffResponseAt: timestamp('staff_response_at'),
+  consent: boolean('consent').notNull().default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const guestSupportRequests = pgTable('guest_support_requests', {
+  id: serial('id').primaryKey(),
+  guestName: text('guest_name').notNull().default(''),
+  roomNumber: text('room_number').notNull().default(''),
+  requestType: text('request_type').notNull().default('support'), // 'support' | 'complaint'
+  issueCategory: text('issue_category').notNull().default('other'),
+  subject: text('subject').notNull().default(''),
+  message: text('message').notNull().default(''),
+  imageUrl: text('image_url').notNull().default(''),
+  status: text('status').notNull().default('open'),
+  staffResponse: text('staff_response').notNull().default(''),
+  staffResponseBy: text('staff_response_by').notNull().default(''),
+  staffResponseAt: timestamp('staff_response_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 

@@ -29,6 +29,7 @@ const LABELS: Record<string, string> = {
   guests: "Guests",
   ai: "AI Assistant",
   settings: "Settings",
+  "access-control": "Access Control",
 }
 
 export function AdminBreadcrumb() {

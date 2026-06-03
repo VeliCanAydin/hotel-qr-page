@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
-import { Timeline } from "@/components/events/Timeline"
+import { EventDetailsDrawer, Timeline } from "@/components/events"
 import type { HotelEvent } from "@/lib/data/events"
 
 function formatDateLocal(date: Date): string {
@@ -14,12 +14,19 @@ function formatDateLocal(date: Date): string {
 
 export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   const eventsForSelectedDate = useMemo(() => {
     if (!selectedDate) return []
     const dateStr = formatDateLocal(selectedDate)
     return allEvents.filter((e) => e.date === dateStr)
   }, [selectedDate, allEvents])
+
+  const selectedEvent = useMemo(
+    () => allEvents.find((event) => event.id === selectedEventId) ?? null,
+    [allEvents, selectedEventId]
+  )
 
   const datesWithEvents = useMemo(() => {
     const unique = [...new Set(allEvents.map((e) => e.date))]
@@ -29,8 +36,21 @@ export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }
     })
   }, [allEvents])
 
+  function openEventDrawer(event: HotelEvent) {
+    setSelectedEventId(event.id)
+    setDrawerOpen(true)
+  }
+
+  function handleDrawerOpenChange(nextOpen: boolean) {
+    setDrawerOpen(nextOpen)
+
+    if (!nextOpen) {
+      setSelectedEventId(null)
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-6 p-4 max-w-2xl mx-auto">
+    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-3 sm:p-4">
       <div className="flex justify-center">
         <Calendar
           mode="single"
@@ -55,7 +75,7 @@ export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }
         </div>
 
         {eventsForSelectedDate.length > 0 ? (
-          <Timeline events={eventsForSelectedDate} selectedDate={selectedDate} />
+          <Timeline events={eventsForSelectedDate} selectedDate={selectedDate} onEventClick={openEventDrawer} />
         ) : (
           <div className="border rounded-lg p-8 text-center text-muted-foreground">
             <p>No events scheduled for this day.</p>
@@ -63,6 +83,13 @@ export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }
           </div>
         )}
       </div>
+
+      <EventDetailsDrawer
+        event={selectedEvent}
+        open={drawerOpen}
+        onOpenChange={handleDrawerOpenChange}
+        showPrimaryAction={false}
+      />
     </div>
   )
 }

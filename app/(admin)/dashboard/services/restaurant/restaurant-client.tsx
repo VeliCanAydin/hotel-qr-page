@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useRef } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SelectSeparator } from "@/components/ui/select"
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 import { Plus, Pencil, Trash2, Leaf, Clock, X, Upload, Loader2, ImageOff, Play, Save, LayoutList } from "lucide-react"
 import { createRestaurant, updateRestaurant, deleteRestaurant } from "@/lib/actions/restaurants"
 import {
@@ -25,6 +26,7 @@ import {
   deleteMenuTemplate, getTemplateItems, addTemplateItem, updateTemplateItem, removeTemplateItem,
 } from "@/lib/actions/menu-templates"
 import { createMenuCategory } from "@/lib/actions/menu-items"
+import { ALLERGENS as STATIC_ALLERGENS } from '@/lib/data/allergens'
 
 type RestaurantRow = {
   id: string; name: string; cuisine: string; openTime: string | null; closeTime: string | null
@@ -36,13 +38,14 @@ type TemplateRow = {
 type TemplateItemRow = {
   id: string; templateId: string; name: string; description: string
   category: string; price: number; isVegetarian: boolean; imageUrl: string | null; orderIndex: number
+  allergens?: string[]
 }
 type MenuItemRow = { id: string; restaurantId: string }
 type Category = { id: string; label: string }
-type MenuForm = { name: string; description: string; price: number; isVegetarian: boolean; category: string }
+type MenuForm = { name: string; description: string; price: number; isVegetarian: boolean; category: string; allergens?: string[] }
 
 const PROTECTED_IDS = ['a-la-carte', 'main-restaurant', 'snack-restaurant']
-const EMPTY_FORM: MenuForm = { name: '', description: '', price: 0, isVegetarian: false, category: '' }
+const EMPTY_FORM: MenuForm = { name: '', description: '', price: 0, isVegetarian: false, category: '', allergens: [] }
 
 export default function RestaurantClient({
   initialRestaurants,
@@ -59,6 +62,17 @@ export default function RestaurantClient({
   const [categories, setCategories] = useState<Category[]>(initialCategories)
   const [templatesByRestaurant, setTemplatesByRestaurant] = useState<Record<string, TemplateRow[]>>(initialTemplatesByRestaurant)
   const [mainTab, setMainTab] = useState("info")
+
+  // Client-side allergen metadata (fetched from API, fallback to static)
+  const [allergensMeta, setAllergensMeta] = useState<{ id: string; label: string; icon: string }[]>(STATIC_ALLERGENS)
+  useEffect(() => {
+    let mounted = true
+    fetch('/api/allergens')
+      .then((r) => r.json())
+      .then((data) => { if (mounted && Array.isArray(data)) setAllergensMeta(data) })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [])
 
   // Restaurant dialog
   const [restaurantDialogOpen, setRestaurantDialogOpen] = useState(false)
@@ -110,6 +124,9 @@ export default function RestaurantClient({
     }
     return counts
   }, [initialMenuItems])
+
+  // Expose same variable name used previously for compatibility
+  const ALLERGENS = allergensMeta
 
   const filteredTemplateItems = useMemo(
     () => templateCategoryFilter === 'all' ? templateItems : templateItems.filter((i) => i.category === templateCategoryFilter),
@@ -260,8 +277,12 @@ export default function RestaurantClient({
     setTemplateItemsLoading(true)
     setTemplateEditOpen(true)
     try {
-      const items = await getTemplateItems(template.id)
-      setTemplateItems(items)
+        const items = await getTemplateItems(template.id)
+        const parsed = items.map((it: any) => ({
+          ...it,
+          allergens: it?.allergens ? (typeof it.allergens === 'string' ? JSON.parse(it.allergens) : it.allergens) : [],
+        }))
+        setTemplateItems(parsed)
     } catch {
       toast.error('Failed to load template items')
     } finally {
@@ -292,7 +313,7 @@ export default function RestaurantClient({
 
   function openAddTemplateItem() {
     setEditingTemplateItem(null)
-    setTemplateItemForm({ ...EMPTY_FORM, category: categories[0]?.id ?? '' })
+    setTemplateItemForm({ ...EMPTY_FORM, category: categories[0]?.id ?? '', allergens: [] })
     setTemplateItemImageUrl('')
     setAddingTemplateCategory(false)
     setTemplateItemDialogOpen(true)
@@ -300,7 +321,7 @@ export default function RestaurantClient({
 
   function openEditTemplateItem(item: TemplateItemRow) {
     setEditingTemplateItem(item)
-    setTemplateItemForm({ name: item.name, description: item.description, price: item.price, isVegetarian: item.isVegetarian, category: item.category })
+    setTemplateItemForm({ name: item.name, description: item.description, price: item.price, isVegetarian: item.isVegetarian, category: item.category, allergens: item.allergens ?? [] })
     setTemplateItemImageUrl(item.imageUrl ?? '')
     setAddingTemplateCategory(false)
     setTemplateItemDialogOpen(true)
@@ -309,21 +330,21 @@ export default function RestaurantClient({
   async function handleTemplateItemSave() {
     if (!templateItemForm.name.trim() || !editingTemplate) return
     if (editingTemplateItem) {
-      const updated: TemplateItemRow = { ...editingTemplateItem, ...templateItemForm, imageUrl: templateItemImageUrl || null }
+        const updated: TemplateItemRow = { ...editingTemplateItem, ...templateItemForm, imageUrl: templateItemImageUrl || null }
       setTemplateItems((prev) => prev.map((i) => i.id === editingTemplateItem.id ? updated : i))
       setTemplateItemDialogOpen(false)
       setTemplateIsDirty(true)
-      toast.promise(updateTemplateItem(editingTemplateItem.id, { ...templateItemForm, imageUrl: templateItemImageUrl || null }), {
+        toast.promise(updateTemplateItem(editingTemplateItem.id, { ...templateItemForm, imageUrl: templateItemImageUrl || null, allergens: templateItemForm.allergens ?? [] }), {
         loading: 'Saving...', success: 'Item updated', error: 'Failed to update',
       })
     } else {
       const tempId = `temp-${Date.now()}`
-      const newItem: TemplateItemRow = { id: tempId, templateId: editingTemplate.id, ...templateItemForm, imageUrl: templateItemImageUrl || null, orderIndex: templateItems.length }
+        const newItem: TemplateItemRow = { id: tempId, templateId: editingTemplate.id, ...templateItemForm, imageUrl: templateItemImageUrl || null, orderIndex: templateItems.length }
       setTemplateItems((prev) => [...prev, newItem])
       setTemplateItemDialogOpen(false)
       setTemplateIsDirty(true)
       try {
-        const realId = await addTemplateItem(editingTemplate.id, { ...templateItemForm, imageUrl: templateItemImageUrl || null })
+          const realId = await addTemplateItem(editingTemplate.id, { ...templateItemForm, imageUrl: templateItemImageUrl || null, allergens: templateItemForm.allergens ?? [] })
         setTemplateItems((prev) => prev.map((i) => i.id === tempId ? { ...i, id: realId } : i))
         toast.success('Item added')
       } catch {
@@ -874,6 +895,44 @@ export default function RestaurantClient({
                 onChange={(e) => setTemplateItemForm((p) => ({ ...p, isVegetarian: e.target.checked }))}
                 className="h-4 w-4 rounded border" />
               <Label htmlFor="ti-vegetarian" className="cursor-pointer">Vegetarian</Label>
+            </div>
+            <div className="space-y-2">
+              <Label>Allergens</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    <span className="text-left truncate">{(templateItemForm.allergens ?? []).length > 0 ? (templateItemForm.allergens ?? []).map(id => ALLERGENS.find(a=>a.id===id)?.label ?? id).join(', ') : 'Select allergens'}</span>
+                    <span className="text-xs text-muted-foreground">{(templateItemForm.allergens ?? []).length} selected</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-col max-h-48 overflow-auto">
+                      {ALLERGENS.map((a) => {
+                        const selected = (templateItemForm.allergens ?? []).includes(a.id)
+                        return (
+                          <label key={a.id} className="flex items-center gap-2">
+                            <input type="checkbox" checked={selected}
+                              onChange={() => setTemplateItemForm((p) => {
+                                const s = new Set(p.allergens ?? [])
+                                if (s.has(a.id)) s.delete(a.id)
+                                else s.add(a.id)
+                                return { ...p, allergens: Array.from(s) }
+                              })}
+                              className="h-4 w-4"
+                            />
+                            <span>{a.label}</span>
+                          </label>
+                        )
+                      })}
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <Button variant="ghost" size="sm" onClick={() => setTemplateItemForm((p) => ({ ...p, allergens: [] }))}>Clear</Button>
+                      <Button size="sm" onClick={() => { /* popover will close automatically on outside click */ }}>Done</Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
           <DialogFooter>

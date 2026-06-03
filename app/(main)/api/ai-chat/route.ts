@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 interface AIApiResponse {
-    user_text: string;
-    bot_response: string;
-    image_path: string | null;
+    session_id: string;
+    message_id: string;
+    content: string;
+    tokens_used: number;
+    cost_usd: number;
+    latency_ms: number;
+    created_at: string;
 }
 
 export async function POST(request: NextRequest) {
     try {
-        const { message } = await request.json();
+        const { message, sessionId } = await request.json();
 
         if (!message || typeof message !== 'string') {
             return NextResponse.json(
@@ -17,14 +21,18 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // FormData oluştur
-        const formData = new FormData();
-        formData.append('text', message);
+        const aiBackendUrl = process.env.AI_BACKEND_URL || 'http://localhost:8000';
 
-        // AI API'sine istek at
-        const response = await fetch('http://51.77.203.172:83/api/forward-message/', {
+        // AI API'sine JSON istek at
+        const response = await fetch(`${aiBackendUrl}/api/chat/`, {
             method: 'POST',
-            body: formData,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: message,
+                session_id: sessionId || null,
+            }),
         });
 
         if (!response.ok) {
@@ -33,10 +41,11 @@ export async function POST(request: NextRequest) {
 
         const data: AIApiResponse = await response.json();
 
-        // API'den gelen yanıtı frontend'e ilet
+        // API'den gelen yanıtı frontend'e ilet (Cevap ve session_id dahil)
         return NextResponse.json({
-            response: data.bot_response,
-            imagePath: data.image_path,
+            response: data.content,
+            imagePath: null,
+            sessionId: data.session_id,
         });
 
     } catch (error) {
@@ -51,3 +60,4 @@ export async function POST(request: NextRequest) {
         );
     }
 }
+

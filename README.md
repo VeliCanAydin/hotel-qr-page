@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Database Workflow
+
+Use the focused feedback setup script for the feedback feature:
+
+```bash
+npm run db:feedback
+```
+
+Avoid `npm run db:push` for this repository unless you are intentionally reconciling the full schema, because the current migration history and live database are not fully aligned.
+
 ## Getting Started
 
 First, run the development server:
