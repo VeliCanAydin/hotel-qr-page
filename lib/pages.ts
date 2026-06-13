@@ -1,4 +1,4 @@
-import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark, MapPinned, NotebookPen } from "lucide-react";
+import { CircleAlert, Utensils, Baby, TreePalm, Flower, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark, MapPinned, NotebookPen, Flame } from "lucide-react";
 
 export const pages = [
     {
@@ -42,6 +42,12 @@ export const pages = [
         title: "Room Service",
         description: "In-Room Dining",
         href: "/room-service",
+    },
+    {
+        icon: Flame,
+        title: "Calorie Tracker",
+        description: "Track your meals and daily calorie intake",
+        href: "/calorie-tracker",
     },
     {
         icon: Bot,
