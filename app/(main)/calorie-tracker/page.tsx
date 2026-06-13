@@ -19,15 +19,50 @@ interface LoggedMeal {
     date: string; // YYYY-MM-DD local format
 }
 
-interface MockMealAnalysis {
-    mealName: string;
-    portion: string;
+interface DetectedFoodItem {
+    food_name: string;
+    food_name_en?: string | null;
+    estimated_weight_g?: number | null;
+    portion_description?: string | null;
+    confidence: number;
+    usda_verified: boolean;
+    nutrition?: {
+        calories_kcal: number;
+        protein_g: number;
+        carbs_g: number;
+        fat_g: number;
+        fiber_g?: number | null;
+        sugar_g?: number | null;
+        sodium_mg?: number | null;
+        saturated_fat_g?: number | null;
+    } | null;
+}
+
+interface ConfidenceInterval {
+    min_calories: number;
+    max_calories: number;
+    overall_confidence: number;
+    confidence_label: string; // 'Yüksek' | 'Orta' | 'Düşük'
+}
+
+interface MealAnalysis {
+    // Görüntüde tespit edilen her bir yemek
+    detected_foods: DetectedFoodItem[];
+    // Toplam besin değerleri
     calories: number;
     protein: number;
     carbs: number;
     fat: number;
-    note: string;
-    rawText?: string;
+    fiber?: number | null;
+    sugar?: number | null;
+    sodium?: number | null;
+    saturated_fat?: number | null;
+    // Meta
+    mealName: string;       // İlk yemeğin adı (veya birleşik liste)
+    portion: string;        // İlk yemeğin porsiyon açıklaması
+    note?: string | null;
+    confidence_interval?: ConfidenceInterval;
+    model_used?: string;
 }
 
 export default function CalorieTrackerPage() {
@@ -35,7 +70,7 @@ export default function CalorieTrackerPage() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [analysisResult, setAnalysisResult] = useState<MockMealAnalysis | null>(null);
+    const [analysisResult, setAnalysisResult] = useState<MealAnalysis | null>(null);
     
     // Daily log states
     const [dailyLogs, setDailyLogs] = useState<LoggedMeal[]>([]);
@@ -211,59 +246,6 @@ export default function CalorieTrackerPage() {
         }
     };
 
-    // Parser for Vision Agent output (handles both Turkish and English labels returned by model)
-    const parseVisionOutput = (text: string): MockMealAnalysis => {
-        const result: MockMealAnalysis = {
-            mealName: 'Unknown Dish',
-            portion: '1 Portion',
-            calories: 0,
-            protein: 0,
-            carbs: 0,
-            fat: 0,
-            note: '',
-            rawText: text
-        };
-
-        try {
-            // Find Meal Name
-            const mealMatch = text.match(/(?:Yemek|Meal|🍽️)\s*:\s*\*\*?([^\n*]+)\*\*?/i) || text.match(/\*\*?Yemek:\*\*?\s*([^\n]+)/i);
-            if (mealMatch) result.mealName = mealMatch[1].trim();
-
-            // Find Portion
-            const portionMatch = text.match(/(?:Porsiyon|Portion|📊)\s*:\s*\*\*?([^\n*]+)\*\*?/i) || text.match(/\*\*?Porsiyon:\*\*?\s*([^\n]+)/i);
-            if (portionMatch) result.portion = portionMatch[1].trim();
-
-            // Find Calories
-            const calorieMatch = text.match(/(?:Kalori|Calories|🔥)\s*:\s*\*\*?~?\s*(\d+)\s*(?:kcal)?\*\*?/i) || text.match(/\*\*?Kalori:\*\*?\s*~?\s*(\d+)/i);
-            if (calorieMatch) result.calories = parseInt(calorieMatch[1]);
-
-            // Find macros (Protein, Carbs, Fat)
-            const proteinMatch = text.match(/(?:Protein|📈)\s*:\s*\*\*?~?\s*(\d+)\s*g\*\*?/i) || text.match(/Protein:\s*~?\s*(\d+)/i);
-            if (proteinMatch) result.protein = parseInt(proteinMatch[1]);
-
-            const carbsMatch = text.match(/(?:Karbonhidrat|Carbs|Carbohydrate)\s*:\s*\*\*?~?\s*(\d+)\s*g\*\*?/i) || text.match(/Karbonhidrat:\s*~?\s*(\d+)/i);
-            if (carbsMatch) result.carbs = parseInt(carbsMatch[1]);
-
-            const fatMatch = text.match(/(?:Yağ|Fat)\s*:\s*\*\*?~?\s*(\d+)\s*g\*\*?/i) || text.match(/Yağ:\s*~?\s*(\d+)/i);
-            if (fatMatch) result.fat = parseInt(fatMatch[1]);
-
-            // Find Health Note
-            const noteMatch = text.match(/(?:Not|Note|💡)\s*:\s*\*\*?([^\n*]+)\*\*?/i) || text.match(/\*\*?Not:\*\*?\s*([^\n]+)/i);
-            if (noteMatch) result.note = noteMatch[1].trim();
-            else {
-                const lines = text.split('\n');
-                const noteLine = lines.find(l => l.includes('💡') || l.toLowerCase().includes('not:') || l.toLowerCase().includes('note:'));
-                if (noteLine) {
-                    result.note = noteLine.replace(/💡|Not:|Note:|\*\*/gi, '').trim();
-                }
-            }
-        } catch (e) {
-            console.error('Error parsing AI text:', e);
-        }
-
-        return result;
-    };
-
     // Trigger AI Vision Request to proxy endpoint
     const handleAnalyze = async () => {
         if (!imageFile) {
@@ -274,37 +256,62 @@ export default function CalorieTrackerPage() {
         setIsAnalyzing(true);
         try {
             const base64Data = await getBase64(imageFile);
-            
+
             const response = await fetch('/api/calorie-vision', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: "Bu yemeğin kalori ve besin değerlerini analiz et.",
                     image_base64: base64Data,
-                    has_image: true
+                    image_mime_type: imageFile.type || 'image/jpeg',
+                    language: 'tr',
                 }),
             });
 
             if (!response.ok) {
-                throw new Error('API server returned an error');
+                const errBody = await response.json().catch(() => ({}));
+                throw new Error(errBody?.error || `Sunucu hatası: ${response.status}`);
             }
 
+            // FastAPI /api/v1/analyze'den gelen yapılandırılmış JSON
             const data = await response.json();
-            const rawText = data.response;
-            
-            if (rawText) {
-                const parsed = parseVisionOutput(rawText);
-                setAnalysisResult(parsed);
-                toast.success('Food plate analyzed successfully!');
-            } else {
-                throw new Error('No content returned from AI vision agent');
+
+            if (!data.total_nutrition) {
+                throw new Error('AI geçersiz bir yanıt döndürdü.');
             }
+
+            const total = data.total_nutrition;
+            const foods: DetectedFoodItem[] = data.detected_foods ?? [];
+
+            // Yemek adını birleştir (birden fazla yiyecek varsa)
+            const mealName = foods.length > 0
+                ? foods.map((f: DetectedFoodItem) => f.food_name).join(', ')
+                : 'Bilinmeyen Yemek';
+
+            // İlk yemeğin porsiyon açıklaması
+            const portion = foods[0]?.portion_description ?? '1 Porsiyon';
+
+            setAnalysisResult({
+                detected_foods: foods,
+                calories: Math.round(total.calories_kcal),
+                protein: Math.round(total.protein_g),
+                carbs: Math.round(total.carbs_g),
+                fat: Math.round(total.fat_g),
+                fiber: total.fiber_g != null ? Math.round(total.fiber_g) : null,
+                sugar: total.sugar_g != null ? Math.round(total.sugar_g) : null,
+                sodium: total.sodium_mg != null ? Math.round(total.sodium_mg) : null,
+                saturated_fat: total.saturated_fat_g != null ? Math.round(total.saturated_fat_g) : null,
+                mealName,
+                portion,
+                note: data.analysis_notes ?? null,
+                confidence_interval: data.confidence_interval ?? null,
+                model_used: data.model_used ?? null,
+            });
+
+            toast.success('Yemek tabağı başarıyla analiz edildi!');
 
         } catch (error) {
             console.error('Analysis failed:', error);
-            toast.error('Failed to analyze meal. Please check backend connection.');
+            toast.error(error instanceof Error ? error.message : 'Analiz başarısız. Backend bağlantısını kontrol edin.');
         } finally {
             setIsAnalyzing(false);
         }
@@ -322,7 +329,7 @@ export default function CalorieTrackerPage() {
             carbs: analysisResult.carbs || 0,
             fat: analysisResult.fat || 0,
             mealType: selectedMealType,
-            timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
             date: todayStr
         };
 
@@ -517,24 +524,23 @@ export default function CalorieTrackerPage() {
                             <CardDescription>AI vision estimates of your plate contents.</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-6">
+                            {/* Meal Name + Calorie Badge */}
                             <div className="flex justify-between items-start">
                                 <div className="flex flex-col">
-                                    <span className="text-xs font-bold text-[#45a7d7] uppercase tracking-wider">Identified Meal</span>
+                                    <span className="text-xs font-bold text-[#45a7d7] uppercase tracking-wider">Tespit Edilen Yemek</span>
                                     <h3 className="text-2xl font-black text-foreground mt-0.5">{analysisResult.mealName}</h3>
-                                    <span className="text-xs text-muted-foreground mt-0.5">Est. Portion: {analysisResult.portion}</span>
+                                    <span className="text-xs text-muted-foreground mt-0.5">Porsiyon: {analysisResult.portion}</span>
                                 </div>
-                                
-                                {/* Calorie Badge */}
                                 <div className="p-4 bg-orange-100/80 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 rounded-3xl flex flex-col items-center justify-center min-w-[100px] border border-orange-200/50">
                                     <span className="text-2xl font-extrabold">{analysisResult.calories}</span>
                                     <span className="text-[10px] font-bold uppercase tracking-wider">kcal</span>
                                 </div>
                             </div>
 
-                            {/* Macro Progress Bars */}
+                            {/* Makro Besin Progress Barlar */}
                             <div className="flex flex-col gap-3 border-t pt-4">
-                                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Macronutrients</h4>
-                                
+                                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Makro Besinler</h4>
+
                                 {/* Protein */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
@@ -546,10 +552,10 @@ export default function CalorieTrackerPage() {
                                     </div>
                                 </div>
 
-                                {/* Carbs */}
+                                {/* Karbonhidrat */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Carbohydrates 🥖</span>
+                                        <span>Karbonhidrat 🥖</span>
                                         <span>{analysisResult.carbs}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -557,31 +563,73 @@ export default function CalorieTrackerPage() {
                                     </div>
                                 </div>
 
-                                {/* Fat */}
+                                {/* Yağ */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Fat 🥑</span>
+                                        <span>Yağ 🥑</span>
                                         <span>{analysisResult.fat}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                                         <div className="h-full bg-red-500 rounded-full" style={{ width: `${Math.min(100, (analysisResult.fat / 40) * 100)}%` }} />
                                     </div>
                                 </div>
+
+                                {/* Lif (opsiyonel) */}
+                                {analysisResult.fiber != null && (
+                                    <div className="flex flex-col gap-1.5">
+                                        <div className="flex justify-between text-xs font-semibold">
+                                            <span>Lif 🌿</span>
+                                            <span>{analysisResult.fiber}g</span>
+                                        </div>
+                                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                            <div className="h-full bg-green-500 rounded-full" style={{ width: `${Math.min(100, (analysisResult.fiber / 30) * 100)}%` }} />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Health Note */}
-                            {analysisResult.note && (
-                                <div className="p-3 bg-muted/40 border rounded-2xl flex items-start gap-2.5 text-xs text-muted-foreground">
-                                    <AlertCircle className="w-4.5 h-4.5 text-[#45a7d7] shrink-0 mt-0.5" />
-                                    <p className="leading-relaxed"><strong className="text-foreground font-semibold">Note:</strong> {analysisResult.note}</p>
+                            {/* Ek bilgiler (şeker, sodyum) */}
+                            {(analysisResult.sugar != null || analysisResult.sodium != null) && (
+                                <div className="flex gap-3 text-xs">
+                                    {analysisResult.sugar != null && (
+                                        <div className="flex-1 p-2.5 bg-muted/30 rounded-2xl border text-center">
+                                            <span className="block font-bold text-foreground">{analysisResult.sugar}g</span>
+                                            <span className="text-muted-foreground">Şeker</span>
+                                        </div>
+                                    )}
+                                    {analysisResult.sodium != null && (
+                                        <div className="flex-1 p-2.5 bg-muted/30 rounded-2xl border text-center">
+                                            <span className="block font-bold text-foreground">{analysisResult.sodium}mg</span>
+                                            <span className="text-muted-foreground">Sodyum</span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
-                            {/* Fallback Raw Text (if parsing missed important text) */}
-                            {analysisResult.calories === 0 && analysisResult.rawText && (
-                                <div className="p-3 bg-muted/20 border rounded-2xl text-xs space-y-1">
-                                    <strong className="text-foreground font-semibold block">Full Vision Report:</strong>
-                                    <p className="whitespace-pre-wrap leading-relaxed">{analysisResult.rawText}</p>
+                            {/* Güven aralığı */}
+                            {analysisResult.confidence_interval && (
+                                <div className="p-3 bg-muted/30 border rounded-2xl text-xs flex items-center justify-between">
+                                    <span className="text-muted-foreground font-semibold">Kalori Aralığı</span>
+                                    <span className="font-bold text-foreground">
+                                        {analysisResult.confidence_interval.min_calories}–{analysisResult.confidence_interval.max_calories} kcal
+                                        <span className={`ml-2 px-1.5 py-0.5 rounded-lg text-[10px] font-bold ${
+                                            analysisResult.confidence_interval.confidence_label === 'Yüksek'
+                                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                                : analysisResult.confidence_interval.confidence_label === 'Orta'
+                                                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                        }`}>
+                                            {analysisResult.confidence_interval.confidence_label}
+                                        </span>
+                                    </span>
+                                </div>
+                            )}
+
+                            {/* Analiz notu */}
+                            {analysisResult.note && (
+                                <div className="p-3 bg-muted/40 border rounded-2xl flex items-start gap-2.5 text-xs text-muted-foreground">
+                                    <AlertCircle className="w-4.5 h-4.5 text-[#45a7d7] shrink-0 mt-0.5" />
+                                    <p className="leading-relaxed"><strong className="text-foreground font-semibold">Not:</strong> {analysisResult.note}</p>
                                 </div>
                             )}
 
