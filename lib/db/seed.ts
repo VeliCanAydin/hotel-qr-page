@@ -96,6 +96,7 @@ async function seed() {
   await db.delete(kidsActivities)
   const activitiesToInsert = weeklySchedule.flatMap((day, dayIndex) =>
     day.activities.map((activity, activityIndex) => ({
+      serviceId: 'kids-club',
       day: day.day,
       time: activity.time,
       event: activity.event,

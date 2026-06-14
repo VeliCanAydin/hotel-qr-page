@@ -116,6 +116,25 @@ export const mockReservations: GuestReservation[] = [
     phone: '+90 555 777 77 77',
     notes: 'Test record for login and guest portal validation',
   },
+  {
+    roomNumber: '404',
+    surname: 'celik',
+    reservationCode: 'DOS-2026-0404',
+    guestName: 'Ahmet Çelik',
+    roomType: 'suite',
+    boardType: 'all-inclusive',
+    status: 'checked-in',
+    checkIn: '2026-06-14',
+    checkOut: '2026-12-14',
+    adults: 2,
+    children: 1,
+    floor: 4,
+    view: 'Sea View',
+    bedType: 'King',
+    email: 'ahmet.celik@example.com',
+    phone: '+90 555 123 4567',
+    notes: '6-month stay for feature testing',
+  },
 ]
 
 /** Login time lookup — checks room+surname and that the stay hasn't ended. */

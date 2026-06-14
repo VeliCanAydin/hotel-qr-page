@@ -71,35 +71,36 @@ export default function CalorieTrackerPage() {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisResult, setAnalysisResult] = useState<MealAnalysis | null>(null);
-    
+
     // Daily log states
     const [dailyLogs, setDailyLogs] = useState<LoggedMeal[]>([]);
-    const [dailyGoal, setDailyGoal] = useState<number | null>(null); // null means no target set
+    const [dailyGoals, setDailyGoals] = useState<Record<string, number | null>>({}); // date -> goal mapping
     const [selectedMealType, setSelectedMealType] = useState<'Breakfast' | 'Lunch' | 'Dinner' | 'Snack'>('Lunch');
-    
+
     // Goal editing states
     const [isEditingGoal, setIsEditingGoal] = useState(false);
     const [goalInputValue, setGoalInputValue] = useState('');
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Get current local date string (YYYY-MM-DD) safely
-    const getLocalDateString = () => {
+    // Get offset local date string (YYYY-MM-DD) safely
+    const getOffsetDateString = (offsetDays: number) => {
         const d = new Date();
+        d.setDate(d.getDate() - offsetDays);
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
 
-    const todayStr = getLocalDateString();
+    const todayStr = getOffsetDateString(0);
 
     useEffect(() => {
         setMounted(true);
         // Load data from localStorage
         const storedLogs = localStorage.getItem('guest-calorie-logs');
         const storedGoal = localStorage.getItem('guest-calorie-goal');
-        
+
         let logs: LoggedMeal[] = [];
         if (storedLogs) {
             try {
@@ -108,8 +109,8 @@ export default function CalorieTrackerPage() {
                 console.error(e);
             }
         }
-        
-        // Seed database if empty with Friday, Saturday, Sunday data
+
+        // Seed database if empty with historical data
         if (logs.length === 0) {
             logs = [
                 {
@@ -121,7 +122,7 @@ export default function CalorieTrackerPage() {
                     fat: 22,
                     mealType: 'Dinner',
                     timestamp: '20:15',
-                    date: '2026-06-12' // Friday
+                    date: getOffsetDateString(3)
                 },
                 {
                     id: 'seed-2',
@@ -132,7 +133,7 @@ export default function CalorieTrackerPage() {
                     fat: 15,
                     mealType: 'Lunch',
                     timestamp: '13:30',
-                    date: '2026-06-12' // Friday
+                    date: getOffsetDateString(3)
                 },
                 {
                     id: 'seed-3',
@@ -143,7 +144,7 @@ export default function CalorieTrackerPage() {
                     fat: 16,
                     mealType: 'Breakfast',
                     timestamp: '08:45',
-                    date: '2026-06-12' // Friday
+                    date: getOffsetDateString(3)
                 },
                 {
                     id: 'seed-4',
@@ -154,7 +155,7 @@ export default function CalorieTrackerPage() {
                     fat: 38,
                     mealType: 'Lunch',
                     timestamp: '14:15',
-                    date: '2026-06-13' // Saturday (Today)
+                    date: getOffsetDateString(2)
                 },
                 {
                     id: 'seed-5',
@@ -165,7 +166,7 @@ export default function CalorieTrackerPage() {
                     fat: 12,
                     mealType: 'Breakfast',
                     timestamp: '09:30',
-                    date: '2026-06-14' // Sunday
+                    date: getOffsetDateString(1)
                 },
                 {
                     id: 'seed-6',
@@ -176,7 +177,7 @@ export default function CalorieTrackerPage() {
                     fat: 14,
                     mealType: 'Snack',
                     timestamp: '16:00',
-                    date: '2026-06-14' // Sunday
+                    date: getOffsetDateString(1)
                 }
             ];
             localStorage.setItem('guest-calorie-logs', JSON.stringify(logs));
@@ -184,18 +185,30 @@ export default function CalorieTrackerPage() {
 
         setDailyLogs(logs);
 
-        if (storedGoal === 'none') {
-            setDailyGoal(null);
-            setGoalInputValue('');
-        } else if (storedGoal && storedGoal !== 'null') {
-            setDailyGoal(Number(storedGoal));
-            setGoalInputValue(storedGoal);
+        let goals: Record<string, number | null> = {};
+        const storedGoals = localStorage.getItem('guest-calorie-goals');
+        if (storedGoals) {
+            try {
+                goals = JSON.parse(storedGoals);
+            } catch (e) {
+                console.error(e);
+            }
         } else {
-            // First load ever: Seed a default goal of 2000
-            setDailyGoal(2000);
-            setGoalInputValue('2000');
-            localStorage.setItem('guest-calorie-goal', '2000');
+            // Fallback to legacy single goal
+            const storedGoal = localStorage.getItem('guest-calorie-goal');
+            if (storedGoal === 'none') {
+                goals[todayStr] = null;
+            } else if (storedGoal && storedGoal !== 'null') {
+                goals[todayStr] = Number(storedGoal);
+            } else {
+                goals[todayStr] = 2000;
+            }
+            localStorage.setItem('guest-calorie-goals', JSON.stringify(goals));
         }
+
+        setDailyGoals(goals);
+        const todayGoalVal = goals[todayStr] !== undefined ? goals[todayStr] : 2000;
+        setGoalInputValue(todayGoalVal !== null ? todayGoalVal.toString() : '');
     }, []);
 
     // Save states to localstorage
@@ -206,8 +219,8 @@ export default function CalorieTrackerPage() {
 
     useEffect(() => {
         if (!mounted) return;
-        localStorage.setItem('guest-calorie-goal', dailyGoal !== null ? dailyGoal.toString() : 'none');
-    }, [dailyGoal, mounted]);
+        localStorage.setItem('guest-calorie-goals', JSON.stringify(dailyGoals));
+    }, [dailyGoals, mounted]);
 
     if (!mounted) {
         return (
@@ -269,26 +282,26 @@ export default function CalorieTrackerPage() {
 
             if (!response.ok) {
                 const errBody = await response.json().catch(() => ({}));
-                throw new Error(errBody?.error || `Sunucu hatası: ${response.status}`);
+                throw new Error(errBody?.error || `Server error: ${response.status}`);
             }
 
-            // FastAPI /api/v1/analyze'den gelen yapılandırılmış JSON
+            // Structured JSON from FastAPI /api/v1/analyze
             const data = await response.json();
 
             if (!data.total_nutrition) {
-                throw new Error('AI geçersiz bir yanıt döndürdü.');
+                throw new Error('AI returned an invalid response.');
             }
 
             const total = data.total_nutrition;
             const foods: DetectedFoodItem[] = data.detected_foods ?? [];
 
-            // Yemek adını birleştir (birden fazla yiyecek varsa)
+            // Combine meal names (if multiple items)
             const mealName = foods.length > 0
                 ? foods.map((f: DetectedFoodItem) => f.food_name).join(', ')
-                : 'Bilinmeyen Yemek';
+                : 'Unknown Food';
 
-            // İlk yemeğin porsiyon açıklaması
-            const portion = foods[0]?.portion_description ?? '1 Porsiyon';
+            // Portion description of the first item
+            const portion = foods[0]?.portion_description ?? '1 Portion';
 
             setAnalysisResult({
                 detected_foods: foods,
@@ -307,11 +320,11 @@ export default function CalorieTrackerPage() {
                 model_used: data.model_used ?? null,
             });
 
-            toast.success('Yemek tabağı başarıyla analiz edildi!');
+            toast.success('Meal plate analyzed successfully!');
 
         } catch (error) {
             console.error('Analysis failed:', error);
-            toast.error(error instanceof Error ? error.message : 'Analiz başarısız. Backend bağlantısını kontrol edin.');
+            toast.error(error instanceof Error ? error.message : 'Analysis failed. Please check the backend connection.');
         } finally {
             setIsAnalyzing(false);
         }
@@ -335,7 +348,7 @@ export default function CalorieTrackerPage() {
 
         setDailyLogs(prev => [newLog, ...prev]);
         toast.success(`Logged ${newLog.calories} kcal to ${selectedMealType}!`);
-        
+
         // Reset analysis states to allow new scan
         setSelectedImage(null);
         setImageFile(null);
@@ -355,24 +368,33 @@ export default function CalorieTrackerPage() {
             toast.error('Please enter a valid calorie target number.');
             return;
         }
-        setDailyGoal(parsed);
+        setDailyGoals(prev => ({
+            ...prev,
+            [todayStr]: parsed
+        }));
         setIsEditingGoal(false);
-        toast.success(`Daily calorie target set to ${parsed} kcal!`);
+        toast.success(`Daily calorie target set to ${parsed} kcal for today!`);
     };
 
     const handleRemoveGoal = () => {
-        setDailyGoal(null);
+        setDailyGoals(prev => ({
+            ...prev,
+            [todayStr]: null
+        }));
         setGoalInputValue('');
         setIsEditingGoal(false);
-        toast.info('Daily calorie target removed.');
+        toast.info('Daily calorie target removed for today.');
     };
 
     // Log calculation metrics based ONLY on today's logs
     const todayLogs = dailyLogs.filter(log => log.date === todayStr);
     const totalConsumed = todayLogs.reduce((sum, item) => sum + item.calories, 0);
-    
-    // Percent & progress metrics when dailyGoal is set
-    const progressPercent = dailyGoal ? Math.min(100, Math.round((totalConsumed / dailyGoal) * 100)) : 0;
+
+    // Resolve today's goal (default to 2000 if not set yet)
+    const todayGoal = dailyGoals[todayStr] !== undefined ? dailyGoals[todayStr] : 2000;
+
+    // Percent & progress metrics when todayGoal is set
+    const progressPercent = todayGoal ? Math.min(100, Math.round((totalConsumed / todayGoal) * 100)) : 0;
 
     return (
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 p-4 pb-24 text-foreground transition-all duration-300">
@@ -385,7 +407,7 @@ export default function CalorieTrackerPage() {
                         </div>
                         <h1 className="text-3xl font-extrabold tracking-tight">AI Calorie Tracker</h1>
                     </div>
-                    
+
                     {/* Action buttons */}
                     <div className="flex items-center gap-2">
                         {analysisResult && (
@@ -416,35 +438,34 @@ export default function CalorieTrackerPage() {
                         </CardHeader>
                         <CardContent className="flex flex-col gap-5">
                             {/* Upload Area */}
-                            <div 
+                            <div
                                 onClick={() => !isAnalyzing && fileInputRef.current?.click()}
-                                className={`relative border-2 border-dashed rounded-3xl p-6 transition-all cursor-pointer flex flex-col items-center justify-center min-h-[260px] ${
-                                    selectedImage 
-                                        ? 'border-primary/20 bg-muted/10' 
+                                className={`relative border-2 border-dashed rounded-3xl p-6 transition-all cursor-pointer flex flex-col items-center justify-center min-h-[260px] ${selectedImage
+                                        ? 'border-primary/20 bg-muted/10'
                                         : 'border-muted hover:border-[#45a7d7] bg-muted/5 hover:bg-[#45a7d7]/5'
-                                }`}
+                                    }`}
                             >
-                                <input 
-                                    type="file" 
-                                    ref={fileInputRef} 
-                                    onChange={handleImageChange} 
-                                    accept="image/*" 
-                                    className="hidden" 
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleImageChange}
+                                    accept="image/*"
+                                    className="hidden"
                                     disabled={isAnalyzing}
                                 />
 
                                 {selectedImage ? (
                                     <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner group">
-                                        <img 
-                                            src={selectedImage} 
-                                            alt="Food Preview" 
-                                            className="w-full h-full object-cover" 
+                                        <img
+                                            src={selectedImage}
+                                            alt="Food Preview"
+                                            className="w-full h-full object-cover"
                                         />
-                                        
+
                                         {/* Scanning Animation line overlay */}
                                         {isAnalyzing && (
                                             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#45a7d7]/30 to-transparent flex flex-col justify-between">
-                                                <div 
+                                                <div
                                                     className="w-full h-1.5 bg-[#45a7d7] shadow-[0_0_15px_#45a7d7] animate-[bounce_2.5s_infinite]"
                                                     style={{ animationTimingFunction: 'linear' }}
                                                 />
@@ -474,14 +495,14 @@ export default function CalorieTrackerPage() {
                             {/* Button actions */}
                             {selectedImage && !isAnalyzing && (
                                 <div className="flex gap-3">
-                                    <Button 
+                                    <Button
                                         onClick={handleReset}
-                                        variant="outline" 
+                                        variant="outline"
                                         className="flex-1 rounded-2xl font-bold border-muted"
                                     >
                                         Change Photo
                                     </Button>
-                                    <Button 
+                                    <Button
                                         onClick={handleAnalyze}
                                         className="flex-1 bg-[#45a7d7] text-white hover:bg-[#45a7d7]/95 rounded-2xl font-bold gap-2"
                                     >
@@ -496,15 +517,15 @@ export default function CalorieTrackerPage() {
             ) : (
                 /* Results State: Image & Analysis Breakdown side-by-side */
                 <div className="grid gap-8 md:grid-cols-2 items-start animate-[fadeIn_0.4s_ease-out]">
-                    
+
                     {/* Left Column: Food Image Preview */}
                     <div className="flex flex-col gap-4">
                         <Card className="border-border rounded-3xl overflow-hidden bg-card">
                             <div className="relative w-full aspect-video">
-                                <img 
-                                    src={selectedImage!} 
-                                    alt="Analyzed Food" 
-                                    className="w-full h-full object-cover" 
+                                <img
+                                    src={selectedImage!}
+                                    alt="Analyzed Food"
+                                    className="w-full h-full object-cover"
                                 />
                             </div>
                             <CardContent className="p-4 flex gap-3">
@@ -527,9 +548,9 @@ export default function CalorieTrackerPage() {
                             {/* Meal Name + Calorie Badge */}
                             <div className="flex justify-between items-start">
                                 <div className="flex flex-col">
-                                    <span className="text-xs font-bold text-[#45a7d7] uppercase tracking-wider">Tespit Edilen Yemek</span>
+                                    <span className="text-xs font-bold text-[#45a7d7] uppercase tracking-wider">Detected Food</span>
                                     <h3 className="text-2xl font-black text-foreground mt-0.5">{analysisResult.mealName}</h3>
-                                    <span className="text-xs text-muted-foreground mt-0.5">Porsiyon: {analysisResult.portion}</span>
+                                    <span className="text-xs text-muted-foreground mt-0.5">Portion: {analysisResult.portion}</span>
                                 </div>
                                 <div className="p-4 bg-orange-100/80 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 rounded-3xl flex flex-col items-center justify-center min-w-[100px] border border-orange-200/50">
                                     <span className="text-2xl font-extrabold">{analysisResult.calories}</span>
@@ -539,12 +560,12 @@ export default function CalorieTrackerPage() {
 
                             {/* Makro Besin Progress Barlar */}
                             <div className="flex flex-col gap-3 border-t pt-4">
-                                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Makro Besinler</h4>
+                                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Macronutrients</h4>
 
                                 {/* Protein */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Protein 🥩</span>
+                                        <span>Protein</span>
                                         <span>{analysisResult.protein}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -555,7 +576,7 @@ export default function CalorieTrackerPage() {
                                 {/* Karbonhidrat */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Karbonhidrat 🥖</span>
+                                        <span>Carbs</span>
                                         <span>{analysisResult.carbs}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -566,7 +587,7 @@ export default function CalorieTrackerPage() {
                                 {/* Yağ */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Yağ 🥑</span>
+                                        <span>Fat</span>
                                         <span>{analysisResult.fat}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -578,7 +599,7 @@ export default function CalorieTrackerPage() {
                                 {analysisResult.fiber != null && (
                                     <div className="flex flex-col gap-1.5">
                                         <div className="flex justify-between text-xs font-semibold">
-                                            <span>Lif 🌿</span>
+                                            <span>Fiber 🌿</span>
                                             <span>{analysisResult.fiber}g</span>
                                         </div>
                                         <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -594,13 +615,13 @@ export default function CalorieTrackerPage() {
                                     {analysisResult.sugar != null && (
                                         <div className="flex-1 p-2.5 bg-muted/30 rounded-2xl border text-center">
                                             <span className="block font-bold text-foreground">{analysisResult.sugar}g</span>
-                                            <span className="text-muted-foreground">Şeker</span>
+                                            <span className="text-muted-foreground">Sugar</span>
                                         </div>
                                     )}
                                     {analysisResult.sodium != null && (
                                         <div className="flex-1 p-2.5 bg-muted/30 rounded-2xl border text-center">
                                             <span className="block font-bold text-foreground">{analysisResult.sodium}mg</span>
-                                            <span className="text-muted-foreground">Sodyum</span>
+                                            <span className="text-muted-foreground">Sodium</span>
                                         </div>
                                     )}
                                 </div>
@@ -609,17 +630,20 @@ export default function CalorieTrackerPage() {
                             {/* Güven aralığı */}
                             {analysisResult.confidence_interval && (
                                 <div className="p-3 bg-muted/30 border rounded-2xl text-xs flex items-center justify-between">
-                                    <span className="text-muted-foreground font-semibold">Kalori Aralığı</span>
+                                    <span className="text-muted-foreground font-semibold">Calorie Range</span>
                                     <span className="font-bold text-foreground">
                                         {analysisResult.confidence_interval.min_calories}–{analysisResult.confidence_interval.max_calories} kcal
-                                        <span className={`ml-2 px-1.5 py-0.5 rounded-lg text-[10px] font-bold ${
-                                            analysisResult.confidence_interval.confidence_label === 'Yüksek'
+                                        <span className={`ml-2 px-1.5 py-0.5 rounded-lg text-[10px] font-bold ${analysisResult.confidence_interval.confidence_label === 'Yüksek'
                                                 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                                                 : analysisResult.confidence_interval.confidence_label === 'Orta'
-                                                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                                        }`}>
-                                            {analysisResult.confidence_interval.confidence_label}
+                                                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                                    : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                            }`}>
+                                            {analysisResult.confidence_interval.confidence_label === 'Yüksek'
+                                                ? 'High'
+                                                : analysisResult.confidence_interval.confidence_label === 'Orta'
+                                                    ? 'Medium'
+                                                    : 'Low'}
                                         </span>
                                     </span>
                                 </div>
@@ -629,7 +653,7 @@ export default function CalorieTrackerPage() {
                             {analysisResult.note && (
                                 <div className="p-3 bg-muted/40 border rounded-2xl flex items-start gap-2.5 text-xs text-muted-foreground">
                                     <AlertCircle className="w-4.5 h-4.5 text-[#45a7d7] shrink-0 mt-0.5" />
-                                    <p className="leading-relaxed"><strong className="text-foreground font-semibold">Not:</strong> {analysisResult.note}</p>
+                                    <p className="leading-relaxed"><strong className="text-foreground font-semibold">Note:</strong> {analysisResult.note}</p>
                                 </div>
                             )}
 
@@ -642,18 +666,17 @@ export default function CalorieTrackerPage() {
                                             <button
                                                 key={type}
                                                 onClick={() => setSelectedMealType(type)}
-                                                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition ${
-                                                    selectedMealType === type
+                                                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition ${selectedMealType === type
                                                         ? 'bg-primary text-primary-foreground'
                                                         : 'bg-muted hover:bg-muted-hover text-muted-foreground'
-                                                }`}
+                                                    }`}
                                             >
                                                 {type}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
-                                <Button 
+                                <Button
                                     onClick={handleLogToHistory}
                                     className="w-full bg-[#45a7d7] text-white hover:bg-[#45a7d7]/95 rounded-2xl font-bold py-2 flex items-center justify-center gap-1.5 text-sm"
                                 >
@@ -666,8 +689,8 @@ export default function CalorieTrackerPage() {
                 </div>
             )}
 
-            {/* Daily Tracker Log - Only visible if there are logs for today or if a meal was analyzed */}
-            {(todayLogs.length > 0 || analysisResult) && (
+            {/* Daily Tracker Log - Only visible if there are logs for today, a meal was analyzed, or a daily goal is set */}
+            {(todayLogs.length > 0 || analysisResult || todayGoal !== null) && (
                 <div className="flex flex-col gap-6 border-t pt-8 animate-[fadeIn_0.5s_ease-out] max-w-xl mx-auto w-full">
                     {/* Goal Progress Gauge (Centered Full Width) */}
                     <Card className="border-border rounded-3xl shadow-sm bg-card w-full">
@@ -675,31 +698,34 @@ export default function CalorieTrackerPage() {
                             <CardTitle className="text-sm font-extrabold uppercase tracking-wider text-muted-foreground">
                                 Today's Calories
                             </CardTitle>
-                            
+
                             {/* Toggle/Edit Target Action link (Shows "Set Target" if no target exists) */}
                             {!isEditingGoal && (
-                                <button 
-                                    onClick={() => setIsEditingGoal(true)}
+                                <button
+                                    onClick={() => {
+                                        setIsEditingGoal(true);
+                                        setGoalInputValue(todayGoal !== null ? todayGoal.toString() : '');
+                                    }}
                                     className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
                                 >
-                                    <Edit3 className="w-3.5 h-3.5" /> {dailyGoal === null ? 'Set Target' : 'Edit Target'}
+                                    <Edit3 className="w-3.5 h-3.5" /> {todayGoal === null ? 'Set Target' : 'Edit Target'}
                                 </button>
                             )}
                         </CardHeader>
-                        
+
                         <CardContent className="flex flex-col gap-4">
                             {/* IF NO TARGET IS SET */}
-                            {dailyGoal === null ? (
+                            {todayGoal === null ? (
                                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
                                     <div className="flex flex-col gap-0.5 text-center sm:text-left">
                                         <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Total Consumed</span>
                                         <span className="text-3xl font-black">{totalConsumed} <span className="text-sm font-bold text-muted-foreground">kcal</span></span>
                                     </div>
-                                    
+
                                     {/* Set Goal Inline Input Form */}
                                     {isEditingGoal && (
                                         <div className="flex items-center gap-2 w-full sm:w-auto">
-                                            <input 
+                                            <input
                                                 type="number"
                                                 placeholder="e.g. 2000"
                                                 value={goalInputValue}
@@ -723,7 +749,7 @@ export default function CalorieTrackerPage() {
                                         /* Edit Target Inline Form */
                                         <div className="flex items-center justify-between gap-3 border-b pb-3">
                                             <div className="flex items-center gap-2">
-                                                <input 
+                                                <input
                                                     type="number"
                                                     value={goalInputValue}
                                                     onChange={(e) => setGoalInputValue(e.target.value)}
@@ -737,7 +763,7 @@ export default function CalorieTrackerPage() {
                                                     <X className="w-4 h-4" />
                                                 </Button>
                                             </div>
-                                            <button 
+                                            <button
                                                 onClick={handleRemoveGoal}
                                                 className="text-xs text-destructive font-bold hover:underline"
                                             >
@@ -748,17 +774,17 @@ export default function CalorieTrackerPage() {
 
                                     <div className="flex justify-between items-end">
                                         <span className="text-3xl font-black">{totalConsumed} <span className="text-xs font-bold text-muted-foreground">kcal</span></span>
-                                        <span className="text-xs text-muted-foreground font-semibold">Target: {dailyGoal} kcal</span>
+                                        <span className="text-xs text-muted-foreground font-semibold">Target: {todayGoal} kcal</span>
                                     </div>
-                                    
+
                                     {/* Linear Progress bar */}
                                     <div className="h-3.5 w-full bg-muted rounded-full overflow-hidden">
                                         <div className="h-full bg-gradient-to-r from-sky-400 to-[#45a7d7] rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
                                     </div>
 
                                     <div className="flex justify-between items-center text-xs font-semibold">
-                                        <span className={totalConsumed <= dailyGoal ? 'text-green-600 dark:text-green-400' : 'text-red-500'}>
-                                            {totalConsumed <= dailyGoal ? `${dailyGoal - totalConsumed} kcal remaining` : `${totalConsumed - dailyGoal} kcal over target`}
+                                        <span className={totalConsumed <= todayGoal ? 'text-green-600 dark:text-green-400' : 'text-red-500'}>
+                                            {totalConsumed <= todayGoal ? `${todayGoal - totalConsumed} kcal remaining` : `${totalConsumed - todayGoal} kcal over target`}
                                         </span>
                                         <span className="text-primary">{progressPercent}%</span>
                                     </div>

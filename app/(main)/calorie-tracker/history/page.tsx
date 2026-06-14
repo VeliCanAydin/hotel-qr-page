@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, Award, BarChart2, Coffee } from 'lucide-react';
+import { ArrowLeft, Calendar, Award, BarChart2, Coffee, Egg, Utensils, UtensilsCrossed, Cookie } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -19,11 +19,36 @@ interface LoggedMeal {
     date: string;
 }
 
+const getMealIcon = (mealType: 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack') => {
+    switch (mealType) {
+        case 'Breakfast':
+            return <Egg className="w-4.5 h-4.5 text-amber-500" />;
+        case 'Lunch':
+            return <Utensils className="w-4.5 h-4.5 text-sky-500" />;
+        case 'Dinner':
+            return <UtensilsCrossed className="w-4.5 h-4.5 text-indigo-500" />;
+        case 'Snack':
+            return <Cookie className="w-4.5 h-4.5 text-orange-600" />;
+        default:
+            return <Coffee className="w-4.5 h-4.5 text-muted-foreground" />;
+    }
+};
+
 export default function CalorieHistoryPage() {
     const [mounted, setMounted] = useState(false);
     const [dailyLogs, setDailyLogs] = useState<LoggedMeal[]>([]);
-    const [dailyGoal, setDailyGoal] = useState<number>(2000);
+    const [dailyGoals, setDailyGoals] = useState<Record<string, number | null>>({}); // date -> goal mapping
     const [expandedDates, setExpandedDates] = useState<Record<string, boolean>>({});
+
+    // Get offset local date string (YYYY-MM-DD) safely
+    const getOffsetDateString = (offsetDays: number) => {
+        const d = new Date();
+        d.setDate(d.getDate() - offsetDays);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
     useEffect(() => {
         setMounted(true);
@@ -39,7 +64,7 @@ export default function CalorieHistoryPage() {
             }
         }
         
-        // Seed logs if empty with Friday, Saturday, Sunday data
+        // Seed logs if empty with historical data
         if (logs.length === 0) {
             logs = [
                 {
@@ -51,7 +76,7 @@ export default function CalorieHistoryPage() {
                     fat: 22,
                     mealType: 'Dinner',
                     timestamp: '20:15',
-                    date: '2026-06-12' // Friday
+                    date: getOffsetDateString(3)
                 },
                 {
                     id: 'seed-2',
@@ -62,7 +87,7 @@ export default function CalorieHistoryPage() {
                     fat: 15,
                     mealType: 'Lunch',
                     timestamp: '13:30',
-                    date: '2026-06-12' // Friday
+                    date: getOffsetDateString(3)
                 },
                 {
                     id: 'seed-3',
@@ -73,7 +98,7 @@ export default function CalorieHistoryPage() {
                     fat: 16,
                     mealType: 'Breakfast',
                     timestamp: '08:45',
-                    date: '2026-06-12' // Friday
+                    date: getOffsetDateString(3)
                 },
                 {
                     id: 'seed-4',
@@ -84,7 +109,7 @@ export default function CalorieHistoryPage() {
                     fat: 38,
                     mealType: 'Lunch',
                     timestamp: '14:15',
-                    date: '2026-06-13' // Saturday (Today)
+                    date: getOffsetDateString(2)
                 },
                 {
                     id: 'seed-5',
@@ -95,7 +120,7 @@ export default function CalorieHistoryPage() {
                     fat: 12,
                     mealType: 'Breakfast',
                     timestamp: '09:30',
-                    date: '2026-06-14' // Sunday
+                    date: getOffsetDateString(1)
                 },
                 {
                     id: 'seed-6',
@@ -106,7 +131,7 @@ export default function CalorieHistoryPage() {
                     fat: 14,
                     mealType: 'Snack',
                     timestamp: '16:00',
-                    date: '2026-06-14' // Sunday
+                    date: getOffsetDateString(1)
                 }
             ];
             localStorage.setItem('guest-calorie-logs', JSON.stringify(logs));
@@ -114,14 +139,27 @@ export default function CalorieHistoryPage() {
 
         setDailyLogs(logs);
 
-        if (storedGoal === 'none') {
-            setDailyGoal(2000); // fallback value for percentage math logic
-        } else if (storedGoal && storedGoal !== 'null') {
-            setDailyGoal(Number(storedGoal));
+        let goals: Record<string, number | null> = {};
+        const storedGoals = localStorage.getItem('guest-calorie-goals');
+        if (storedGoals) {
+            try {
+                goals = JSON.parse(storedGoals);
+            } catch (e) {
+                console.error(e);
+            }
         } else {
-            setDailyGoal(2000);
-            localStorage.setItem('guest-calorie-goal', '2000');
+            // Fallback to legacy single goal
+            const storedGoal = localStorage.getItem('guest-calorie-goal');
+            if (storedGoal === 'none') {
+                goals[getOffsetDateString(0)] = null;
+            } else if (storedGoal && storedGoal !== 'null') {
+                goals[getOffsetDateString(0)] = Number(storedGoal);
+            } else {
+                goals[getOffsetDateString(0)] = 2000;
+            }
+            localStorage.setItem('guest-calorie-goals', JSON.stringify(goals));
         }
+        setDailyGoals(goals);
     }, []);
 
     if (!mounted) {
@@ -215,7 +253,8 @@ export default function CalorieHistoryPage() {
                     {sortedDates.map((dateStr) => {
                         const logsForDay = groupedLogs[dateStr];
                         const dayCalories = logsForDay.reduce((sum, item) => sum + item.calories, 0);
-                        const dayGoalPercent = Math.min(100, Math.round((dayCalories / dailyGoal) * 100));
+                        const dayGoal = dailyGoals[dateStr] !== undefined ? dailyGoals[dateStr] : 2000;
+                        const dayGoalPercent = dayGoal ? Math.min(100, Math.round((dayCalories / dayGoal) * 100)) : 0;
                         const isExpanded = !!expandedDates[dateStr];
 
                         return (
@@ -240,16 +279,22 @@ export default function CalorieHistoryPage() {
                                         <div className="flex flex-col md:items-end">
                                             <div className="flex items-baseline gap-1 text-lg font-black">
                                                 <span>{dayCalories}</span>
-                                                <span className="text-xs text-muted-foreground font-bold">/ {dailyGoal} kcal</span>
+                                                {dayGoal !== null ? (
+                                                    <span className="text-xs text-muted-foreground font-bold">/ {dayGoal} kcal</span>
+                                                ) : (
+                                                    <span className="text-xs text-muted-foreground font-bold"> kcal</span>
+                                                )}
                                             </div>
                                             
                                             {/* Mini progress bar */}
-                                            <div className="w-36 h-2 bg-muted rounded-full overflow-hidden mt-1.5">
-                                                <div 
-                                                    className="h-full bg-gradient-to-r from-sky-400 to-[#45a7d7] rounded-full" 
-                                                    style={{ width: `${dayGoalPercent}%` }} 
-                                                />
-                                            </div>
+                                            {dayGoal !== null && (
+                                                <div className="w-36 h-2 bg-muted rounded-full overflow-hidden mt-1.5">
+                                                    <div 
+                                                        className="h-full bg-gradient-to-r from-sky-400 to-[#45a7d7] rounded-full" 
+                                                        style={{ width: `${dayGoalPercent}%` }} 
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                         
                                         {/* Expand Toggle label */}
@@ -266,7 +311,7 @@ export default function CalorieHistoryPage() {
                                             <div key={log.id} className="p-4 flex items-center justify-between hover:bg-muted/20 transition">
                                                 <div className="flex items-center gap-3">
                                                     <div className="p-2 bg-card border rounded-xl shrink-0">
-                                                        <Coffee className="w-4.5 h-4.5 text-orange-500" />
+                                                        {getMealIcon(log.mealType)}
                                                     </div>
                                                     <div className="flex flex-col">
                                                         <span className="text-sm font-bold text-foreground">{log.name}</span>
