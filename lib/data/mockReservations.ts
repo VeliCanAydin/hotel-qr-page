@@ -121,7 +121,9 @@ export const mockReservations: GuestReservation[] = [
     boardType: 'all-inclusive',
     status: 'checked-in',
     checkIn: daysFromToday(-1),
-    checkOut: daysFromToday(7),
+    // Far-future checkout keeps the documented test login (room 777 /
+    // surname test) working indefinitely, even long after a re-seed.
+    checkOut: daysFromToday(365 * 5),
     adults: 2,
     children: 1,
     floor: 7,
@@ -129,6 +131,6 @@ export const mockReservations: GuestReservation[] = [
     bedType: 'King',
     email: 'test.guest@example.com',
     phone: '+90 555 777 77 77',
-    notes: 'Test record for login and guest portal validation',
+    notes: 'Permanent test account — do not check out. Login: room 777 / surname test',
   },
 ]

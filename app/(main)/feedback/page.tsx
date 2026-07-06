@@ -8,13 +8,13 @@ import {
   Bed,
   BrushCleaning,
   CalendarIcon,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
+  Check,
+  ChevronRight,
   CircleDollarSign,
   ImagePlus,
+  Loader2,
+  Lock,
   Send,
-  Sparkle,
   Star,
   UtensilsCrossed,
   UsersRound,
@@ -22,15 +22,11 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import type { DateRange } from "react-day-picker";
 
 type FeedbackMode = "rating" | "support";
@@ -47,7 +43,7 @@ const supportIssueCategories = [
   { value: "wifi", label: "Wi-Fi" },
   { value: "housekeeping", label: "Housekeeping" },
   { value: "other", label: "Other" },
-]
+];
 
 const tripTypes = [
   { value: "business", label: "Business" },
@@ -65,25 +61,56 @@ const categories = [
   { key: "food", label: "Food & Beverage", icon: UtensilsCrossed },
 ];
 
-function StarRating({ value, onChange, size = "default" }: { value: number; onChange: (value: number) => void; size?: "default" | "large" }) {
+const RATING_LABELS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
+
+/* ---------- small building blocks ---------- */
+
+function SectionHeader({ step, title, hint }: { step: string; title: string; hint?: string }) {
+  return (
+    <div className="flex items-baseline gap-3">
+      <span className="font-mono text-xs tabular-nums text-muted-foreground/70">{step}</span>
+      <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+      {hint ? <span className="ml-auto text-xs text-muted-foreground">{hint}</span> : null}
+    </div>
+  );
+}
+
+function Stars({
+  value,
+  onChange,
+  size = "sm",
+  allowClear = false,
+  label,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  size?: "sm" | "lg";
+  allowClear?: boolean;
+  label?: string;
+}) {
   const [hoverValue, setHoverValue] = useState(0);
-  const starSize = size === "large" ? "size-10" : "size-7";
+  const starSize = size === "lg" ? "size-11" : "size-8";
 
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-0.5" role="radiogroup" aria-label={label ?? "Rating"}>
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
           type="button"
-          className={cn("transition-all duration-150 hover:scale-110 active:scale-95", starSize)}
+          role="radio"
+          aria-checked={value === star}
+          aria-label={`${star} of 5`}
+          className={cn("transition-transform duration-100 hover:scale-110 active:scale-95 p-0.5", starSize)}
           onMouseEnter={() => setHoverValue(star)}
           onMouseLeave={() => setHoverValue(0)}
-          onClick={() => onChange(star)}
+          onClick={() => onChange(allowClear && value === star ? 0 : star)}
         >
           <Star
             className={cn(
-              "w-full h-full transition-colors",
-              (hoverValue || value) >= star ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"
+              "h-full w-full transition-colors",
+              (hoverValue || value) >= star
+                ? "fill-amber-400 text-amber-400"
+                : "fill-transparent text-border"
             )}
           />
         </button>
@@ -92,60 +119,114 @@ function StarRating({ value, onChange, size = "default" }: { value: number; onCh
   );
 }
 
-function NPSScale({ value, onChange }: { value: number | null; onChange: (value: number) => void }) {
+function RecommendScale({ value, onChange }: { value: number | null; onChange: (value: number | null) => void }) {
   return (
-    <div className="space-y-3">
-      <div className="flex justify-between text-xs text-muted-foreground px-1">
-        <span>Not likely</span>
-        <span>Very likely</span>
-      </div>
+    <div className="space-y-2">
       <div className="grid grid-cols-11 gap-1">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
           <button
             key={num}
             type="button"
-            onClick={() => onChange(num)}
+            onClick={() => onChange(value === num ? null : num)}
+            aria-pressed={value === num}
             className={cn(
-              "aspect-square rounded-md text-sm font-medium transition-all duration-150",
-              "border hover:scale-105 active:scale-95",
+              "aspect-square rounded-lg border text-sm font-medium tabular-nums transition-all duration-100 active:scale-95",
               value === num
                 ? num <= 6
-                  ? "bg-red-500 text-white border-red-500"
+                  ? "border-transparent bg-destructive text-white"
                   : num <= 8
-                    ? "bg-yellow-500 text-white border-yellow-500"
-                    : "bg-green-500 text-white border-green-500"
-                : "bg-muted/50 hover:bg-muted border-border"
+                    ? "border-transparent bg-amber-500 text-white"
+                    : "border-transparent bg-emerald-500 text-white"
+                : "border-border bg-transparent text-muted-foreground hover:border-foreground/25 hover:text-foreground"
             )}
           >
             {num}
           </button>
         ))}
       </div>
-      <div className="flex justify-between text-xs px-1">
-        <span className="text-red-500">Detractors</span>
-        <span className="text-yellow-600">Passives</span>
-        <span className="text-green-500">Promoters</span>
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>Not likely</span>
+        <span>Very likely</span>
       </div>
     </div>
   );
 }
 
-function CategoryRating({ icon: Icon, label, value, onChange }: { icon: React.ElementType; label: string; value: number; onChange: (value: number) => void }) {
+function Chip({
+  selected,
+  onClick,
+  children,
+  tone = "default",
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  tone?: "default" | "destructive";
+}) {
   return (
-    <div className="flex items-center gap-4 py-3">
-      <div className="flex items-center gap-3 min-w-[140px]">
-        <div className="p-2 rounded-lg bg-muted">
-          <Icon className="size-4 text-muted-foreground" />
-        </div>
-        <span className="text-sm font-medium">{label}</span>
-      </div>
-      <div className="flex-1">
-        <Slider value={[value]} onValueChange={([v]) => onChange(v)} max={5} min={1} step={1} className="w-full" />
-      </div>
-      <span className="text-sm font-semibold w-6 text-center">{value}</span>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={cn(
+        "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
+        selected
+          ? tone === "destructive"
+            ? "border-transparent bg-destructive text-white"
+            : "border-transparent bg-foreground text-background"
+          : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function FlowHeader({ title, onBack }: { title: string; onBack: () => void }) {
+  return (
+    <div className="flex items-center gap-1 pt-2">
+      <Button type="button" variant="ghost" size="icon" className="-ml-2" onClick={onBack} aria-label="Go back">
+        <ArrowLeft className="size-4" />
+      </Button>
+      <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
     </div>
   );
 }
+
+function SubmitBar({
+  isSubmitting,
+  error,
+  summary,
+  label,
+}: {
+  isSubmitting: boolean;
+  error: string;
+  summary?: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="sticky bottom-0 -mx-4 mt-2 border-t bg-background/95 px-4 py-3 backdrop-blur supports-backdrop-filter:bg-background/80">
+      {error ? (
+        <p className="pb-2 text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <div className="flex items-center justify-between gap-4">
+        <div className="text-sm text-muted-foreground">{summary}</div>
+        <Button type="submit" size="lg" className="rounded-full px-6" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <Loader2 className="size-4 mr-2 animate-spin" />
+          ) : (
+            <Send className="size-4 mr-2" />
+          )}
+          {isSubmitting ? "Sending..." : label}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- page ---------- */
 
 export default function FeedbackPage() {
   const [mode, setMode] = useState<FeedbackMode | null>(null);
@@ -159,13 +240,12 @@ export default function FeedbackPage() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [overallRating, setOverallRating] = useState(0);
   const [npsScore, setNpsScore] = useState<number | null>(null);
-  const [categoryRatings, setCategoryRatings] = useState({ cleanliness: 3, staff: 3, comfort: 3, value: 3, food: 3 });
-  const [hasOpenedDetails, setHasOpenedDetails] = useState(false);
+  // 0 = not rated; only explicit choices are submitted (0 maps to null)
+  const [categoryRatings, setCategoryRatings] = useState({ cleanliness: 0, staff: 0, comfort: 0, value: 0, food: 0 });
   const [positive, setPositive] = useState("");
   const [negative, setNegative] = useState("");
   const [tripType, setTripType] = useState("");
   const [consent, setConsent] = useState(false);
-  const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
 
   const [supportName, setSupportName] = useState("");
   const [supportRoom, setSupportRoom] = useState("");
@@ -181,7 +261,7 @@ export default function FeedbackPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  const showImprovementSection = overallRating > 0 && overallRating <= 3;
+  const showImprovementEmphasis = overallRating > 0 && overallRating <= 3;
 
   const handleCategoryChange = (key: string, value: number) => {
     setCategoryRatings((prev) => ({ ...prev, [key]: value }));
@@ -241,11 +321,12 @@ export default function FeedbackPage() {
       },
       ratings: {
         overall: overallRating,
-        // Only send category scores the guest actually saw; otherwise the
-        // untouched slider defaults would be recorded as real ratings.
-        ...(hasOpenedDetails
-          ? categoryRatings
-          : { cleanliness: null, staff: null, comfort: null, value: null, food: null }),
+        // 0 means the guest never rated that category — store null, not a fake score
+        cleanliness: categoryRatings.cleanliness || null,
+        staff: categoryRatings.staff || null,
+        comfort: categoryRatings.comfort || null,
+        value: categoryRatings.value || null,
+        food: categoryRatings.food || null,
         nps: npsScore,
       },
       feedback: { positive, negative, tripType },
@@ -339,352 +420,391 @@ export default function FeedbackPage() {
     }
   };
 
+  /* ---------- success ---------- */
+
   if (isSubmitted) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center p-4">
-        <Card className="max-w-md w-full text-center">
-          <CardContent className="pt-10 pb-8">
-            <div className="mx-auto w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6">
-              <CheckCircle2 className="size-8 text-green-600 dark:text-green-400" />
-            </div>
-            <h2 className="text-2xl font-bold mb-2">{submitTitle}</h2>
-            <p className="text-muted-foreground mb-6">{submitDescription}</p>
-            <Button
-              onClick={() => {
-                setIsSubmitted(false);
-                goHome();
-              }}
-              variant="outline"
-            >
-              Submit Another
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="flex min-h-[70vh] items-center justify-center p-6">
+        <div className="w-full max-w-sm text-center animate-in fade-in zoom-in-95 duration-300">
+          <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-emerald-500/10 ring-8 ring-emerald-500/5">
+            <Check className="size-7 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
+          </div>
+          <h2 className="text-2xl font-semibold tracking-tight">{submitTitle}</h2>
+          <p className="mt-2 text-muted-foreground">{submitDescription}</p>
+          <Button
+            variant="outline"
+            className="mt-8 rounded-full"
+            onClick={() => {
+              setIsSubmitted(false);
+              goHome();
+            }}
+          >
+            Submit Another
+          </Button>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen pb-8">
-      <section className="relative bg-linear-to-br from-primary/10 via-background to-accent/10 py-10 px-4">
-        <div className="mx-auto max-w-2xl text-center">
-          <Badge variant="secondary" className="mb-4">
-            <Sparkle className="size-3 mr-1" />
-            {mode === "support" ? "Guest Support" : mode === "rating" ? "Guest Rating" : "Guest Feedback"}
-          </Badge>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            {mode === "support" ? "Report an Issue" : mode === "rating" ? "Rate Your Stay" : "Share Feedback"}
-          </h1>
-          <p className="mx-auto max-w-xl text-muted-foreground text-lg">
-            {mode === "support"
-              ? "Send a quick support or complaint request and our team will respond."
-              : mode === "rating"
-                ? "Tell us how your stay felt and add any notes you want our team to see."
-                : "Leave a rating or tell us what stood out during your stay."}
+  /* ---------- mode select ---------- */
+
+  if (!mode) {
+    return (
+      <div className="mx-auto w-full max-w-xl px-4 py-10">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Dosinia · Guest Feedback</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">How was your stay?</h1>
+        <p className="mt-2 text-muted-foreground">
+          Praise or problem — every message goes straight to our Guest Relations team.
+        </p>
+
+        <div className="mt-8 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => setMode("rating")}
+            className="group flex items-center gap-4 rounded-2xl border p-4 text-left transition-colors hover:bg-accent/50"
+          >
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-amber-400/15">
+              <Star className="size-5 fill-amber-400 text-amber-400" />
+            </span>
+            <span className="flex-1">
+              <span className="block font-semibold">Rate your stay</span>
+              <span className="block text-sm text-muted-foreground">A quick rating, plus anything you want us to know</span>
+            </span>
+            <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMode("support")}
+            className="group flex items-center gap-4 rounded-2xl border p-4 text-left transition-colors hover:bg-accent/50"
+          >
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-destructive/10">
+              <AlertTriangle className="size-5 text-destructive" />
+            </span>
+            <span className="flex-1">
+              <span className="block font-semibold">Report an issue</span>
+              <span className="block text-sm text-muted-foreground">Something wrong right now? We&apos;ll get on it</span>
+            </span>
+            <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------- rating flow ---------- */
+
+  if (mode === "rating") {
+    return (
+      <form onSubmit={handleRatingSubmit} className="mx-auto w-full max-w-xl px-4 pb-6">
+        <FlowHeader title="Rate your stay" onBack={goHome} />
+
+        {/* 01 — overall */}
+        <section className="flex flex-col items-center gap-3 py-10">
+          <Stars value={overallRating} onChange={setOverallRating} size="lg" label="Overall rating" />
+          <p className={cn("text-sm transition-colors", overallRating ? "font-medium text-foreground" : "text-muted-foreground")}>
+            {overallRating ? RATING_LABELS[overallRating - 1] : "Tap a star to begin"}
           </p>
-        </div>
-      </section>
+        </section>
 
-      {!mode ? (
-        <div className="mx-auto mt-4 grid max-w-2xl gap-4 p-4 md:grid-cols-2">
-          <Card className="border-primary/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="size-5 text-yellow-500" />
-                Rate Your Stay
-              </CardTitle>
-              <CardDescription>Leave a quick rating and optional comments about your stay.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" onClick={() => setMode("rating")}>Leave Feedback</Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border-destructive/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="size-5 text-destructive" />
-                Report an Issue
-              </CardTitle>
-              <CardDescription>Send a support or complaint request with a category and photo.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" variant="destructive" onClick={() => setMode("support")}>Report Issue</Button>
-            </CardContent>
-          </Card>
-        </div>
-      ) : null}
-
-      {mode === "rating" ? (
-        <form onSubmit={handleRatingSubmit} className="max-w-2xl mx-auto p-4 space-y-6">
-          <Button type="button" variant="ghost" className="-ml-2" onClick={goHome}>
-            <ArrowLeft className="size-4 mr-2" />Back
-          </Button>
-
-          <Card>
-            <CardHeader className="text-center pb-4">
-              <CardTitle>Overall Experience</CardTitle>
-              <CardDescription>How would you rate your stay with us?</CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center pb-8">
-              <StarRating value={overallRating} onChange={setOverallRating} size="large" />
-            </CardContent>
-          </Card>
-
-          {overallRating > 0 && (
-            <>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Guest Information</CardTitle>
-                  <CardDescription>Help us identify your stay (optional)</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
+        {overallRating > 0 && (
+          <div className="flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            {/* 02 — categories */}
+            <section className="flex flex-col gap-4">
+              <SectionHeader step="01" title="In detail" hint="Optional — rate what you like" />
+              <div className="flex flex-col divide-y">
+                {categories.map((cat) => (
+                  <div key={cat.key} className="flex items-center justify-between gap-3 py-2.5">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <cat.icon className="size-4 shrink-0 text-muted-foreground" />
+                      <span className="truncate text-sm">{cat.label}</span>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="john@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </div>
+                    <Stars
+                      value={categoryRatings[cat.key as keyof typeof categoryRatings]}
+                      onChange={(v) => handleCategoryChange(cat.key, v)}
+                      allowClear
+                      label={cat.label}
+                    />
                   </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="room">Room Number</Label>
-                      <Input id="room" type="number" placeholder="304" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Dates of Stay</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dateRange && "text-muted-foreground")}>
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {dateRange?.from ? (dateRange.to ? <>{format(dateRange.from, "LLL dd")} - {format(dateRange.to, "LLL dd, y")}</> : format(dateRange.from, "LLL dd, y")) : <span>Select dates</span>}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar mode="range" defaultMonth={dateRange?.from} selected={dateRange} onSelect={setDateRange} numberOfMonths={1} />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-lg">Rate Your Experience</CardTitle>
-                      <CardDescription>Help us understand what worked and what didn&apos;t</CardDescription>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        if (!showDetailedFeedback) setHasOpenedDetails(true);
-                        setShowDetailedFeedback(!showDetailedFeedback);
-                      }}
-                    >
-                      {showDetailedFeedback ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-                    </Button>
-                  </div>
-                </CardHeader>
-                {showDetailedFeedback && (
-                  <CardContent className="pt-0">
-                    <div className="divide-y">
-                      {categories.map((cat) => (
-                        <CategoryRating key={cat.key} icon={cat.icon} label={cat.label} value={categoryRatings[cat.key as keyof typeof categoryRatings]} onChange={(v) => handleCategoryChange(cat.key, v)} />
-                      ))}
-                    </div>
-                  </CardContent>
-                )}
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Would You Recommend Us?</CardTitle>
-                  <CardDescription>How likely are you to recommend Dosinia to a friend or colleague?</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <NPSScale value={npsScore} onChange={setNpsScore} />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Tell Us More</CardTitle>
-                  <CardDescription>Your comments help us improve</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="positive">What did you like most about your stay?</Label>
-                    <Textarea id="positive" placeholder="The view was amazing, the front desk staff was very helpful..." value={positive} onChange={(e) => setPositive(e.target.value)} rows={3} />
-                  </div>
-
-                  <div className={cn("space-y-2 transition-all", showImprovementSection && "p-4 -mx-4 bg-destructive/5 rounded-lg border border-destructive/20")}>
-                    <Label htmlFor="negative" className={cn(showImprovementSection && "text-destructive font-medium")}>
-                      What could we have done better?
-                    </Label>
-                    <Textarea id="negative" placeholder="We're sorry to hear that. Please share what went wrong..." value={negative} onChange={(e) => setNegative(e.target.value)} rows={showImprovementSection ? 4 : 3} />
-                    {showImprovementSection && (
-                      <p className="text-xs text-muted-foreground">Your feedback is important to us. If you provide your email, our team will reach out.</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">A Few More Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-3">
-                    <Label>What was the purpose of your trip?</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {tripTypes.map((type) => (
-                        <Button key={type.value} type="button" variant={tripType === type.value ? "default" : "outline"} size="sm" onClick={() => setTripType(type.value)} className="rounded-full">
-                          {type.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 pt-2">
-                    <input type="checkbox" id="consent" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 size-4 rounded border-input" />
-                    <Label htmlFor="consent" className="text-sm font-normal leading-relaxed cursor-pointer">
-                      May we use your feedback as a testimonial on our website?
-                    </Label>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting || overallRating === 0}>
-                {isSubmitting ? (
-                  <>
-                    <span className="animate-spin mr-2">⏳</span>
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send className="size-4 mr-2" />
-                    Submit Feedback
-                  </>
-                )}
-              </Button>
-              {submitError ? <p className="text-sm text-destructive text-center">{submitError}</p> : null}
-            </>
-          )}
-        </form>
-      ) : null}
-
-      {mode === "support" ? (
-        <form onSubmit={handleSupportSubmit} className="max-w-2xl mx-auto p-4 space-y-6">
-          <Button type="button" variant="ghost" className="-ml-2" onClick={goHome}>
-            <ArrowLeft className="size-4 mr-2" />Back
-          </Button>
-
-          <Card>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground pt-2">
-                Your request will be sent to Guest Relations. Please add a detailed description and an image.
-              </p>
-
-              <div className="space-y-3">
-                <Label>Request Type</Label>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <Button type="button" variant={supportCategory === "support" ? "default" : "outline"} onClick={() => setSupportCategory("support")}>Support Request</Button>
-                  <Button type="button" variant={supportCategory === "complaint" ? "destructive" : "outline"} onClick={() => setSupportCategory("complaint")}>Complaint</Button>
-                </div>
+                ))}
               </div>
+            </section>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="support-name">Full Name</Label>
-                  <Input
-                    id="support-name"
-                    placeholder="Your full name"
-                    value={supportName}
-                    onChange={(e) => setSupportName(e.target.value)}
-                    readOnly={supportGuestLocked}
-                    disabled={supportGuestLocked || supportGuestLoading}
-                  />
-                </div>
-              </div>
+            {/* 03 — recommend */}
+            <section className="flex flex-col gap-4">
+              <SectionHeader step="02" title="Would you recommend us?" hint="Optional" />
+              <RecommendScale value={npsScore} onChange={setNpsScore} />
+            </section>
 
+            {/* 04 — words */}
+            <section className="flex flex-col gap-4">
+              <SectionHeader step="03" title="In your words" />
               <div className="space-y-2">
-                <Label htmlFor="support-room">Room Number</Label>
-                <Input
-                  id="support-room"
-                  placeholder="304"
-                  value={supportRoom}
-                  onChange={(e) => setSupportRoom(e.target.value)}
-                  readOnly={supportGuestLocked}
-                  disabled={supportGuestLocked || supportGuestLoading}
+                <Label htmlFor="positive" className="text-sm text-muted-foreground">What did you enjoy most?</Label>
+                <Textarea
+                  id="positive"
+                  placeholder="The view, the breakfast, someone on the team..."
+                  value={positive}
+                  onChange={(e) => setPositive(e.target.value)}
+                  rows={3}
                 />
               </div>
-
-              <div className="space-y-3">
-                <Label htmlFor="support-issue-category">Issue Category</Label>
-                <Select value={supportIssueCategory} onValueChange={setSupportIssueCategory}>
-                  <SelectTrigger id="support-issue-category">
-                    <SelectValue placeholder="Select an issue category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {supportIssueCategories.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div className="space-y-2">
-                <Label htmlFor="support-subject">Subject</Label>
-                <Input id="support-subject" placeholder="e.g. Air conditioning is not working" value={supportSubject} onChange={(e) => setSupportSubject(e.target.value)} minLength={3} required />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="support-message">Description</Label>
-                <Textarea id="support-message" placeholder="Please describe the problem or support request in detail..." rows={5} value={supportMessage} onChange={(e) => setSupportMessage(e.target.value)} minLength={10} required />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="support-image">Image (required)</Label>
-                <Input id="support-image" type="file" accept="image/*" onChange={handleSupportImageChange} required />
-                <p className="text-xs text-muted-foreground">PNG/JPG/WebP format, maximum 5 MB.</p>
-                {supportImagePreview ? (
-                  <div className="rounded-lg border p-2 bg-muted/20">
-                    <img src={supportImagePreview} alt="Uploaded image preview" className="w-full max-h-64 object-contain rounded" />
-                  </div>
-                ) : (
-                  <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground flex items-center gap-2">
-                    <ImagePlus className="size-4" />No image selected yet.
-                  </div>
+                <Label
+                  htmlFor="negative"
+                  className={cn("text-sm", showImprovementEmphasis ? "font-medium text-destructive" : "text-muted-foreground")}
+                >
+                  {showImprovementEmphasis ? "We're sorry — what went wrong?" : "What could we do better?"}
+                </Label>
+                <Textarea
+                  id="negative"
+                  placeholder={showImprovementEmphasis ? "Please tell us what happened, we read every word." : "Anything we should improve..."}
+                  value={negative}
+                  onChange={(e) => setNegative(e.target.value)}
+                  rows={showImprovementEmphasis ? 4 : 3}
+                  className={cn(showImprovementEmphasis && "border-destructive/40 focus-visible:ring-destructive/30")}
+                />
+                {showImprovementEmphasis && (
+                  <p className="text-xs text-muted-foreground">
+                    Leave your email below and our team will personally follow up.
+                  </p>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </section>
 
-          <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <span className="animate-spin mr-2">⏳</span>
-                Submitting...
-              </>
+            {/* 05 — about you */}
+            <section className="flex flex-col gap-4">
+              <SectionHeader step="04" title="About you" hint="Optional" />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Input placeholder="Name" aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input type="email" placeholder="Email" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input type="number" placeholder="Room number" aria-label="Room number" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className={cn("justify-start text-left font-normal", !dateRange && "text-muted-foreground")}
+                    >
+                      <CalendarIcon className="mr-2 size-4" />
+                      {dateRange?.from
+                        ? dateRange.to
+                          ? <>{format(dateRange.from, "LLL dd")} – {format(dateRange.to, "LLL dd, y")}</>
+                          : format(dateRange.from, "LLL dd, y")
+                        : <span>Dates of stay</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar mode="range" defaultMonth={dateRange?.from} selected={dateRange} onSelect={setDateRange} numberOfMonths={1} />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {tripTypes.map((type) => (
+                  <Chip
+                    key={type.value}
+                    selected={tripType === type.value}
+                    onClick={() => setTripType(tripType === type.value ? "" : type.value)}
+                  >
+                    {type.label}
+                  </Chip>
+                ))}
+              </div>
+
+              <label htmlFor="consent" className="flex cursor-pointer items-start gap-3 pt-1 text-sm text-muted-foreground">
+                <input
+                  type="checkbox"
+                  id="consent"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 size-4 rounded border-input"
+                />
+                <span>May we use your feedback as a testimonial on our website?</span>
+              </label>
+            </section>
+
+            <SubmitBar
+              isSubmitting={isSubmitting}
+              error={submitError}
+              label="Send feedback"
+              summary={
+                <span className="flex items-center gap-1.5">
+                  <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                  <span className="tabular-nums">{overallRating}/5</span>
+                  <span className="text-muted-foreground/60">·</span>
+                  {RATING_LABELS[overallRating - 1]}
+                </span>
+              }
+            />
+          </div>
+        )}
+      </form>
+    );
+  }
+
+  /* ---------- support flow ---------- */
+
+  return (
+    <form onSubmit={handleSupportSubmit} className="mx-auto w-full max-w-xl px-4 pb-6">
+      <FlowHeader title="Report an issue" onBack={goHome} />
+
+      <div className="flex flex-col gap-10 pt-6">
+        {/* 01 — what */}
+        <section className="flex flex-col gap-4">
+          <SectionHeader step="01" title="What's the issue?" />
+
+          <div className="grid grid-cols-2 gap-1 rounded-full border p-1">
+            <button
+              type="button"
+              onClick={() => setSupportCategory("support")}
+              aria-pressed={supportCategory === "support"}
+              className={cn(
+                "rounded-full py-2 text-sm font-medium transition-colors",
+                supportCategory === "support" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Support request
+            </button>
+            <button
+              type="button"
+              onClick={() => setSupportCategory("complaint")}
+              aria-pressed={supportCategory === "complaint"}
+              className={cn(
+                "rounded-full py-2 text-sm font-medium transition-colors",
+                supportCategory === "complaint" ? "bg-destructive text-white" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Complaint
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {supportIssueCategories.map((category) => (
+              <Chip
+                key={category.value}
+                selected={supportIssueCategory === category.value}
+                onClick={() => setSupportIssueCategory(category.value)}
+                tone={supportCategory === "complaint" ? "destructive" : "default"}
+              >
+                {category.label}
+              </Chip>
+            ))}
+          </div>
+        </section>
+
+        {/* 02 — details */}
+        <section className="flex flex-col gap-4">
+          <SectionHeader step="02" title="The details" />
+          <div className="space-y-2">
+            <Label htmlFor="support-subject" className="text-sm text-muted-foreground">Subject</Label>
+            <Input
+              id="support-subject"
+              placeholder="e.g. Air conditioning is not working"
+              value={supportSubject}
+              onChange={(e) => setSupportSubject(e.target.value)}
+              minLength={3}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="support-message" className="text-sm text-muted-foreground">Description</Label>
+            <Textarea
+              id="support-message"
+              placeholder="What happened, where, and since when..."
+              rows={5}
+              value={supportMessage}
+              onChange={(e) => setSupportMessage(e.target.value)}
+              minLength={10}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="support-image" className="text-sm text-muted-foreground">
+              Photo <span className="text-xs">(required — it helps us fix it faster)</span>
+            </Label>
+            {supportImagePreview ? (
+              <div className="overflow-hidden rounded-xl border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={supportImagePreview} alt="Uploaded image preview" className="max-h-64 w-full object-contain bg-muted/30" />
+                <div className="flex items-center justify-between border-t px-3 py-2">
+                  <span className="truncate text-xs text-muted-foreground">{supportImageFile?.name}</span>
+                  <label
+                    htmlFor="support-image"
+                    className="cursor-pointer text-xs font-medium underline underline-offset-2 hover:text-primary"
+                  >
+                    Change photo
+                  </label>
+                </div>
+              </div>
             ) : (
-              <>
-                <Send className="size-4 mr-2" />Submit Request
-              </>
+              <label
+                htmlFor="support-image"
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-8 text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+              >
+                <ImagePlus className="size-6" />
+                <span className="text-sm font-medium">Add a photo</span>
+                <span className="text-xs">PNG, JPG or WebP — max 5 MB</span>
+              </label>
             )}
-          </Button>
-          {submitError ? <p className="text-sm text-destructive text-center">{submitError}</p> : null}
-        </form>
-      ) : null}
-    </div>
+            <input
+              id="support-image"
+              type="file"
+              accept="image/*"
+              onChange={handleSupportImageChange}
+              className="sr-only"
+            />
+          </div>
+        </section>
+
+        {/* 03 — who */}
+        <section className="flex flex-col gap-4">
+          <SectionHeader step="03" title="Your room" />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="support-name" className="text-sm text-muted-foreground">Full name</Label>
+              <Input
+                id="support-name"
+                placeholder="Your full name"
+                value={supportName}
+                onChange={(e) => setSupportName(e.target.value)}
+                readOnly={supportGuestLocked}
+                disabled={supportGuestLocked || supportGuestLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="support-room" className="text-sm text-muted-foreground">Room number</Label>
+              <Input
+                id="support-room"
+                placeholder="304"
+                value={supportRoom}
+                onChange={(e) => setSupportRoom(e.target.value)}
+                readOnly={supportGuestLocked}
+                disabled={supportGuestLocked || supportGuestLoading}
+              />
+            </div>
+          </div>
+          {supportGuestLocked && (
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Lock className="size-3" />
+              Filled automatically from your sign-in.
+            </p>
+          )}
+        </section>
+
+        <SubmitBar
+          isSubmitting={isSubmitting}
+          error={submitError}
+          label="Send request"
+          summary={
+            <span>
+              {supportCategory === "complaint" ? "Complaint" : "Support"} ·{" "}
+              {supportIssueCategories.find((c) => c.value === supportIssueCategory)?.label}
+            </span>
+          }
+        />
+      </div>
+    </form>
   );
 }
