@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { wellnessServices } from '@/lib/db/schema'
 import { eq, asc } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/auth'
 
 export type WellnessServiceInput = {
   id: string
@@ -23,16 +24,19 @@ export async function getWellnessServices() {
 }
 
 export async function createWellnessService(data: WellnessServiceInput) {
+  await requireAdmin('/dashboard/content/wellness')
   await db.insert(wellnessServices).values(data)
   revalidatePath('/wellness')
 }
 
 export async function updateWellnessService(id: string, data: Omit<WellnessServiceInput, 'id'>) {
+  await requireAdmin('/dashboard/content/wellness')
   await db.update(wellnessServices).set(data).where(eq(wellnessServices.id, id))
   revalidatePath('/wellness')
 }
 
 export async function deleteWellnessService(id: string) {
+  await requireAdmin('/dashboard/content/wellness')
   await db.delete(wellnessServices).where(eq(wellnessServices.id, id))
   revalidatePath('/wellness')
 }

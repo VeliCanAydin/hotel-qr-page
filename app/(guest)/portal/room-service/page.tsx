@@ -14,7 +14,7 @@ export default async function GuestRoomServicePage() {
   const guest = await verifyGuestToken(token)
   if (!guest) redirect('/login')
 
-  const orders = await getGuestRoomServiceOrders(guest.reservationCode)
+  const orders = await getGuestRoomServiceOrders()
 
   if (orders.length === 0) {
     return (

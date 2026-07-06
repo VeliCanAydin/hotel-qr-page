@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { beachPoolsInfo } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/auth'
 
 export type BeachPoolsInfoData = {
   beachDescription: string
@@ -52,6 +53,8 @@ export async function getBeachPoolsInfo(): Promise<BeachPoolsInfoData> {
 }
 
 export async function updateBeachPoolsInfo(data: BeachPoolsInfoData) {
+  await requireAdmin('/dashboard/content/beach-pools')
+
   const toSave = {
     ...data,
     beachOpenTime: normalizeTimeValue(data.beachOpenTime),

@@ -15,18 +15,18 @@ export const ADMIN_PAGE_PERMISSIONS: AdminPagePermission[] = [
     description: 'Home metrics, quick links and operational overview.',
   },
   {
-    href: '/dashboard/content/hotel-info',
-    key: 'hotel-info',
-    label: 'Hotel Info',
-    section: 'Content',
-    description: 'Phone, Wi-Fi and policy content for guests.',
-  },
-  {
     href: '/dashboard/content',
     key: 'content-overview',
     label: 'Content Overview',
     section: 'Content',
     description: 'Central hub for managing all guest-facing content.',
+  },
+  {
+    href: '/dashboard/content/hotel-info',
+    key: 'hotel-info',
+    label: 'Hotel Info',
+    section: 'Content',
+    description: 'Phone, Wi-Fi and policy content for guests.',
   },
   {
     href: '/dashboard/content/kids-care',
@@ -106,6 +106,13 @@ export const ADMIN_PAGE_PERMISSIONS: AdminPagePermission[] = [
     description: 'Daily guest ratings, review notes and follow-up tracking.',
   },
   {
+    href: '/dashboard/guests/support-requests',
+    key: 'support-requests',
+    label: 'Support Requests',
+    section: 'Operations',
+    description: 'Guest support requests and complaint follow-up.',
+  },
+  {
     href: '/dashboard/settings/access-control',
     key: 'access-control',
     label: 'Access Control',
@@ -119,13 +126,6 @@ export type AdminRolePreset = {
   description: string
   allowedPageKeys: string[]
   isSystem: boolean
-}
-
-export type TempAdminUser = {
-  email: string
-  password: string
-  roleName: string
-  displayName: string
 }
 
 export const DEFAULT_ADMIN_ROLE_PRESETS: AdminRolePreset[] = [
@@ -169,35 +169,11 @@ export const DEFAULT_ADMIN_ROLE_PRESETS: AdminRolePreset[] = [
       '/dashboard/events/list',
       '/dashboard/guests/list',
       '/dashboard/guests/feedback',
+      '/dashboard/guests/support-requests',
     ],
     isSystem: true,
   },
 ]
-
-export const TEMP_ADMIN_USERS: TempAdminUser[] = [
-  {
-    email: 'admin@dosinia.com',
-    password: 'admin123',
-    roleName: 'Super Admin',
-    displayName: 'Super Admin',
-  },
-  {
-    email: 'content.manager@dosinia.com',
-    password: 'content123!',
-    roleName: 'Content Manager',
-    displayName: 'Content Manager',
-  },
-  {
-    email: 'service.manager@dosinia.com',
-    password: 'service123!',
-    roleName: 'Service Manager',
-    displayName: 'Service Manager',
-  },
-]
-
-export function getTempAdminUserByEmail(email: string) {
-  return TEMP_ADMIN_USERS.find((user) => user.email.toLowerCase() === email.toLowerCase())
-}
 
 export function getAdminPageByHref(pathname: string) {
   return [...ADMIN_PAGE_PERMISSIONS]
@@ -216,5 +192,13 @@ export function isDashboardPathAllowed(pathname: string, roleName: string) {
     return false
   }
 
-  return rolePreset.allowedPageKeys.some((allowedHref) => pathname === allowedHref || pathname.startsWith(`${allowedHref}/`))
+  // Resolve the pathname to its owning page first, then require an exact
+  // grant. A plain prefix check would make the '/dashboard' entry every
+  // preset contains match *all* dashboard pages (fail open).
+  const page = getAdminPageByHref(pathname)
+  if (!page) {
+    return false
+  }
+
+  return rolePreset.allowedPageKeys.includes(page.href)
 }

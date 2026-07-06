@@ -1,7 +1,7 @@
 'use server'
 
 import { eq } from 'drizzle-orm'
-import { signToken, SESSION_COOKIE, verifyPassword, verifyTempAdminCredentials } from '@/lib/auth'
+import { signToken, SESSION_COOKIE, verifyPassword } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { adminRoles, adminUsers } from '@/lib/db/schema'
 import { cookies } from 'next/headers'
@@ -30,38 +30,19 @@ export async function login(prevState: LoginState, formData: FormData): Promise<
     .where(eq(adminUsers.email, email))
     .limit(1)
 
-  if (dbUser) {
-    const isDbUserValid = await verifyPassword(password, dbUser.passwordHash)
-    if (!isDbUserValid) {
-      return { error: 'Invalid email or password' }
-    }
-
-    const token = await signToken({
-      userId: dbUser.id,
-      email: dbUser.email,
-      roleName: dbUser.roleName ?? 'Unassigned',
-    })
-    const cookieStore = await cookies()
-    cookieStore.set(SESSION_COOKIE, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: '/',
-    })
-
-    return { error: '', redirectTo: '/dashboard' }
+  if (!dbUser) {
+    return { error: 'Invalid email or password' }
   }
 
-  const tempUser = await verifyTempAdminCredentials(email, password)
-  if (!tempUser) {
+  const isDbUserValid = await verifyPassword(password, dbUser.passwordHash)
+  if (!isDbUserValid) {
     return { error: 'Invalid email or password' }
   }
 
   const token = await signToken({
-    userId: 0,
-    email: tempUser.email,
-    roleName: tempUser.roleName,
+    userId: dbUser.id,
+    email: dbUser.email,
+    roleName: dbUser.roleName ?? 'Unassigned',
   })
   const cookieStore = await cookies()
   cookieStore.set(SESSION_COOKIE, token, {

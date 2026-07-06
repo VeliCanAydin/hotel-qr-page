@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
-import { isDashboardPathAllowed } from '@/lib/permissions'
+import { isPageAllowedForSession } from '@/lib/page-access'
 import { verifyToken, SESSION_COOKIE } from '@/lib/auth'
 import { updateGuestSupportRequest } from '@/lib/actions/support-requests'
 
@@ -24,7 +24,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (session.roleName !== 'Super Admin' && !isDashboardPathAllowed('/dashboard/guests/support-requests', session.roleName)) {
+  if (!(await isPageAllowedForSession(session, '/dashboard/guests/support-requests'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

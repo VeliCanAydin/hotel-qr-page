@@ -3,6 +3,7 @@
 import { db } from '@/lib/db'
 import { reservations } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
+import { requireAdmin } from '@/lib/auth'
 
 export type Reservation = {
   id: number
@@ -27,6 +28,7 @@ export type Reservation = {
 }
 
 export async function getReservations(): Promise<Reservation[]> {
+  await requireAdmin('/dashboard/guests/list')
   return db
     .select()
     .from(reservations)

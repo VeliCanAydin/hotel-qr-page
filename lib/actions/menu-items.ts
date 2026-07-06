@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { menuItems, menuCategories, menuItemImages } from '@/lib/db/schema'
 import { revalidatePath } from 'next/cache'
 import { eq } from 'drizzle-orm'
+import { requireAdmin } from '@/lib/auth'
 
 type MenuItemInput = {
   id: string
@@ -17,6 +18,7 @@ type MenuItemInput = {
 }
 
 export async function createMenuItem(item: MenuItemInput) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.insert(menuItems).values({
     ...item,
     isVegetarian: item.isVegetarian ?? false,
@@ -27,6 +29,7 @@ export async function createMenuItem(item: MenuItemInput) {
 }
 
 export async function updateMenuItem(id: string, data: Omit<MenuItemInput, 'id'>) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.update(menuItems).set({
     ...data,
     isVegetarian: data.isVegetarian ?? false,
@@ -37,17 +40,20 @@ export async function updateMenuItem(id: string, data: Omit<MenuItemInput, 'id'>
 }
 
 export async function deleteMenuItem(id: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuItems).where(eq(menuItems.id, id))
   await db.delete(menuItemImages).where(eq(menuItemImages.itemId, id))
   revalidatePath('/restaurants/a-la-carte')
 }
 
 export async function deleteMenuItemImage(itemId: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuItemImages).where(eq(menuItemImages.itemId, itemId))
   revalidatePath('/restaurants/a-la-carte')
 }
 
 export async function upsertMenuItemImage(itemId: string, proxyUrl: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db
     .insert(menuItemImages)
     .values({ itemId, proxyUrl })
@@ -60,6 +66,7 @@ export async function getMenuCategories() {
 }
 
 export async function createMenuCategory(id: string, label: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.insert(menuCategories).values({ id, label }).onConflictDoNothing()
   revalidatePath('/dashboard/services/restaurant')
 }

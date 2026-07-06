@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { menuTemplates, menuTemplateItems, menuItems, menuItemImages } from '@/lib/db/schema'
 import { eq, asc, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/auth'
 
 export type TemplateItemInput = {
   name: string
@@ -17,6 +18,7 @@ export type TemplateItemInput = {
 }
 
 export async function getMenuTemplates(restaurantId: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   const templates = await db
     .select()
     .from(menuTemplates)
@@ -37,6 +39,7 @@ export async function getMenuTemplates(restaurantId: string) {
 }
 
 export async function createMenuTemplate(restaurantId: string, name: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   const id = crypto.randomUUID()
   await db.insert(menuTemplates).values({ id, name, restaurantId })
   revalidatePath('/dashboard/services/restaurant')
@@ -44,6 +47,7 @@ export async function createMenuTemplate(restaurantId: string, name: string) {
 }
 
 export async function saveCurrentMenuAsTemplate(restaurantId: string, name: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   const templateId = crypto.randomUUID()
   await db.insert(menuTemplates).values({ id: templateId, name, restaurantId })
 
@@ -77,6 +81,7 @@ export async function saveCurrentMenuAsTemplate(restaurantId: string, name: stri
 }
 
 export async function loadMenuTemplate(templateId: string, restaurantId: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   const templateItemRows = await db
     .select()
     .from(menuTemplateItems)
@@ -121,11 +126,13 @@ export async function loadMenuTemplate(templateId: string, restaurantId: string)
 }
 
 export async function deleteMenuTemplate(id: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuTemplates).where(eq(menuTemplates.id, id))
   revalidatePath('/dashboard/services/restaurant')
 }
 
 export async function getTemplateItems(templateId: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   return db
     .select()
     .from(menuTemplateItems)
@@ -134,6 +141,7 @@ export async function getTemplateItems(templateId: string) {
 }
 
 export async function addTemplateItem(templateId: string, item: TemplateItemInput) {
+  await requireAdmin('/dashboard/services/restaurant')
   const id = crypto.randomUUID()
   const countRows = await db
     .select({ count: sql<number>`count(*)::int` })
@@ -158,6 +166,7 @@ export async function addTemplateItem(templateId: string, item: TemplateItemInpu
 }
 
 export async function updateTemplateItem(id: string, data: Partial<TemplateItemInput>) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.update(menuTemplateItems).set({
     ...data,
     allergens: JSON.stringify(data.allergens ?? []),
@@ -166,6 +175,7 @@ export async function updateTemplateItem(id: string, data: Partial<TemplateItemI
 }
 
 export async function removeTemplateItem(id: string) {
+  await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuTemplateItems).where(eq(menuTemplateItems.id, id))
   revalidatePath('/dashboard/services/restaurant')
 }

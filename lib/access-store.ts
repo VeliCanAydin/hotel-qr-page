@@ -3,7 +3,8 @@
 import { and, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { adminRolePages, adminRoles, adminUsers } from '@/lib/db/schema'
-import { DEFAULT_ADMIN_ROLE_PRESETS, TEMP_ADMIN_USERS, type AdminPagePermission } from '@/lib/permissions'
+import { requireAdmin } from '@/lib/auth'
+import { DEFAULT_ADMIN_ROLE_PRESETS, type AdminPagePermission } from '@/lib/permissions'
 import {
   ADMIN_PAGE_PERMISSIONS,
 } from '@/lib/permissions'
@@ -54,13 +55,7 @@ function buildFallbackSnapshot(message: string): AccessControlSnapshot {
 
   return {
     roles,
-    staff: TEMP_ADMIN_USERS.map((user, index) => ({
-      id: index + 1,
-      email: user.email,
-      roleId: index + 1,
-      roleName: user.roleName,
-      roleDescription: DEFAULT_ADMIN_ROLE_PRESETS.find((preset) => preset.name === user.roleName)?.description ?? '',
-    })),
+    staff: [],
     pages,
     isReadOnly: true,
     warning: message,
@@ -68,6 +63,10 @@ function buildFallbackSnapshot(message: string): AccessControlSnapshot {
 }
 
 export async function getAccessControlSnapshot(): Promise<AccessControlSnapshot> {
+  // Any authenticated staff member may read (the admin layout builds the
+  // sidebar from it); only Access Control page holders may mutate below.
+  await requireAdmin()
+
   try {
     const roles = await db.select().from(adminRoles)
     const rolePermissions = await db.select().from(adminRolePages)
@@ -80,14 +79,14 @@ export async function getAccessControlSnapshot(): Promise<AccessControlSnapshot>
     }
 
     const pages = ADMIN_PAGE_PERMISSIONS
-    const permissionsByRole = new Map<number, Set<string>>()
+    // Explicit DB rows win; pages a role has no row for fall back to the
+    // static preset — the same resolution order as isPageAllowedForSession.
+    const explicitByRole = new Map<number, Map<string, boolean>>()
     for (const row of rolePermissions) {
-      if (!permissionsByRole.has(row.roleId)) {
-        permissionsByRole.set(row.roleId, new Set())
+      if (!explicitByRole.has(row.roleId)) {
+        explicitByRole.set(row.roleId, new Map())
       }
-      if (row.isAllowed) {
-        permissionsByRole.get(row.roleId)!.add(row.pageKey)
-      }
+      explicitByRole.get(row.roleId)!.set(row.pageKey, row.isAllowed)
     }
 
     const staffCountByRole = new Map<number, number>()
@@ -99,9 +98,15 @@ export async function getAccessControlSnapshot(): Promise<AccessControlSnapshot>
 
     return {
       roles: roles.map((role) => {
-        const allowedPages = permissionsByRole.get(role.id) ?? new Set<string>()
+        const explicit = explicitByRole.get(role.id)
+        const preset = DEFAULT_ADMIN_ROLE_PRESETS.find((candidate) => candidate.name === role.name)
         const permissions = Object.fromEntries(
-          pages.map((page) => [page.href, allowedPages.has(page.href)])
+          pages.map((page) => {
+            const explicitAllowed = explicit?.get(page.href)
+            const fallbackAllowed =
+              role.name === 'Super Admin' || (preset?.allowedPageKeys.includes(page.href) ?? false)
+            return [page.href, explicitAllowed ?? fallbackAllowed]
+          })
         )
 
         return {
@@ -132,6 +137,8 @@ export async function getAccessControlSnapshot(): Promise<AccessControlSnapshot>
 }
 
 export async function updateRoleAccess(roleId: number, pageKey: string, isAllowed: boolean) {
+  await requireAdmin('/dashboard/settings/access-control')
+
   const [role] = await db.select().from(adminRoles).where(eq(adminRoles.id, roleId)).limit(1)
   if (!role) {
     throw new Error('Role not found')
@@ -159,6 +166,11 @@ export async function updateRoleAccess(roleId: number, pageKey: string, isAllowe
 }
 
 export async function updateStaffRole(userId: number, roleId: number | null) {
+  const session = await requireAdmin('/dashboard/settings/access-control')
+  if (session.userId === userId) {
+    throw new Error('You cannot change your own role')
+  }
+
   const [user] = await db.select().from(adminUsers).where(eq(adminUsers.id, userId)).limit(1)
   if (!user) {
     throw new Error('User not found')

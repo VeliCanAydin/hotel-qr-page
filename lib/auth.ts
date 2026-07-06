@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
-import { getTempAdminUserByEmail } from '@/lib/permissions'
+import { cookies } from 'next/headers'
+import { isPageAllowedForSession } from '@/lib/page-access'
 
 const getSecret = () => new TextEncoder().encode(process.env.JWT_SECRET!)
 
@@ -36,6 +37,27 @@ export async function verifyToken(token: string): Promise<{ userId: number; emai
 
 export const SESSION_COOKIE = 'admin-session'
 
+export type AdminSession = { userId: number; email: string; roleName: string }
+
+// Guards server actions and API routes. Every admin mutation must call this —
+// proxy.ts only protects page navigation, not action/route invocations.
+// Pass the owning dashboard page href to also enforce role page permissions.
+export async function requireAdmin(pageHref?: string): Promise<AdminSession> {
+  const cookieStore = await cookies()
+  const token = cookieStore.get(SESSION_COOKIE)?.value
+  const session = token ? await verifyToken(token) : null
+
+  if (!session || !session.userId) {
+    throw new Error('Unauthorized: admin session required')
+  }
+
+  if (pageHref && !(await isPageAllowedForSession(session, pageHref))) {
+    throw new Error('Forbidden: your role has no access to this page')
+  }
+
+  return session
+}
+
 // --- Guest auth ---
 
 export const GUEST_SESSION_COOKIE = 'guest-session'
@@ -69,13 +91,4 @@ export async function verifyGuestToken(token: string): Promise<GuestTokenPayload
   } catch {
     return null
   }
-}
-
-export async function verifyTempAdminCredentials(email: string, password: string) {
-  const tempUser = getTempAdminUserByEmail(email)
-  if (!tempUser || tempUser.password !== password) {
-    return null
-  }
-
-  return tempUser
 }

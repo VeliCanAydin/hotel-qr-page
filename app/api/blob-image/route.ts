@@ -4,7 +4,18 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const blobUrl = searchParams.get('url')
 
-  if (!blobUrl || !blobUrl.includes('blob.vercel-storage.com')) {
+  // Strict host validation: the read-write token is attached to the upstream
+  // request, so this must never fetch anything but our own blob store.
+  let parsed: URL
+  try {
+    parsed = new URL(blobUrl ?? '')
+  } catch {
+    return new NextResponse('Invalid url', { status: 400 })
+  }
+  const isBlobHost =
+    parsed.hostname === 'blob.vercel-storage.com' ||
+    parsed.hostname.endsWith('.blob.vercel-storage.com')
+  if (parsed.protocol !== 'https:' || !isBlobHost) {
     return new NextResponse('Invalid url', { status: 400 })
   }
 
@@ -13,7 +24,7 @@ export async function GET(request: Request) {
     return new NextResponse('Storage not configured', { status: 500 })
   }
 
-  const upstream = await fetch(blobUrl, {
+  const upstream = await fetch(parsed, {
     headers: { Authorization: `Bearer ${token}` },
   })
 

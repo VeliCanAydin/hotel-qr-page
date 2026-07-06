@@ -399,6 +399,13 @@ async function seed() {
   console.log(`Inserted ${nearbyGuideData.length} nearby guide items`)
 
   // Admin user (upsert — don't wipe on re-seed)
+  // Override the dev defaults with SEED_ADMIN_PASSWORD / SEED_STAFF_PASSWORD
+  // before seeding any environment that is reachable from the internet.
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? 'admin123'
+  const staffPassword = process.env.SEED_STAFF_PASSWORD
+  if (!process.env.SEED_ADMIN_PASSWORD) {
+    console.warn('WARNING: using default dev password for admin@dosinia.com — set SEED_ADMIN_PASSWORD for real deployments')
+  }
   const superAdmin = roleByName.get('Super Admin')
   const contentManager = roleByName.get('Content Manager')
   const serviceManager = roleByName.get('Service Manager')
@@ -407,9 +414,9 @@ async function seed() {
     await db.insert(adminUsers).values({
       roleId: superAdmin?.id ?? null,
       email: 'admin@dosinia.com',
-      passwordHash: await hashPassword('admin123'),
+      passwordHash: await hashPassword(adminPassword),
     })
-    console.log('Created default admin user: admin@dosinia.com / admin123')
+    console.log('Created default admin user: admin@dosinia.com')
   } else {
     if (superAdmin) {
       await db.update(adminUsers).set({ roleId: superAdmin.id }).where(eq(adminUsers.email, 'admin@dosinia.com'))
@@ -420,13 +427,13 @@ async function seed() {
   const testStaffUsers = [
     {
       email: 'content.manager@dosinia.com',
-      password: 'content123!',
+      password: staffPassword ?? 'content123!',
       roleId: contentManager?.id ?? null,
       label: 'Content Manager',
     },
     {
       email: 'service.manager@dosinia.com',
-      password: 'service123!',
+      password: staffPassword ?? 'service123!',
       roleId: serviceManager?.id ?? null,
       label: 'Service Manager',
     },
@@ -447,7 +454,7 @@ async function seed() {
       passwordHash: await hashPassword(staffUser.password),
       roleId: staffUser.roleId,
     })
-    console.log(`Created ${staffUser.label} test account: ${staffUser.email} / ${staffUser.password}`)
+    console.log(`Created ${staffUser.label} test account: ${staffUser.email}`)
   }
 
   console.log('Done!')

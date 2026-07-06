@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import ExcelJS from 'exceljs'
 
 import { verifyToken, SESSION_COOKIE } from '@/lib/auth'
-import { isDashboardPathAllowed } from '@/lib/permissions'
+import { isPageAllowedForSession } from '@/lib/page-access'
 import { getGuestFeedbacks } from '@/lib/actions/feedback'
 
 export async function GET(request: Request) {
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (session.roleName !== 'Super Admin' && !isDashboardPathAllowed('/dashboard/guests/feedback', session.roleName)) {
+  if (!(await isPageAllowedForSession(session, '/dashboard/guests/feedback'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

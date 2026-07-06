@@ -3,6 +3,7 @@
 import { desc, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { guestSupportRequests } from '@/lib/db/schema'
+import { requireAdmin } from '@/lib/auth'
 
 export type GuestSupportRequest = typeof guestSupportRequests.$inferSelect
 
@@ -33,6 +34,7 @@ export async function createGuestSupportRequest(input: GuestSupportRequestInput)
 }
 
 export async function getGuestSupportRequests(): Promise<GuestSupportRequest[]> {
+  await requireAdmin('/dashboard/guests/support-requests')
   try {
     return await db.select().from(guestSupportRequests).orderBy(desc(guestSupportRequests.createdAt))
   } catch (err) {
@@ -55,6 +57,7 @@ export async function updateGuestSupportRequest(
   requestId: number,
   input: GuestSupportRequestUpdateInput
 ): Promise<GuestSupportRequest | null> {
+  await requireAdmin('/dashboard/guests/support-requests')
   const [updated] = await db
     .update(guestSupportRequests)
     .set({

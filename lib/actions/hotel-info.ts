@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { hotelInfo } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/auth'
 
 export type HotelInfoData = {
   phone: string
@@ -37,6 +38,7 @@ export async function getHotelInfo(): Promise<HotelInfoData> {
 }
 
 export async function updateHotelInfo(data: HotelInfoData) {
+  await requireAdmin('/dashboard/content/hotel-info')
   await db
     .insert(hotelInfo)
     .values({ id: 1, ...data })

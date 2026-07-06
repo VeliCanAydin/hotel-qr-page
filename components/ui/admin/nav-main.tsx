@@ -36,7 +36,6 @@ export function NavMain({
     items?: {
       title: string
       url: string
-      disabled?: boolean
     }[]
   }[]
 }) {
@@ -48,9 +47,7 @@ export function NavMain({
       const next = { ...prev }
 
       for (const item of items) {
-        const groupIsActive =
-          isPathActive(pathname, item.url) ||
-          item.items?.some((subItem) => !subItem.disabled && isPathActive(pathname, subItem.url))
+        const groupIsActive = item.items?.some((subItem) => isPathActive(pathname, subItem.url))
 
         if (groupIsActive) {
           next[item.title] = true
@@ -66,9 +63,21 @@ export function NavMain({
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          const groupIsActive =
-            isPathActive(pathname, item.url) ||
-            item.items?.some((subItem) => !subItem.disabled && isPathActive(pathname, subItem.url))
+          // Entries without sub-items render as a plain link (e.g. Dashboard).
+          if (!item.items?.length) {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild tooltip={item.title} isActive={pathname === item.url}>
+                  <Link href={item.url}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          }
+
+          const groupIsActive = item.items.some((subItem) => isPathActive(pathname, subItem.url))
 
           return (
             <Collapsible
@@ -93,30 +102,15 @@ export function NavMain({
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    {item.items?.map((subItem) => {
-                      const subItemIsActive = !subItem.disabled && isPathActive(pathname, subItem.url)
-
-                      return (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          {subItem.disabled ? (
-                            <SidebarMenuSubButton
-                              aria-disabled="true"
-                              tabIndex={-1}
-                              className="cursor-not-allowed opacity-50"
-                            >
-                              <span>{subItem.title}</span>
-                              <span className="ml-auto text-[10px] uppercase tracking-wide">Soon</span>
-                            </SidebarMenuSubButton>
-                          ) : (
-                            <SidebarMenuSubButton asChild isActive={subItemIsActive}>
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          )}
-                        </SidebarMenuSubItem>
-                      )
-                    })}
+                    {item.items.map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild isActive={isPathActive(pathname, subItem.url)}>
+                          <Link href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>

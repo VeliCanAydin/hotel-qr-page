@@ -2,8 +2,15 @@ import { put } from '@vercel/blob'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { menuItemImages } from '@/lib/db/schema'
+import { requireAdmin } from '@/lib/auth'
 
 export async function POST(request: Request) {
+  try {
+    await requireAdmin('/dashboard/services/restaurant')
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null

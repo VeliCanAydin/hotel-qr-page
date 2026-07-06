@@ -1,10 +1,10 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { roomServiceOrders } from '@/lib/db/schema'
-import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
+import { roomServiceOrders, roomServiceItems } from '@/lib/db/schema'
+import { verifyGuestToken, requireAdmin, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { cookies } from 'next/headers'
-import { desc, eq } from 'drizzle-orm'
+import { desc, eq, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
 export type OrderItem = {
@@ -16,7 +16,7 @@ export type OrderItem = {
 
 export type CreateOrderResult =
   | { orderId: number }
-  | { error: string; redirectTo: string }
+  | { error: string; redirectTo?: string }
 
 export async function createRoomServiceOrder(
   items: OrderItem[],
@@ -34,7 +34,33 @@ export async function createRoomServiceOrder(
     return { error: 'Session expired', redirectTo: '/login?redirect=/room-service/cart' }
   }
 
-  const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  if (!items.length) {
+    return { error: 'Your cart is empty.' }
+  }
+
+  // Never trust client-side prices — rebuild every line from the catalog.
+  const catalogRows = await db
+    .select()
+    .from(roomServiceItems)
+    .where(inArray(roomServiceItems.id, items.map((item) => item.id)))
+  const catalog = new Map(catalogRows.map((row) => [row.id, row]))
+
+  const safeItems: OrderItem[] = []
+  for (const item of items) {
+    const catalogItem = catalog.get(item.id)
+    if (!catalogItem) {
+      return { error: 'Some items in your cart are no longer available. Please refresh and try again.' }
+    }
+    const quantity = Math.min(Math.max(Math.trunc(item.quantity), 1), 99)
+    safeItems.push({
+      id: catalogItem.id,
+      name: catalogItem.name,
+      price: catalogItem.price,
+      quantity,
+    })
+  }
+
+  const totalAmount = safeItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   const [order] = await db
     .insert(roomServiceOrders)
@@ -42,7 +68,7 @@ export async function createRoomServiceOrder(
       reservationCode: guest.reservationCode,
       roomNumber: guest.roomNumber,
       guestSurname: guest.surname,
-      items: JSON.stringify(items),
+      items: JSON.stringify(safeItems),
       totalAmount,
       note,
       status: 'pending',
@@ -68,6 +94,7 @@ export type RoomServiceOrder = {
 }
 
 export async function getRoomServiceOrders(): Promise<RoomServiceOrder[]> {
+  await requireAdmin('/dashboard/orders/room-service-orders')
   return db
     .select()
     .from(roomServiceOrders)
@@ -82,6 +109,7 @@ export async function updateOrderStatus(
   cancellationReason?: string,
   cancelledBy: 'guest' | 'staff' = 'staff'
 ): Promise<void> {
+  await requireAdmin('/dashboard/orders/room-service-orders')
   await db
     .update(roomServiceOrders)
     .set({
@@ -130,12 +158,17 @@ export async function cancelGuestOrder(
   return { success: true }
 }
 
-export async function getGuestRoomServiceOrders(
-  reservationCode: string
-): Promise<RoomServiceOrder[]> {
+export async function getGuestRoomServiceOrders(): Promise<RoomServiceOrder[]> {
+  // Reservation code comes from the verified session, never from the caller —
+  // otherwise any guest could read another room's orders.
+  const cookieStore = await cookies()
+  const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
+  const guest = token ? await verifyGuestToken(token) : null
+  if (!guest) return []
+
   return db
     .select()
     .from(roomServiceOrders)
-    .where(eq(roomServiceOrders.reservationCode, reservationCode))
+    .where(eq(roomServiceOrders.reservationCode, guest.reservationCode))
     .orderBy(desc(roomServiceOrders.createdAt))
 }

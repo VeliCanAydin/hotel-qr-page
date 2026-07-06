@@ -2,29 +2,16 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
+  LayoutDashboard,
   Settings2,
   SquareTerminal,
   ShoppingCart,
-  TreePalm,
-  Utensils,
-  Users,
-  Hotel,
-  Flower,
-  CalendarDays,
-  Camera,
   HandPlatter,
+  Hotel,
+  type LucideIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/ui/admin/nav-main"
-import { NavProjects } from "@/components/ui/admin/nav-projects"
 import { NavUser } from "@/components/ui/admin/nav-user"
 import { TeamSwitcher } from "@/components/ui/admin/team-switcher"
 import {
@@ -34,274 +21,79 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { getRolePreset } from "@/lib/permissions"
+import { ADMIN_PAGE_PERMISSIONS, getRolePreset } from "@/lib/permissions"
 
-const EXISTING_ADMIN_ROUTES = new Set([
-  "/dashboard",
-  "/dashboard/content",
-  "/dashboard/content/hotel-info",
-  "/dashboard/content/kids-care",
-  "/dashboard/content/nearby-guide",
-  "/dashboard/content/beach-pools",
-  "/dashboard/content/spa",
-  "/dashboard/content/wellness",
-  "/dashboard/services/restaurant",
-  "/dashboard/services/room-service",
-  "/dashboard/orders/room-service-orders",
-  "/dashboard/events/list",
-  "/dashboard/guests/list",
-  "/dashboard/guests/feedback",
-  "/dashboard/guests/support-requests",
-  "/dashboard/settings/access-control",
-])
+// The menu is generated from ADMIN_PAGE_PERMISSIONS so the sidebar, the
+// Access Control UI and proxy.ts share one page list and can never drift.
+const SECTION_GROUPS: { section: string; title: string; url: string; icon: LucideIcon }[] = [
+  { section: "Content", title: "Content Management", url: "/dashboard/content", icon: SquareTerminal },
+  { section: "Services", title: "Services", url: "/dashboard/services", icon: HandPlatter },
+  { section: "Operations", title: "Operations", url: "/dashboard/orders", icon: ShoppingCart },
+  { section: "Administration", title: "Settings", url: "/dashboard/settings", icon: Settings2 },
+]
 
-// This is sample data.
-const data = {
-  user: {
-    name: "Admin User",
-    email: "admin@dosinia.com",
+const teams = [
+  {
+    name: "Dosinia Luxury Resort",
+    logo: Hotel,
+    plan: "Main Location",
   },
+]
 
-  // If you manage multiple hotel locations or departments
-  teams: [
-    {
-      name: "Dosinia Luxury Resort",
-      logo: Hotel, // from lucide-react
-      plan: "Main Location",
-    },
-    // {
-    //   name: "Grand Ring Hotel",
-    //   logo: Hotel,
-    //   plan: "Department",
-    // },
-    // {
-    //   name: "Just Inn City Hotel",
-    //   logo: Hotel,
-    //   plan: "Department",
-    // },
-  ],
+function buildNavMain(allowed: (href: string) => boolean) {
+  const dashboard = allowed("/dashboard")
+    ? [{ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard }]
+    : []
 
-  // Main navigation groups
-  navMain: [
-    {
-      title: "Content Management",
-      url: "/dashboard/content",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Overview",
-          url: "/dashboard/content",
-        },
-        {
-          title: "Hotel Info",
-          url: "/dashboard/content/hotel-info",
-        },
-        {
-          title: "Kids Care",
-          url: "/dashboard/content/kids-care",
-        },
-        {
-          title: "Beach & Pools",
-          url: "/dashboard/content/beach-pools",
-        },
-        {
-          title: "Spa",
-          url: "/dashboard/content/spa",
-        },
-        {
-          title: "Wellness",
-          url: "/dashboard/content/wellness",
-        },
-        {
-          title: "Nearby Guide",
-          url: "/dashboard/content/nearby-guide",
-        }
-      ],
-    },
-    {
-      title: "Services",
-      url: "/dashboard/services",
-      icon: HandPlatter,
-      items: [
-        {
-          title: "Restaurant",
-          url: "/dashboard/services/restaurant",
-        },
-        {
-          title: "Room Service",
-          url: "/dashboard/services/room-service",
-        }
-      ],
-    },
-    {
-      title: "Orders & Requests",
-      url: "/dashboard/orders",
-      icon: ShoppingCart,
-      items: [
-        {
-          title: "Room Service Orders",
-          url: "/dashboard/orders/room-service-orders",
-        },
-        {
-          title: "Spa Bookings",
-          url: "/dashboard/orders/spa-bookings",
-        },
-        {
-          title: "Event Registrations",
-          url: "/dashboard/orders/events",
-        },
-        {
-          title: "Special Requests",
-          url: "/dashboard/orders/requests",
-        },
-      ],
-    },
-    {
-      title: "AI Assistant",
-      url: "/dashboard/ai",
-      icon: Bot,
-      items: [
-        {
-          title: "Chat Logs",
-          url: "/dashboard/ai/chat-logs",
-        },
-        {
-          title: "Training Data",
-          url: "/dashboard/ai/training",
-        },
-        {
-          title: "AI Settings",
-          url: "/dashboard/ai/settings",
-        },
-      ],
-    },
-    {
-      title: "Guest Management",
-      url: "/dashboard/guests",
-      icon: Users,
-      items: [
-        {
-          title: "Guest List",
-          url: "/dashboard/guests/list",
-        },
-        {
-          title: "Feedback & Support",
-          url: "/dashboard/guests/feedback",
-        },
-        {
-          title: "Support / Complaints",
-          url: "/dashboard/guests/support-requests",
-        },
-        {
-          title: "Room Assignments",
-          url: "/dashboard/guests/rooms",
-        },
-        {
-          title: "Check-in/Check-out",
-          url: "/dashboard/guests/checkin",
-        },
-      ],
-    },
-    {
-      title: "Events Calendar",
-      url: "/dashboard/events",
-      icon: CalendarDays,
-      items: [
-        {
-          title: "List Events",
-          url: "/dashboard/events/list",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "/dashboard/settings",
-      icon: Settings2,
-      items: [
-        {
-          title: "Access Control",
-          url: "/dashboard/settings/access-control",
-        },
-        {
-          title: "Notifications",
-          url: "/dashboard/settings/notifications",
-        },
-        {
-          title: "Integrations",
-          url: "/dashboard/settings/integrations",
-        },
-      ],
-    },
-  ],
+  const groups = SECTION_GROUPS.map((group) => ({
+    title: group.title,
+    url: group.url,
+    icon: group.icon,
+    items: ADMIN_PAGE_PERMISSIONS
+      .filter((page) => page.section === group.section && allowed(page.href))
+      .map((page) => ({ title: page.label, url: page.href })),
+  })).filter((group) => group.items.length > 0)
 
-  // Quick access projects/sections
-  projects: [
-    {
-      name: "Restaurant Menus",
-      url: "/dashboard/content/restaurants",
-      icon: Utensils,
-    },
-  ],
+  return [...dashboard, ...groups]
 }
 
-function buildVisibleNavMain(roleName: string) {
-  const rolePreset = getRolePreset(roleName)
-  const allowedRoutes = new Set(rolePreset?.allowedPageKeys ?? [])
-
-  return data.navMain
-    .map((group) => ({
-      ...group,
-      items: group.items
-        ?.filter((item) => allowedRoutes.has(item.url))
-        .map((item) => ({
-          ...item,
-          disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
-        })),
-    }))
-    .filter((group) => (group.items?.length ?? 0) > 0)
-}
-
-export function AppSidebar({ roleName, allowedPageKeys, user, ...props }: React.ComponentProps<typeof Sidebar> & { roleName: string, allowedPageKeys?: string[] | undefined, user?: { name?: string; email?: string } }) {
+export function AppSidebar({
+  roleName,
+  allowedPageKeys,
+  user,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  roleName: string
+  allowedPageKeys?: string[] | undefined
+  user?: { name?: string; email?: string }
+}) {
   const navMain = React.useMemo(() => {
-    // If allowedPageKeys are passed (DB snapshot), prefer them. Otherwise fall back to role presets.
+    // Prefer the DB snapshot (Access Control UI) when provided; otherwise
+    // fall back to the static role presets.
     const effectiveAllowed = allowedPageKeys ? new Set(allowedPageKeys) : undefined
+    const preset = getRolePreset(roleName)
 
-    if (roleName === "Super Admin") {
-      return data.navMain.map((group) => ({
-        ...group,
-        items: group.items?.map((item) => ({
-          ...item,
-          disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
-        })),
-      }))
+    const allowed = (href: string) => {
+      if (roleName === "Super Admin") return true
+      if (effectiveAllowed) return effectiveAllowed.has(href)
+      return preset?.allowedPageKeys.includes(href) ?? false
     }
 
-    if (effectiveAllowed) {
-      return data.navMain
-        .map((group) => ({
-          ...group,
-          items: group.items?.filter((item) => effectiveAllowed.has(item.url)).map((item) => ({
-            ...item,
-            disabled: !EXISTING_ADMIN_ROUTES.has(item.url),
-          })),
-        }))
-        .filter((group) => (group.items?.length ?? 0) > 0)
-    }
-
-    return buildVisibleNavMain(roleName)
+    return buildNavMain(allowed)
   }, [roleName, allowedPageKeys])
 
-  const navUser = user ? { name: user.name ?? user.email ?? '', email: user.email ?? '' } : data.user
+  const navUser = {
+    name: user?.name ?? user?.email ?? "Admin",
+    email: user?.email ?? "",
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={navUser} />

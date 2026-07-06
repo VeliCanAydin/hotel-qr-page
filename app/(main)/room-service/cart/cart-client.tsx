@@ -22,10 +22,12 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderError, setOrderError] = useState('');
   const router = useRouter();
 
   const handlePlaceOrder = async () => {
     setIsSubmitting(true);
+    setOrderError('');
     const orderItems: OrderItem[] = items.map((item) => ({
       id: item.id,
       name: item.name,
@@ -36,7 +38,12 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
     const result = await createRoomServiceOrder(orderItems, note);
 
     if ('error' in result) {
-      router.push(result.redirectTo);
+      if (result.redirectTo) {
+        router.push(result.redirectTo);
+        return;
+      }
+      setOrderError(result.error);
+      setIsSubmitting(false);
       return;
     }
 
@@ -155,7 +162,12 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
             <span>${getTotalPrice().toFixed(2)}</span>
           </div>
         </CardContent>
-        <CardFooter className="p-4 pt-0">
+        <CardFooter className="p-4 pt-0 flex-col gap-2">
+          {orderError ? (
+            <p className="w-full text-sm text-destructive" role="alert">
+              {orderError}
+            </p>
+          ) : null}
           {isLoggedIn ? (
             <Button
               className="w-full"
