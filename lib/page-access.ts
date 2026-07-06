@@ -1,7 +1,12 @@
 import { and, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { adminRolePages, adminUsers } from '@/lib/db/schema'
-import { getAdminPageByHref, isDashboardPathAllowed } from '@/lib/permissions'
+import {
+  ADMIN_PAGE_PERMISSIONS,
+  getAdminPageByHref,
+  getRolePreset,
+  isDashboardPathAllowed,
+} from '@/lib/permissions'
 
 export type AdminSessionInfo = {
   userId: number
@@ -40,5 +45,39 @@ export async function isPageAllowedForSession(
     return isDashboardPathAllowed(page.href, session.roleName)
   } catch {
     return false
+  }
+}
+
+// Bulk variant for pages that filter many links at once (e.g. the dashboard
+// cards) — one query instead of one isPageAllowedForSession call per href.
+// Same resolution order: explicit DB row > preset; errors deny.
+export async function getAllowedPageHrefs(session: AdminSessionInfo): Promise<Set<string>> {
+  const allHrefs = ADMIN_PAGE_PERMISSIONS.map((page) => page.href)
+  if (session.roleName === 'Super Admin') return new Set(allHrefs)
+
+  try {
+    const [user] = await db
+      .select({ roleId: adminUsers.roleId })
+      .from(adminUsers)
+      .where(eq(adminUsers.id, session.userId))
+      .limit(1)
+
+    const explicit = new Map<string, boolean>()
+    if (user?.roleId) {
+      const rows = await db
+        .select({ pageKey: adminRolePages.pageKey, isAllowed: adminRolePages.isAllowed })
+        .from(adminRolePages)
+        .where(eq(adminRolePages.roleId, user.roleId))
+      for (const row of rows) explicit.set(row.pageKey, row.isAllowed)
+    }
+
+    const preset = getRolePreset(session.roleName)
+    return new Set(
+      allHrefs.filter(
+        (href) => explicit.get(href) ?? preset?.allowedPageKeys.includes(href) ?? false
+      )
+    )
+  } catch {
+    return new Set()
   }
 }

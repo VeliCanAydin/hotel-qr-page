@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { findReservation } from '@/lib/data/mockReservations'
+import { findReservationForLogin } from '@/lib/reservations'
 import { signGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 
 export type GuestLoginState = { error: string; redirectTo?: string }
@@ -19,7 +19,7 @@ export async function guestLogin(
     return { error: 'Room number and surname are required.' }
   }
 
-  const reservation = findReservation(roomNumber, surname)
+  const reservation = await findReservationForLogin(roomNumber, surname)
 
   if (!reservation) {
     return { error: 'No reservation found. Please check your room number and surname.' }

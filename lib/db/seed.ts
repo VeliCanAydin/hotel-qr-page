@@ -457,6 +457,20 @@ async function seed() {
     console.log(`Created ${staffUser.label} test account: ${staffUser.email}`)
   }
 
+  // Demo reservations (upsert by code — refreshes dates/status on re-seed so
+  // the demo guests can always log in to the portal)
+  const { reservations } = await import('./schema')
+  const { mockReservations } = await import('../data/mockReservations')
+  for (const reservation of mockReservations) {
+    const { notes, ...rest } = reservation
+    const values = { ...rest, notes: notes ?? '' }
+    await db
+      .insert(reservations)
+      .values(values)
+      .onConflictDoUpdate({ target: reservations.reservationCode, set: values })
+  }
+  console.log(`Upserted ${mockReservations.length} demo reservations`)
+
   console.log('Done!')
   process.exit(0)
 }

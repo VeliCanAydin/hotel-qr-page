@@ -14,9 +14,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ModeToggle } from '@/components/ModeToggle'
 import { guestLogout } from '@/lib/actions/guest-auth'
-import type { GuestReservation } from '@/lib/data/mockReservations'
+import type { Reservation } from '@/lib/reservations'
 
-export function GuestHeader({ reservation }: { reservation: GuestReservation }) {
+export function GuestHeader({ reservation }: { reservation: Reservation }) {
   const router = useRouter()
 
   const initials = reservation.guestName

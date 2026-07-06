@@ -1,16 +1,14 @@
 import { cookies } from "next/headers"
 import Link from "next/link"
+import { ne } from "drizzle-orm"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { db } from "@/lib/db"
-import { events } from "@/lib/db/schema"
+import { events, kidsActivities, menuItems, roomServiceItems } from "@/lib/db/schema"
 import { verifyToken } from "@/lib/auth"
-import { isDashboardPathAllowed } from "@/lib/permissions"
-import { roomServiceItems } from "@/lib/data/roomServiceData"
-import { menuItems } from "@/lib/data/aLaCarteMenu"
-import { weeklySchedule } from "@/lib/data/kidsClubData"
+import { getAllowedPageHrefs } from "@/lib/page-access"
 import {
   HandPlatter,
   Utensils,
@@ -22,42 +20,6 @@ import {
   ArrowRight,
   TrendingUp,
 } from "lucide-react"
-
-const totalKidsActivities = weeklySchedule.reduce(
-  (sum, day) => sum + day.activities.filter((a) => a.event !== "Closed").length,
-  0
-)
-
-const stats = [
-  {
-    title: "Room Service Items",
-    value: roomServiceItems.length,
-    description: `${roomServiceItems.filter((i) => i.category === "food").length} food · ${roomServiceItems.filter((i) => i.category === "beverages").length} beverages · ${roomServiceItems.filter((i) => i.category === "other-services").length} services`,
-    icon: HandPlatter,
-    href: "/dashboard/services/room-service",
-  },
-  {
-    title: "A-La-Carte Menu",
-    value: menuItems.length,
-    description: "5 categories — appetizers to desserts",
-    icon: Utensils,
-    href: "/dashboard/services/restaurant",
-  },
-  {
-    title: "Hotel Events",
-    value: 0,
-    description: "Across 0 dates",
-    icon: CalendarDays,
-    href: "/dashboard/events/list",
-  },
-  {
-    title: "Kids Activities",
-    value: totalKidsActivities,
-    description: "Weekly schedule — 7 days",
-    icon: Baby,
-    href: "/dashboard/content/kids-care",
-  },
-]
 
 const quickLinks = [
   {
@@ -108,21 +70,56 @@ export default async function DashboardPage() {
   const cookieStore = await cookies()
   const session = cookieStore.get("admin-session")?.value
   const token = session ? await verifyToken(session) : null
-  const roleName = token?.roleName ?? ""
+  const allowedHrefs = token
+    ? await getAllowedPageHrefs({ userId: token.userId, roleName: token.roleName })
+    : new Set<string>()
 
-  const eventRows = await db.select({ date: events.date }).from(events)
-  const eventCount = eventRows.length
+  // Live counts — every stat card reads the same tables the admin pages edit.
+  const [roomServiceRows, menuItemRows, eventRows, kidsActivityCount] = await Promise.all([
+    db.select({ category: roomServiceItems.category }).from(roomServiceItems),
+    db.select({ id: menuItems.id }).from(menuItems),
+    db.select({ date: events.date }).from(events),
+    db.$count(kidsActivities, ne(kidsActivities.event, "Closed")),
+  ])
+
+  const foodCount = roomServiceRows.filter((i) => i.category === "food").length
+  const beverageCount = roomServiceRows.filter((i) => i.category === "beverages").length
+  const serviceCount = roomServiceRows.filter((i) => i.category === "other-services").length
   const eventDateCount = new Set(eventRows.map((event) => event.date)).size
 
-  const resolvedStats = stats
-    .filter((stat) => isDashboardPathAllowed(stat.href, roleName))
-    .map((stat) =>
-      stat.href === "/dashboard/events/list"
-        ? { ...stat, value: eventCount, description: `Across ${eventDateCount} dates` }
-        : stat
-    )
+  const stats = [
+    {
+      title: "Room Service Items",
+      value: roomServiceRows.length,
+      description: `${foodCount} food · ${beverageCount} beverages · ${serviceCount} services`,
+      icon: HandPlatter,
+      href: "/dashboard/services/room-service",
+    },
+    {
+      title: "A-La-Carte Menu",
+      value: menuItemRows.length,
+      description: "Across all restaurant menus",
+      icon: Utensils,
+      href: "/dashboard/services/restaurant",
+    },
+    {
+      title: "Hotel Events",
+      value: eventRows.length,
+      description: `Across ${eventDateCount} dates`,
+      icon: CalendarDays,
+      href: "/dashboard/events/list",
+    },
+    {
+      title: "Kids Activities",
+      value: kidsActivityCount,
+      description: "Weekly schedule — 7 days",
+      icon: Baby,
+      href: "/dashboard/content/kids-care",
+    },
+  ]
 
-  const visibleQuickLinks = quickLinks.filter((link) => isDashboardPathAllowed(link.href, roleName))
+  const resolvedStats = stats.filter((stat) => allowedHrefs.has(stat.href))
+  const visibleQuickLinks = quickLinks.filter((link) => allowedHrefs.has(link.href))
 
   return (
     <div className="space-y-8">

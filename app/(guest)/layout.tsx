@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
-import { findActiveReservation } from '@/lib/data/mockReservations'
+import { findActiveReservation } from '@/lib/reservations'
 import { Toaster } from '@/components/ui/sonner'
 
 export default async function GuestLayout({
@@ -17,7 +17,7 @@ export default async function GuestLayout({
   const guestPayload = await verifyGuestToken(token)
   if (!guestPayload) redirect('/login')
 
-  const reservation = findActiveReservation(guestPayload.reservationCode)
+  const reservation = await findActiveReservation(guestPayload.reservationCode)
   if (!reservation) redirect('/login')
 
   return (

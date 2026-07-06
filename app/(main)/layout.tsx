@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import Header from "@/components/Header";
 import FooterWrapper from "@/components/FooterWrapper";
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
-import { findActiveReservation } from '@/lib/data/mockReservations'
+import { findActiveReservation } from '@/lib/reservations'
 
 export default async function MainLayout({
   children,
@@ -17,7 +17,7 @@ export default async function MainLayout({
   if (token) {
     const payload = await verifyGuestToken(token)
     if (payload) {
-      const reservation = findActiveReservation(payload.reservationCode)
+      const reservation = await findActiveReservation(payload.reservationCode)
       if (reservation) {
         guestInfo = {
           guestName: reservation.guestName,

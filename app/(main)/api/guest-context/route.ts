@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
-import { findActiveReservation } from '@/lib/data/mockReservations'
+import { findActiveReservation } from '@/lib/reservations'
 
 export async function GET() {
   try {
@@ -17,7 +17,7 @@ export async function GET() {
       return NextResponse.json({ guest: null })
     }
 
-    const reservation = findActiveReservation(payload.reservationCode)
+    const reservation = await findActiveReservation(payload.reservationCode)
     if (!reservation) {
       return NextResponse.json({ guest: null })
     }

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import SupportRequestsClient from './support-requests-client'
 import { getGuestSupportRequests } from '@/lib/actions/support-requests'
 import type { GuestSupportRequest } from '@/lib/actions/support-requests'

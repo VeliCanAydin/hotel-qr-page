@@ -1,3 +1,10 @@
+// Demo reservation data — used ONLY as a seed source (lib/db/seed.ts,
+// lib/db/migrate-reservations.ts). Runtime lookups live in lib/reservations.ts
+// and read the `reservations` table.
+//
+// Dates are computed relative to "today" at seed time so the demo guests can
+// always log in to the portal after a fresh `npm run db:seed`.
+
 export type RoomType = 'standard' | 'deluxe' | 'suite' | 'villa'
 export type BoardType = 'room-only' | 'bed-breakfast' | 'half-board' | 'full-board' | 'all-inclusive'
 export type ReservationStatus = 'confirmed' | 'checked-in' | 'checked-out'
@@ -22,6 +29,14 @@ export interface GuestReservation {
   notes?: string
 }
 
+function daysFromToday(offset: number): string {
+  const date = new Date()
+  date.setDate(date.getDate() + offset)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
 export const mockReservations: GuestReservation[] = [
   {
     roomNumber: '204',
@@ -31,8 +46,8 @@ export const mockReservations: GuestReservation[] = [
     roomType: 'deluxe',
     boardType: 'all-inclusive',
     status: 'checked-in',
-    checkIn: '2026-05-01',
-    checkOut: '2026-05-08',
+    checkIn: daysFromToday(-3),
+    checkOut: daysFromToday(4),
     adults: 2,
     children: 0,
     floor: 2,
@@ -49,8 +64,8 @@ export const mockReservations: GuestReservation[] = [
     roomType: 'suite',
     boardType: 'all-inclusive',
     status: 'checked-in',
-    checkIn: '2026-04-30',
-    checkOut: '2026-05-10',
+    checkIn: daysFromToday(-5),
+    checkOut: daysFromToday(5),
     adults: 2,
     children: 2,
     floor: 3,
@@ -68,8 +83,8 @@ export const mockReservations: GuestReservation[] = [
     roomType: 'standard',
     boardType: 'full-board',
     status: 'confirmed',
-    checkIn: '2026-05-05',
-    checkOut: '2026-05-12',
+    checkIn: daysFromToday(1),
+    checkOut: daysFromToday(8),
     adults: 2,
     children: 1,
     floor: 1,
@@ -86,8 +101,8 @@ export const mockReservations: GuestReservation[] = [
     roomType: 'villa',
     boardType: 'all-inclusive',
     status: 'checked-in',
-    checkIn: '2026-04-28',
-    checkOut: '2026-05-06',
+    checkIn: daysFromToday(-2),
+    checkOut: daysFromToday(6),
     adults: 2,
     children: 3,
     floor: 5,
@@ -105,8 +120,8 @@ export const mockReservations: GuestReservation[] = [
     roomType: 'suite',
     boardType: 'all-inclusive',
     status: 'checked-in',
-    checkIn: '2026-05-26',
-    checkOut: '2026-06-02',
+    checkIn: daysFromToday(-1),
+    checkOut: daysFromToday(7),
     adults: 2,
     children: 1,
     floor: 7,
@@ -117,31 +132,3 @@ export const mockReservations: GuestReservation[] = [
     notes: 'Test record for login and guest portal validation',
   },
 ]
-
-/** Login time lookup — checks room+surname and that the stay hasn't ended. */
-export function findReservation(
-  roomNumber: string,
-  surname: string
-): GuestReservation | undefined {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  return mockReservations.find(
-    (r) =>
-      r.roomNumber === roomNumber.trim() &&
-      r.surname === surname.trim().toLowerCase() &&
-      new Date(r.checkOut) >= today
-  )
-}
-
-/** Post-login lookup — checks reservationCode (unique per stay) and expiry. */
-export function findActiveReservation(
-  reservationCode: string
-): GuestReservation | undefined {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  return mockReservations.find(
-    (r) =>
-      r.reservationCode === reservationCode &&
-      new Date(r.checkOut) >= today
-  )
-}
