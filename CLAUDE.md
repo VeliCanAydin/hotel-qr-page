@@ -2,229 +2,150 @@
 
 ## Proje Nedir?
 
-**Dosinia Luxury Hotel** için geliştirilmiş bir QR-kod tabanlı dijital misafir deneyimi platformu. Otele gelen misafirler QR kodu okutarak restoran menülerine, oda servisine, spa/wellness/etkinlik bilgilerine ve AI asistana erişiyor.
+**Dosinia Luxury Hotel** için QR-kod tabanlı dijital misafir deneyimi platformu. Üç yüzü var:
+
+1. **Misafir sitesi** (`/`) — QR okutan herkes: restoran menüleri, oda servisi, spa/wellness, etkinlikler, AI asistan
+2. **Misafir portalı** (`/portal`) — oda no + soyad ile giriş yapan misafirler: konaklama özeti, sipariş takibi, geri bildirim
+3. **Admin paneli** (`/dashboard`) — personel: içerik yönetimi, siparişler, rezervasyonlar, feedback/destek, rol bazlı erişim
 
 ---
 
 ## Tech Stack
 
-| Katman | Teknoloji | Versiyon |
-|--------|-----------|----------|
-| Framework | Next.js (App Router) | 16.0.7 |
-| UI Runtime | React | 19.2.1 |
-| Dil | TypeScript | 5 |
-| Stil | Tailwind CSS | 4 |
-| UI Bileşenleri | shadcn/ui (New York style) | — |
-| UI Primitives | Radix UI | 13 paket |
-| İkonlar | Lucide React | 0.546.0 |
-| Tema | next-themes (dark/light) | 0.4.6 |
-| Tarih | date-fns | 4.1.0 |
-| Build | Turbopack (dev + build) | — |
-| Font | Manrope (Google Fonts) | — |
-
-**Veritabanı yok.** Tüm veriler statik TypeScript dosyalarında.
+| Katman | Teknoloji |
+|--------|-----------|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| UI | React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui (New York) |
+| Veritabanı | Neon PostgreSQL (serverless) + Drizzle ORM |
+| Auth | jose (JWT, httpOnly cookie) + bcryptjs |
+| Dosya depolama | Vercel Blob (menü görselleri, destek ekleri) |
+| Bildirim/toast | sonner |
+| Form/validasyon | zod, react-hook-form (yer yer) |
+| Rapor | exceljs (feedback Excel raporu) |
 
 ---
 
-## Klasör Yapısı
+## Auth & RBAC (kritik — her değişiklikte uy)
+
+İki ayrı oturum, ikisi de JWT + httpOnly cookie:
+
+- **Admin:** `admin-session` cookie. Login: email + bcrypt hash (`admin_users` tablosu). Payload: `userId`, `email`, `roleName`, `type: 'admin'`.
+- **Misafir:** `guest-session` cookie. Login: oda no + soyad → `reservations` tablosu (`lib/reservations.ts`). Payload: `reservationCode`, `roomNumber`, `surname`, `checkOut`, `type: 'guest'`.
+
+### Koruma katmanları
+
+1. **`proxy.ts`** (Next 16 middleware) — `/dashboard/*` ve `/portal/*` sayfa navigasyonunu korur. Misafir: checkout tarihi geçince oturum düşer. Admin: sayfa izni yoksa `/dashboard`'a yönlendirir.
+2. **`requireAdmin(pageHref?)`** (`lib/auth.ts`) — **her admin server action'ı ve API route'u bununla başlamak ZORUNDA.** Proxy sadece sayfaları korur; action'lar herhangi bir yerden POST ile çağrılabilir. `pageHref` verilirse rol izni de kontrol edilir.
+3. **`isPageAllowedForSession` / `getAllowedPageHrefs`** (`lib/page-access.ts`) — tek erişim kontrolü kaynağı: Access Control UI'dan yazılmış DB satırı (`admin_role_pages`) > statik preset (`lib/permissions.ts`); hata durumunda **reddet** (fail-closed). Proxy, action'lar, API route'lar ve dashboard kartları bunu kullanır.
+
+### `ADMIN_PAGE_PERMISSIONS` (lib/permissions.ts) — tek sayfa listesi
+
+Admin sidebar **bu listeden üretilir** (`components/ui/admin/app-sidebar.tsx`), Access Control UI bu listeyi gösterir, proxy bu listeye göre yol çözer. **Yeni admin sayfası eklerken bu listeye kayıt eklemeyi unutursan sayfa sidebar'da görünmez ve Super Admin dışında kimse giremez.**
+
+Roller: Super Admin (her şey), Content Manager, Service Manager, Guest Relations. Preset'ler `DEFAULT_ADMIN_ROLE_PRESETS`'te; DB'deki `admin_role_pages` satırları preset'i override eder.
+
+### Güvenlik kuralları
+
+- Misafir action'larında fiyat/veri client'tan **alınmaz** — sipariş satırları DB kataloğundan yeniden kurulur (`createRoomServiceOrder`).
+- Misafir verisi döndüren DB sorguları `lib/reservations.ts` gibi **`'use server'` OLMAYAN** server-only modüllerde tutulur (action'a çevirmek onu public endpoint yapar).
+- `/api/upload` admin auth'lu; `/api/blob-image` yalnızca `*.blob.vercel-storage.com` host'una fetch atar (token sızıntısı koruması).
+- Hardcoded kullanıcı/şifre YOK. Seed şifreleri: `SEED_ADMIN_PASSWORD` / `SEED_STAFF_PASSWORD` env.
+
+---
+
+## Klasör Yapısı (özet)
 
 ```
-hotel-qr-page/
-│
-├── app/                          # Next.js App Router
-│   ├── (main)/                  # Misafir arayüzü (URL'de görünmez)
-│   │   ├── page.tsx             # Ana sayfa — 10 kartlık feature grid
-│   │   ├── layout.tsx           # Header + Footer wrapper
-│   │   ├── restaurants/         # 3 restoran (a-la-carte, main, snack)
-│   │   ├── room-service/        # Oda servisi kataloğu + sepet
-│   │   ├── beach-pools/         # Plaj ve havuz bilgileri
-│   │   ├── spa/                 # Spa hizmetleri
-│   │   ├── wellness/            # Wellness aktiviteleri
-│   │   ├── kids-care/           # Çocuk kulübü
-│   │   ├── events/              # Otel etkinlikleri takvimi
-│   │   ├── hotel-info/          # Genel otel bilgileri
-│   │   ├── ai-assistant/        # AI sohbet arayüzü
-│   │   ├── feedback/            # Misafir geri bildirim formu
-│   │   └── api/
-│   │       └── ai-chat/         # Dış AI API'ye proxy (POST route)
-│   ├── (auth)/                  # Giriş sayfaları
-│   │   ├── login/               # Misafir & Personel giriş (UI only)
-│   │   └── layout.tsx           # Ortalanmış auth layout
-│   ├── (admin)/                 # Admin paneli (eksik/taslak)
-│   │   ├── dashboard/           # Sidebar navigation dashboard
-│   │   └── layout.tsx           # Sidebar tabanlı layout
-│   ├── layout.tsx               # Root layout (providers)
-│   └── globals.css              # Tailwind + OKLCh tema değişkenleri
-│
-├── components/                   # React bileşenleri
-│   ├── Header.tsx               # Sticky header (nav + sepet + login)
-│   ├── Footer.tsx               # Footer
-│   ├── PageCard.tsx             # Ana sayfa feature kartı
-│   ├── ModeToggle.tsx           # Dark/light mod toggle
-│   ├── theme-provider.tsx       # next-themes wrapper
-│   ├── ui/                      # shadcn/ui bileşenleri (29 dosya)
-│   │   └── admin/               # Admin sidebar bileşenleri
-│   ├── room-service/            # Oda servisi bileşenleri
-│   ├── restaurants/             # Restoran bileşenleri
-│   ├── events/                  # Etkinlik bileşenleri
-│   ├── spa-wellness/            # Spa & wellness bileşenleri
-│   ├── beach-pools/             # Plaj bileşenleri
-│   ├── kids-care/               # Çocuk kulübü bileşenleri
-│   ├── a-la-carte/              # A-la-carte menü bileşenleri
-│   └── ai-assistant/            # AI sohbet bileşenleri
-│
-├── context/
-│   └── CartContext.tsx          # Oda servisi sepet state (localStorage)
-│
-├── lib/
-│   ├── utils.ts                 # cn() — clsx + tailwind-merge
-│   ├── pages.ts                 # Ana sayfa navigasyon yapısı (10 sayfa)
-│   └── data/
-│       ├── roomServiceData.ts   # Oda servisi ürünleri
-│       ├── aLaCarteMenu.ts      # A-la-carte menü
-│       ├── events.ts            # Otel etkinlikleri + takvim yardımcıları
-│       └── kidsClubData.ts      # Çocuk kulübü aktiviteleri
-│
-├── hooks/
-│   └── use-mobile.ts            # Mobil cihaz tespiti hook
-│
-├── public/                      # Statik dosyalar (görseller, PWA ikonları)
-│
-├── package.json
-├── tsconfig.json                # Path alias: @/* → ./
-├── next.config.ts               # Unsplash remote image pattern
-├── components.json              # shadcn/ui konfigürasyonu
-└── postcss.config.mjs           # Tailwind PostCSS
+app/
+├── (main)/            # Public misafir sitesi + /api/ai-chat, /api/feedback vb.
+├── (guest)/portal/    # Girişli misafir portalı (layout'lar findActiveReservation ile korur)
+├── (admin)/dashboard/ # Admin panel: content/, services/, orders/, events/, guests/, settings/
+├── (auth)/login/      # Misafir + personel giriş
+└── api/               # admin/* (feedback, support), upload, blob-image, allergens
+components/
+├── ui/                # shadcn bileşenleri
+├── ui/admin/          # Sidebar (ADMIN_PAGE_PERMISSIONS'tan üretilir), nav, breadcrumb
+├── ui/guest/          # Portal header, tabs, feedback formu
+└── [feature]/         # Feature bileşenleri
+lib/
+├── auth.ts            # JWT, requireAdmin, guest token
+├── page-access.ts     # DB-öncelikli sayfa izni (fail-closed)
+├── permissions.ts     # ADMIN_PAGE_PERMISSIONS + rol preset'leri (TEK KAYNAK)
+├── reservations.ts    # Misafir login/oturum lookup'ları (server-only, action DEĞİL)
+├── access-store.ts    # Access Control UI action'ları
+├── actions/           # Server action'lar (admin mutasyonları requireAdmin'li)
+├── db/                # schema.ts, index.ts, seed.ts, seed-* yardımcıları, migrations/
+└── data/              # Statik seed kaynakları (SİLME — seed.ts bunlardan besleniyor)
+hooks/
+├── use-mobile.ts
+└── use-auto-refresh.ts # 30sn router.refresh() polling (orders & support ekranları)
+context/CartContext.tsx # Oda servisi sepeti (localStorage)
+proxy.ts               # Route koruması (Next 16 middleware)
 ```
 
 ---
 
-## Routing
+## Veritabanı
 
-Route group'lar (`()`) URL'yi etkilemez, sadece layout organizasyonu sağlar.
-
-| URL | Sayfa | Açıklama |
-|-----|-------|----------|
-| `/` | Ana sayfa | 10 feature kartı |
-| `/restaurants` | Restoranlar | 3 restoran listesi |
-| `/restaurants/[id]` | Restoran detay | Menü ve ürünler |
-| `/room-service` | Oda servisi | Yemek/içecek/hizmet katalog |
-| `/room-service/cart` | Sepet | Ürünler + ödeme |
-| `/beach-pools` | Plaj & havuz | Bilgi sayfası |
-| `/spa` | Spa | Hizmetler ve sınıflar |
-| `/wellness` | Wellness | Yoga, fitness |
-| `/kids-care` | Çocuk kulübü | Aktiviteler |
-| `/events` | Etkinlikler | Takvim tabanlı liste |
-| `/hotel-info` | Otel bilgisi | Genel bilgiler |
-| `/ai-assistant` | AI asistan | Sohbet arayüzü |
-| `/feedback` | Geri bildirim | Form |
-| `/login` | Giriş | UI only (auth yok) |
-| `/dashboard` | Admin | Sidebar layout (eksik) |
-
-**API Route:**
-- `POST /api/ai-chat` — Kullanıcı mesajını dış AI servisine iletir
+- **Şema:** `lib/db/schema.ts` — içerik tabloları (hotel_info, spa/wellness, restaurants, menu_items, room_service_items, events, kids_*, nearby_guide_items, allergens, menu_templates), operasyon tabloları (room_service_orders, guest_feedbacks, guest_support_requests, reservations), RBAC (admin_users, admin_roles, admin_role_pages).
+- **Şema değişikliği akışı:** `schema.ts`'i düzenle → `npm run db:push`. **Ad-hoc migration script'i yazma** (eskiden `lib/db/migrate-*.ts` vardı, uygulandılar ve silindiler). `lib/db/migrations/` klasörü tarihsel kayıt.
+- **Seed:** `npm run db:seed` — restoranlar, menüler, etkinlikler, roller/izinler, admin kullanıcıları ve demo rezervasyonlar (tarihler seed anında bugüne göre hesaplanır; test girişi: oda **777** / soyad **test**). Dikkat: seed bazı tabloları silip yeniden doldurur — admin'den yapılmış düzenlemeleri ezebilir.
+- Bilinen kalıntı: `room_service_items.allergens` kolonu DB'de var, schema'da yok (zararsız).
 
 ---
 
-## State Management
+## Misafir Girişi Akışı
 
-**CartContext** (`context/CartContext.tsx`):
-- Oda servisi sepetini yönetir
-- `localStorage` ile kalıcı (`room-service-cart` key)
-- Methods: `addToCart`, `removeFromCart`, `updateQuantity`, `clearCart`, `getTotalPrice`, `getTotalItems`
-
-Bunun dışında global state yok. Her sayfa kendi local state'ini kullanır.
+1. `/login` → oda no + soyad → `guestLogin` → `findReservationForLogin` (case-insensitive, bitmemiş konaklama)
+2. JWT `guest-session` cookie'ye yazılır (24h) — ama asıl otorite DB: her portal sayfası `findActiveReservation` ile doğrular
+3. Personel Guest List'ten **Check Out** yapınca veya checkout tarihi geçince misafir erişimi anında düşer
+4. Rezervasyonlar admin panelde `/dashboard/guests/list`'ten yönetilir (CRUD + check-in/out; kod otomatik `DOS-YYYY-NNNN`)
 
 ---
 
-## Veri Modelleri
+## Admin Panel Konvansiyonları
 
-```typescript
-// Oda servisi
-RoomServiceItem: { id, name, description, price, category: 'food'|'beverages'|'other-services' }
+**Sayfa deseni:** `page.tsx` (server, data fetch + `force-dynamic` gerekiyorsa) → `*-client.tsx` (`'use client'`, local state + optimistic update + `toast.promise` + shadcn Dialog formlar).
 
-// A-la-carte menü
-MenuItem: { id, name, description, price, image, isVegetarian?, category }
+**Operasyonel ekranlar** (orders, support-requests): `useAutoRefresh(30_000)` + yeni kayıt toast bildirimi (görülen id'ler ref'te tutulur).
 
-// Etkinlik
-HotelEvent: { id, title, description, location, date, startTime, endTime, category, color? }
+### Yeni admin sayfası checklist'i
 
-// Ana sayfa kartları (lib/pages.ts)
-Page: { icon, title, description, href }
-```
+1. `app/(admin)/dashboard/[bölüm]/[sayfa]/page.tsx` + client bileşeni
+2. `ADMIN_PAGE_PERMISSIONS`'a kayıt ekle (sidebar + izin sistemi buradan)
+3. İlgili rol preset'lerine href'i ekle
+4. Action'larına `await requireAdmin('<sayfa-href>')` koy
+5. Sayfa cookie okuyorsa `export const dynamic = 'force-dynamic'`
+
+### Yeni misafir sayfası checklist'i
+
+1. `app/(main)/[feature]/page.tsx` (public) veya `app/(guest)/portal/` (girişli)
+2. Ana sayfa kartı gerekiyorsa `lib/pages.ts`'e ekle
+3. Veri DB'den geliyorsa action'da public read / admin mutasyon ayrımına dikkat et
 
 ---
 
 ## Dış Entegrasyonlar
 
-### AI Chat API
-- **Endpoint:** `http://51.77.203.172:83/api/forward-message/`
-- **Method:** POST (FormData)
-- **Input:** `text` parametresi
-- **Output:** `{ user_text, bot_response, image_path }`
-- **Proxy:** `/api/ai-chat` route üzerinden erişilir (CORS bypass)
+- **AI Chat:** `POST /api/ai-chat` → `AI_BACKEND_URL` env'deki dış servise proxy
+- **Kalori takibi:** `POST /api/calorie-vision` → `CALORIE_API_URL`
+- **Görseller:** Vercel Blob (private) → `/api/blob-image` proxy'siyle servis edilir; Unsplash remote pattern
 
-### Görseller
-- **Unsplash** (`images.unsplash.com`) — A-la-carte menü görselleri için
-- `next.config.ts`'de remote pattern olarak tanımlı
-- Diğer görseller `public/` altında yerel
-
----
-
-## Stil Sistemi
-
-- **Tailwind CSS 4** — `@tailwindcss/postcss` ile
-- **OKLCh renk uzayı** — Modern CSS değişkenleri (`oklch()` fonksiyonu)
-- **Dark mode** — `next-themes` ile, class tabanlı (`.dark`)
-- **shadcn/ui** — New York stili, slate baz renk, 0.625rem radius
-- **`cn()` utility** — `clsx` + `tailwind-merge` kombinasyonu
+`.env.local` anahtarları: `DATABASE_URL`, `JWT_SECRET`, `BLOB_READ_WRITE_TOKEN`, `AI_BACKEND_URL`, `CALORIE_API_URL` (+ seed için `SEED_ADMIN_PASSWORD`, `SEED_STAFF_PASSWORD`)
 
 ---
 
 ## Geliştirme
 
 ```bash
-npm run dev      # Turbopack ile geliştirme sunucusu (localhost:3000)
-npm run build    # Production build (Turbopack)
-npm start        # Production sunucusu
-npm run lint     # ESLint
+npm run dev        # Turbopack dev server (localhost:3000)
+npm run build      # Production build
+npm run db:push    # schema.ts → Neon (şema değişikliği akışı)
+npm run db:seed    # Seed (dikkat: bazı tabloları sıfırlar)
+npm run db:studio  # Drizzle Studio
 ```
 
-`.env` dosyası yok. Tüm konfigürasyon hardcoded.
-
----
-
-## Önemli Kurallar & Konvansiyonlar
-
-1. **Route Groups** — `(main)`, `(auth)`, `(admin)` layout organizasyonu için, URL'yi etkilemez
-2. **`'use client'`** — Interaktif bileşenler için (Header, AI chat, sepet, vb.)
-3. **Suspense** — Restaurant kartları Suspense sınırı içinde, skeleton fallback ile
-4. **`lib/pages.ts`** — Ana sayfa yapısı buradan okunur, hardcoded değil
-5. **shadcn/ui** — Tüm UI bileşenleri için; `npx shadcn@latest add [component]` ile eklenir
-6. **Bileşen organizasyonu** — Feature'a özel bileşenler `components/[feature]/` altında
-
----
-
-## Tamamlanmamış / Taslak Özellikler
-
-| Özellik | Durum |
-|---------|-------|
-| Login sayfası | UI var, auth logic yok |
-| Admin dashboard | Layout var, içerik yok |
-| Hotel info | Muhtemelen placeholder |
-| Feedback formu | Route var, implementasyon kontrol edilmeli |
-| Gerçek backend/DB | Yok, tüm veri statik |
-
----
-
-## Yeni Feature Eklemek
-
-1. `app/(main)/[feature-name]/page.tsx` oluştur
-2. Interaktifse `'use client'` ekle
-3. Ana sayfada görünmesi gerekiyorsa `lib/pages.ts`'e giriş ekle
-4. Destekleyici bileşenleri `components/[feature-name]/` altına koy
-5. Veri gerekiyorsa `lib/data/[feature]Data.ts` oluştur
-6. UI için shadcn/ui bileşenlerini kullan
+**Bilinen sorun:** `npm run lint` eslintrc circular-config hatasıyla bozuk (koddan bağımsız, config sorunu).
 
 ---
 

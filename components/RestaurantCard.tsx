@@ -13,7 +13,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Clock, Utensils } from "lucide-react";
+import { Clock, Utensils, Phone, MessageCircleMore } from "lucide-react";
 
 interface RestaurantCardProps {
     id: string;
@@ -25,6 +25,8 @@ interface RestaurantCardProps {
     openingHours?: string;
     cuisine?: string;
     highlights?: string[];
+    contactPhone?: string;
+    contactWhatsapp?: string;
 }
 
 export default function RestaurantCard({
@@ -36,7 +38,9 @@ export default function RestaurantCard({
     hasReservation = false,
     openingHours = "12:00 - 22:00",
     cuisine = "International Cuisine",
-    highlights = ["Fresh ingredients", "Seasonal menu", "Vegetarian options available"]
+    highlights = ["Fresh ingredients", "Seasonal menu", "Vegetarian options available"],
+    contactPhone,
+    contactWhatsapp,
 }: RestaurantCardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isReservationOpen, setIsReservationOpen] = useState(false);
@@ -54,7 +58,7 @@ export default function RestaurantCard({
                 />
             </div>
             <h2 className="text-xl font-bold">{title}</h2>
-            <p className="text-base font-normal text-[#887C63]">{description}</p>
+            <p className="text-base font-normal text-muted-foreground">{description}</p>
             <div className="flex flex-row gap-3">
                 <Drawer open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                     <DrawerTrigger asChild>
@@ -135,88 +139,44 @@ export default function RestaurantCard({
                         <DrawerHeader>
                             <DrawerTitle>Reserve a Table at {title}</DrawerTitle>
                             <DrawerDescription>
-                                Fill in the details below to make a reservation.
+                                Table reservations are handled by our reception team. Reach us by
+                                phone or WhatsApp and we&apos;ll arrange it for you.
                             </DrawerDescription>
                         </DrawerHeader>
-                        <div className="px-4 space-y-4">
-                            <div className="space-y-2">
-                                <label htmlFor={`name-${id}`} className="text-sm font-medium">
-                                    Name
-                                </label>
-                                <input
-                                    id={`name-${id}`}
-                                    type="text"
-                                    placeholder="Your name"
-                                    className="w-full px-3 py-2 border rounded-md bg-background"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor={`room-${id}`} className="text-sm font-medium">
-                                    Room Number
-                                </label>
-                                <input
-                                    id={`room-${id}`}
-                                    type="text"
-                                    placeholder="e.g., 101"
-                                    className="w-full px-3 py-2 border rounded-md bg-background"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor={`guests-${id}`} className="text-sm font-medium">
-                                    Number of Guests
-                                </label>
-                                <input
-                                    id={`guests-${id}`}
-                                    type="number"
-                                    min="1"
-                                    max="20"
-                                    placeholder="2"
-                                    className="w-full px-3 py-2 border rounded-md bg-background"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor={`date-${id}`} className="text-sm font-medium">
-                                    Date
-                                </label>
-                                <input
-                                    id={`date-${id}`}
-                                    type="date"
-                                    className="w-full px-3 py-2 border rounded-md bg-background"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor={`time-${id}`} className="text-sm font-medium">
-                                    Preferred Time
-                                </label>
-                                <input
-                                    id={`time-${id}`}
-                                    type="time"
-                                    className="w-full px-3 py-2 border rounded-md bg-background"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor={`notes-${id}`} className="text-sm font-medium">
-                                    Special Requests (optional)
-                                </label>
-                                <textarea
-                                    id={`notes-${id}`}
-                                    placeholder="Any dietary requirements or special requests..."
-                                    rows={3}
-                                    className="w-full px-3 py-2 border rounded-md bg-background resize-none"
-                                />
-                            </div>
+                        <div className="px-4 space-y-3">
+                            {contactPhone && (
+                                <a href={`tel:${contactPhone.replace(/\D/g, "")}`} className="block">
+                                    <Button className="w-full rounded-3xl font-bold">
+                                        <Phone className="h-4 w-4 mr-2" />
+                                        Call Reception — {contactPhone}
+                                    </Button>
+                                </a>
+                            )}
+                            {contactWhatsapp && (
+                                <a
+                                    href={`https://api.whatsapp.com/send/?phone=${contactWhatsapp.replace(/\D/g, "")}&text=${encodeURIComponent(`Hello, I would like to reserve a table at ${title}.`)}&type=phone_number&app_absent=0`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block"
+                                >
+                                    <Button variant="outline" className="w-full rounded-3xl font-bold">
+                                        <MessageCircleMore className="h-4 w-4 mr-2" />
+                                        Message on WhatsApp
+                                    </Button>
+                                </a>
+                            )}
+                            {!contactPhone && !contactWhatsapp && (
+                                <p className="text-sm text-muted-foreground text-center">
+                                    Please visit the reception desk to make a reservation.
+                                </p>
+                            )}
                         </div>
                         <DrawerFooter>
-                            <Button className="rounded-3xl font-bold">
-                                Confirm Reservation
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="rounded-3xl"
-                                onClick={() => setIsReservationOpen(false)}
-                            >
-                                Cancel
-                            </Button>
+                            <DrawerClose asChild>
+                                <Button variant="ghost" className="rounded-3xl">
+                                    Close
+                                </Button>
+                            </DrawerClose>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>

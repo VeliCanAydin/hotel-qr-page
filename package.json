@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "eslint",
     "db:push": "drizzle-kit push",
-    "db:feedback": "tsx lib/db/migrate-feedbacks.ts",
     "db:seed": "tsx lib/db/seed.ts",
     "db:studio": "drizzle-kit studio"
   },

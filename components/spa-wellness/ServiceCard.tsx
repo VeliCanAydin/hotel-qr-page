@@ -1,6 +1,7 @@
 'use client';
 
 import Image from "next/image";
+import { ImageOff } from "lucide-react";
 import {
     Drawer,
     DrawerClose,
@@ -31,13 +32,19 @@ export default function ServiceCard({ data }: ServiceCardProps) {
     return (
         <div className="overflow-hidden">
             {/* Image Section */}
-            <div className="relative w-full h-[200px] rounded-tl-3xl rounded-tr-3xl overflow-hidden">
-                <Image
-                    src={data.image}
-                    alt={data.imageAlt}
-                    fill
-                    className="object-cover"
-                />
+            <div className="relative w-full h-[200px] rounded-tl-3xl rounded-tr-3xl overflow-hidden bg-muted">
+                {data.image ? (
+                    <Image
+                        src={data.image}
+                        alt={data.imageAlt}
+                        fill
+                        className="object-cover"
+                    />
+                ) : (
+                    <div className="flex h-full items-center justify-center text-muted-foreground">
+                        <ImageOff className="size-8" />
+                    </div>
+                )}
             </div>
 
             {/* Content Section */}

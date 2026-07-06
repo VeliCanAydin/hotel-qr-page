@@ -15,11 +15,11 @@ export type GuestFeedbackInput = {
   stayTo?: string
   tripType?: string
   overallRating: number
-  cleanlinessRating: number
-  staffRating: number
-  comfortRating: number
-  valueRating: number
-  foodRating: number
+  cleanlinessRating: number | null
+  staffRating: number | null
+  comfortRating: number | null
+  valueRating: number | null
+  foodRating: number | null
   npsScore?: number | null
   positive?: string
   negative?: string

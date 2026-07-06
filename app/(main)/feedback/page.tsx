@@ -160,6 +160,7 @@ export default function FeedbackPage() {
   const [overallRating, setOverallRating] = useState(0);
   const [npsScore, setNpsScore] = useState<number | null>(null);
   const [categoryRatings, setCategoryRatings] = useState({ cleanliness: 3, staff: 3, comfort: 3, value: 3, food: 3 });
+  const [hasOpenedDetails, setHasOpenedDetails] = useState(false);
   const [positive, setPositive] = useState("");
   const [negative, setNegative] = useState("");
   const [tripType, setTripType] = useState("");
@@ -238,7 +239,15 @@ export default function FeedbackPage() {
           ? { from: dateRange.from?.toISOString(), to: dateRange.to?.toISOString() }
           : null,
       },
-      ratings: { overall: overallRating, ...categoryRatings, nps: npsScore },
+      ratings: {
+        overall: overallRating,
+        // Only send category scores the guest actually saw; otherwise the
+        // untouched slider defaults would be recorded as real ratings.
+        ...(hasOpenedDetails
+          ? categoryRatings
+          : { cleanliness: null, staff: null, comfort: null, value: null, food: null }),
+        nps: npsScore,
+      },
       feedback: { positive, negative, tripType },
       consent,
     };
@@ -320,7 +329,7 @@ export default function FeedbackPage() {
         throw new Error(requestPayload?.error || "Request could not be saved.");
       }
 
-      setSubmitTitle("Talebiniz Alındı");
+      setSubmitTitle("Request Received");
       setSubmitDescription("Your support/complaint request has been sent to the Guest Relations team.");
       setIsSubmitted(true);
     } catch (error) {
@@ -347,7 +356,7 @@ export default function FeedbackPage() {
               }}
               variant="outline"
             >
-              Yeni işlem
+              Submit Another
             </Button>
           </CardContent>
         </Card>
@@ -471,7 +480,15 @@ export default function FeedbackPage() {
                       <CardTitle className="text-lg">Rate Your Experience</CardTitle>
                       <CardDescription>Help us understand what worked and what didn&apos;t</CardDescription>
                     </div>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => setShowDetailedFeedback(!showDetailedFeedback)}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (!showDetailedFeedback) setHasOpenedDetails(true);
+                        setShowDetailedFeedback(!showDetailedFeedback);
+                      }}
+                    >
                       {showDetailedFeedback ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
                     </Button>
                   </div>

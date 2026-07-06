@@ -59,7 +59,7 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                             variant="ghost"
                             size="icon"
                             onClick={handleHomeClick}
-                            aria-label="Ana sayfa"
+                            aria-label="Home"
                         >
                             <Home className="h-5 w-5" />
                         </Button>
@@ -69,14 +69,14 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                             variant="ghost"
                             size="icon"
                             onClick={handleBackClick}
-                            aria-label="Geri dön"
+                            aria-label="Go back"
                         >
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                     )}
 
                     <h1 className="text-lg font-semibold">
-                        {isAIAssistantPage ? 'AI Asistan' : 'Dosinia Luxury Hotel'}
+                        {isAIAssistantPage ? 'AI Assistant' : 'Dosinia Luxury Hotel'}
                     </h1>
                 </div>
 
@@ -106,7 +106,7 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            aria-label="Menü"
+                            aria-label="Menu"
                             onClick={() => {
                                 console.log('AI Assistant menu clicked');
                             }}

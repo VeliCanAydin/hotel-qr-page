@@ -231,11 +231,13 @@ export const guestFeedbacks = pgTable('guest_feedbacks', {
   stayTo: text('stay_to').notNull().default(''),
   tripType: text('trip_type').notNull().default(''),
   overallRating: integer('overall_rating').notNull(),
-  cleanlinessRating: integer('cleanliness_rating').notNull(),
-  staffRating: integer('staff_rating').notNull(),
-  comfortRating: integer('comfort_rating').notNull(),
-  valueRating: integer('value_rating').notNull(),
-  foodRating: integer('food_rating').notNull(),
+  // Category ratings are null when the guest never opened the detailed
+  // rating section — a stored value always reflects an explicit choice.
+  cleanlinessRating: integer('cleanliness_rating'),
+  staffRating: integer('staff_rating'),
+  comfortRating: integer('comfort_rating'),
+  valueRating: integer('value_rating'),
+  foodRating: integer('food_rating'),
   npsScore: integer('nps_score'),
   positive: text('positive').notNull().default(''),
   negative: text('negative').notNull().default(''),

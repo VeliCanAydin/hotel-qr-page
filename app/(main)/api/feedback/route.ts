@@ -17,11 +17,12 @@ const feedbackSchema = z.object({
   }),
   ratings: z.object({
     overall: z.number().int().min(1).max(5),
-    cleanliness: z.number().int().min(1).max(5),
-    staff: z.number().int().min(1).max(5),
-    comfort: z.number().int().min(1).max(5),
-    value: z.number().int().min(1).max(5),
-    food: z.number().int().min(1).max(5),
+    // Category ratings are null when the guest skipped the detailed section
+    cleanliness: z.number().int().min(1).max(5).nullable(),
+    staff: z.number().int().min(1).max(5).nullable(),
+    comfort: z.number().int().min(1).max(5).nullable(),
+    value: z.number().int().min(1).max(5).nullable(),
+    food: z.number().int().min(1).max(5).nullable(),
     nps: z.number().int().min(0).max(10).nullable().optional(),
   }),
   feedback: z.object({

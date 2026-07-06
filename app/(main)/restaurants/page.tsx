@@ -4,6 +4,7 @@ import RestaurantCardSkeleton from "@/components/RestaurantCardSkeleton"
 import { db } from "@/lib/db"
 import { restaurants } from "@/lib/db/schema"
 import { asc } from "drizzle-orm"
+import { getHotelInfo } from "@/lib/actions/hotel-info"
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +17,10 @@ const RESTAURANT_IMAGES: Record<string, string> = {
 const DEFAULT_IMAGE = '/azure.png'
 
 export default async function RestaurantsPage() {
-  const restaurantRows = await db.select().from(restaurants).orderBy(asc(restaurants.orderIndex))
+  const [restaurantRows, hotelInfo] = await Promise.all([
+    db.select().from(restaurants).orderBy(asc(restaurants.orderIndex)),
+    getHotelInfo(),
+  ])
 
   return (
     <div className="p-4">
@@ -32,6 +36,8 @@ export default async function RestaurantsPage() {
             hasReservation={r.reservation}
             openingHours={r.openTime && r.closeTime ? `${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` : r.openTime?.slice(0, 5) || r.closeTime?.slice(0, 5) || ''}
             cuisine={r.cuisine}
+            contactPhone={hotelInfo.phone}
+            contactWhatsapp={hotelInfo.whatsapp}
             highlights={[
               r.reservation ? 'Reservation required' : 'No reservation needed',
               r.cuisine,

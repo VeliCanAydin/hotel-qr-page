@@ -14,35 +14,35 @@ import type { BeachPoolsInfoData } from "@/lib/actions/beach-pools"
 
 const beachImages = [
   {
-    src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=800&fit=crop",
-    alt: "Beautiful beach with crystal clear water",
+    src: "/dosinia_luxury_resort_beach_building.jpeg",
+    alt: "Dosinia beach building by the shore",
   },
   {
-    src: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&h=800&fit=crop",
-    alt: "Beach loungers and umbrellas",
+    src: "/dosinia_luxury_resort_beach_relax_pool.jpeg",
+    alt: "Relax pool right next to the beach",
   },
   {
-    src: "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=1200&h=800&fit=crop",
-    alt: "Tropical beach paradise",
+    src: "/dosinia_luxury_resort_beach_relax_pool_3.jpeg",
+    alt: "Beach area with loungers and relax pool",
   },
   {
-    src: "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=1200&h=800&fit=crop",
-    alt: "Sunset at the beach",
+    src: "/DJI_0712.jpeg",
+    alt: "Aerial view of the resort and beachfront",
   },
 ]
 
 const poolImages = [
   {
-    src: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=1200&h=800&fit=crop",
-    alt: "Luxury resort pool",
+    src: "/dosinia_luxury_resort_main_pool_2.jpeg",
+    alt: "Main swimming pool",
   },
   {
-    src: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?w=1200&h=800&fit=crop",
-    alt: "Infinity pool with ocean view",
+    src: "/dosinia_luxury_resort_swimup_pool.png",
+    alt: "Swim-up pool by the garden rooms",
   },
   {
-    src: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=1200&h=800&fit=crop",
-    alt: "Pool area with palm trees",
+    src: "/dosinia_luxury_resort_relax_pool_4.jpeg",
+    alt: "Relax pool area",
   },
 ]
 

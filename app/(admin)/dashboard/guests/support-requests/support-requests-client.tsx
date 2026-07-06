@@ -1,6 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useAutoRefresh } from "@/hooks/use-auto-refresh"
 import { format, isToday, parseISO, isValid } from "date-fns"
 import { CalendarDays, ChevronDown, Clock3, MessageSquareText, Search, UsersRound } from "lucide-react"
 import { toast } from "sonner"
@@ -189,6 +190,27 @@ export default function SupportRequestsClient({ initialRequests }: Props) {
   const [statusFilter, setStatusFilter] = useState<"all" | "open" | "in-progress" | "resolved">('all')
   const [detail, setDetail] = useState<ServerRequest | null>(null)
   const [requests, setRequests] = useState<ServerRequest[]>(initialRequests)
+
+  // Poll for new requests; sync local state when the server sends fresh data
+  // and announce records we haven't seen in this session.
+  useAutoRefresh(30_000)
+  const knownRequestIds = useRef<Set<number> | null>(null)
+  useEffect(() => {
+    setRequests(initialRequests)
+
+    const previous = knownRequestIds.current
+    knownRequestIds.current = new Set(initialRequests.map((r) => r.id))
+    if (!previous) return
+
+    const fresh = initialRequests.filter((r) => !previous.has(r.id))
+    if (fresh.length === 1) {
+      toast.info(`New ${TYPE_LABELS[fresh[0].requestType]?.toLowerCase() ?? 'request'} — Room ${fresh[0].roomNumber || '?'}`, {
+        description: fresh[0].subject,
+      })
+    } else if (fresh.length > 1) {
+      toast.info(`${fresh.length} new support requests received`)
+    }
+  }, [initialRequests])
   const [saving, setSaving] = useState(false)
   const [staffResponseText, setStaffResponseText] = useState('')
   const [selectedStatus, setSelectedStatus] = useState<"open" | "in-progress" | "resolved">('open')

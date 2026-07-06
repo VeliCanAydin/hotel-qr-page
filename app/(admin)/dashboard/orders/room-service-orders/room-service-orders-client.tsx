@@ -1,6 +1,8 @@
 "use client"
 
-import { useState, useMemo, useOptimistic, useTransition } from "react"
+import { useEffect, useRef, useState, useMemo, useOptimistic, useTransition } from "react"
+import { toast } from "sonner"
+import { useAutoRefresh } from "@/hooks/use-auto-refresh"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -88,6 +90,24 @@ export default function RoomServiceOrdersClient({
   const [cancelReason, setCancelReason] = useState("")
   const [detailOrder, setDetailOrder] = useState<RoomServiceOrder | null>(null)
   const [isPending, startTransition] = useTransition()
+
+  // Poll for new orders and announce ones we haven't seen in this session.
+  useAutoRefresh(30_000)
+  const knownOrderIds = useRef<Set<number> | null>(null)
+  useEffect(() => {
+    const previous = knownOrderIds.current
+    knownOrderIds.current = new Set(initialOrders.map((o) => o.id))
+    if (!previous) return
+
+    const fresh = initialOrders.filter((o) => !previous.has(o.id))
+    if (fresh.length === 1) {
+      toast.info(`New order — Room ${fresh[0].roomNumber}`, {
+        description: `${fresh[0].guestSurname} · $${fresh[0].totalAmount.toFixed(2)}`,
+      })
+    } else if (fresh.length > 1) {
+      toast.info(`${fresh.length} new orders received`)
+    }
+  }, [initialOrders])
 
   const [optimisticOrders, applyOptimistic] = useOptimistic(
     initialOrders,

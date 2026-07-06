@@ -13,7 +13,13 @@ export async function guestLogin(
 ): Promise<GuestLoginState> {
   const roomNumber = (formData.get('roomNumber') as string)?.trim()
   const surname = (formData.get('surname') as string)?.trim()
-  const redirectPath = (formData.get('redirect') as string)?.trim() || '/'
+  // Only allow same-site relative paths ('/...' but not '//host' or '/\host')
+  // to prevent open redirects to external sites after login.
+  const rawRedirect = (formData.get('redirect') as string)?.trim() || '/'
+  const redirectPath =
+    rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') && !rawRedirect.startsWith('/\\')
+      ? rawRedirect
+      : '/'
 
   if (!roomNumber || !surname) {
     return { error: 'Room number and surname are required.' }
