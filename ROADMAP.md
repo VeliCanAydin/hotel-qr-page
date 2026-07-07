@@ -35,13 +35,16 @@ Yeni bir desen ya da küçük bir altyapı parçası isteyen, tasarım riski dü
   (Wi-Fi şifresi public endpoint'ten sızmıyor).
 - [ ] **Rate limiting (login + AI chat)** — Upstash Redis (Vercel Marketplace) ile IP/oturum
   bazlı sınır. Login brute-force yüzeyini ve AI maliyet riskini kapatır.
-- [ ] **Orders/support pagination + arşivleme** — "hepsini çek" sorgularını sayfalı hale getir,
-  tamamlanmış kayıtları varsayılan görünümden çıkar.
-- [ ] **Housekeeping hızlı istek butonları** — support-requests altyapısının üstüne
-  "havlu / temizlik / geç checkout" şablonları. Misafire dönük en ucuz–en etkili özellik.
-- [ ] **Menü öğesi geçici kapatma** — room service ve menü öğelerine admin'den tek dokunuş
-  "tükendi" toggle'ı (+ istenirse servis saati aralığı). Cache tag invalidation'la birlikte
-  çalışır; cache maddesinden sonra yapılmalı.
+- [x] **Orders/support pagination** — orders ve support ekranları en yeni 100 kayıtla açılıyor,
+  `?limit=` + "Load older" ile eskiler yükleniyor; "yeni kayıt" bildirimi id karşılaştırmasına
+  geçirildi (eski sayfa yüklenince yanlış toast atmıyor).
+- [x] **Housekeeping hızlı istek butonları** — portal ana sayfasında "Quick Requests" kartı
+  (havlu / temizlik / buklet / geç checkout). Oda+isim doğrulanmış oturumdan geliyor; oda başına
+  aynı türde tek açık istek (spam koruması). Admin support ekranına mevcut polling'le düşüyor.
+- [x] **Menü öğesi geçici kapatma** — `room_service_items.is_available` kolonu + admin ekranında
+  Switch ("Sold out"). Kapalı öğe misafir menüsünden gizleniyor (cache tag'iyle anında) ve
+  sipariş action'ında reddediliyor. Not: restoran menüleri şablon-tabanlı yönetildiği için bu
+  toggle bilinçli olarak yalnız oda servisinde; a-la-carte tarafı ayrı bir canlı-menü UI'ı ister.
 
 ## Faz 3 — En zorlayıcılar
 

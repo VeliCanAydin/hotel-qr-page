@@ -93,6 +93,8 @@ export const roomServiceItems = pgTable('room_service_items', {
   description: text('description').notNull(),
   price: real('price').notNull(),
   category: text('category').notNull(),
+  // Kitchen's "sold out" switch — hidden from guests and rejected in orders while false
+  isAvailable: boolean('is_available').notNull().default(true),
 })
 
 export const events = pgTable('events', {

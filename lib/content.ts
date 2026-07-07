@@ -73,7 +73,8 @@ export async function getPublicRoomServiceItems() {
   'use cache'
   cacheTag(CONTENT_TAGS.roomServiceItems)
   cacheLife('hours')
-  return db.select().from(roomServiceItems)
+  // Sold-out items are hidden from guests; the admin page reads the table directly.
+  return db.select().from(roomServiceItems).where(eq(roomServiceItems.isAvailable, true))
 }
 
 export async function getPublicEvents() {

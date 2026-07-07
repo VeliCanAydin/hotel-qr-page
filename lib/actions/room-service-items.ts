@@ -33,3 +33,11 @@ export async function deleteRoomServiceItem(id: string) {
   await db.delete(roomServiceItems).where(eq(roomServiceItems.id, id))
   updateTag(CONTENT_TAGS.roomServiceItems)
 }
+
+/** Kitchen's "sold out" switch — the item vanishes from the guest menu and
+ *  new orders containing it are rejected until it's switched back on. */
+export async function setRoomServiceItemAvailability(id: string, isAvailable: boolean) {
+  await requireAdmin('/dashboard/services/room-service')
+  await db.update(roomServiceItems).set({ isAvailable }).where(eq(roomServiceItems.id, id))
+  updateTag(CONTENT_TAGS.roomServiceItems)
+}

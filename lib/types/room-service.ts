@@ -5,6 +5,7 @@ export interface RoomServiceItem {
     price: number;
     category: 'food' | 'beverages' | 'other-services';
     allergens?: string[];
+    isAvailable?: boolean;
 }
 
 export const categoryLabels: Record<RoomServiceItem['category'], string> = {

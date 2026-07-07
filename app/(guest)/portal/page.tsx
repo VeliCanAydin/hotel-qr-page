@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { QuickRequests } from '@/components/guest/quick-requests'
 import {
   Users,
   BedDouble,
@@ -112,6 +113,9 @@ export default async function PortalPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* One-tap housekeeping / front-desk requests */}
+      <QuickRequests />
     </div>
   )
 }

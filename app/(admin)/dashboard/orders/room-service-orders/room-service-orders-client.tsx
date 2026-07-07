@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useMemo, useOptimistic, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useAutoRefresh } from "@/hooks/use-auto-refresh"
 import { Badge } from "@/components/ui/badge"
@@ -80,9 +81,14 @@ function formatDate(date: Date): string {
 
 export default function RoomServiceOrdersClient({
   initialOrders,
+  totalCount,
+  limit,
 }: {
   initialOrders: RoomServiceOrder[]
+  totalCount: number
+  limit: number
 }) {
+  const router = useRouter()
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
   const [roomFilter, setRoomFilter] = useState<string>("all")
@@ -92,14 +98,16 @@ export default function RoomServiceOrdersClient({
   const [isPending, startTransition] = useTransition()
 
   // Poll for new orders and announce ones we haven't seen in this session.
+  // Compared by highest known id (not set membership) so "Load older" pages
+  // don't announce old orders as new.
   useAutoRefresh(30_000)
-  const knownOrderIds = useRef<Set<number> | null>(null)
+  const maxKnownOrderId = useRef<number | null>(null)
   useEffect(() => {
-    const previous = knownOrderIds.current
-    knownOrderIds.current = new Set(initialOrders.map((o) => o.id))
-    if (!previous) return
+    const previousMax = maxKnownOrderId.current
+    maxKnownOrderId.current = Math.max(0, ...initialOrders.map((o) => o.id))
+    if (previousMax === null) return
 
-    const fresh = initialOrders.filter((o) => !previous.has(o.id))
+    const fresh = initialOrders.filter((o) => o.id > previousMax)
     if (fresh.length === 1) {
       toast.info(`New order — Room ${fresh[0].roomNumber}`, {
         description: `${fresh[0].guestSurname} · $${fresh[0].totalAmount.toFixed(2)}`,
@@ -329,6 +337,17 @@ export default function RoomServiceOrdersClient({
           </TableBody>
         </Table>
       </div>
+
+      {totalCount > initialOrders.length && (
+        <div className="flex items-center justify-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            Showing the latest {initialOrders.length} of {totalCount} orders
+          </span>
+          <Button variant="outline" size="sm" onClick={() => router.replace(`?limit=${limit + 100}`)}>
+            Load older
+          </Button>
+        </div>
+      )}
 
       {/* Detail Dialog */}
       <Dialog open={liveDetailOrder !== null} onOpenChange={(open) => !open && setDetailOrder(null)}>

@@ -57,7 +57,7 @@ export async function createRoomServiceOrder(
   const safeItems: OrderItem[] = []
   for (const item of items) {
     const catalogItem = catalog.get(item.id)
-    if (!catalogItem) {
+    if (!catalogItem || !catalogItem.isAvailable) {
       return { error: 'Some items in your cart are no longer available. Please refresh and try again.' }
     }
     const quantity = Math.min(Math.max(Math.trunc(item.quantity), 1), 99)
@@ -102,12 +102,20 @@ export type RoomServiceOrder = {
   createdAt: Date
 }
 
-export async function getRoomServiceOrders(): Promise<RoomServiceOrder[]> {
+// Newest-first window — the admin screen starts with the most recent orders
+// and loads older ones on demand so the query doesn't grow with order history.
+export async function getRoomServiceOrders(limit = 100): Promise<RoomServiceOrder[]> {
   await requireAdmin('/dashboard/orders/room-service-orders')
   return db
     .select()
     .from(roomServiceOrders)
     .orderBy(desc(roomServiceOrders.createdAt))
+    .limit(limit)
+}
+
+export async function countRoomServiceOrders(): Promise<number> {
+  await requireAdmin('/dashboard/orders/room-service-orders')
+  return db.$count(roomServiceOrders)
 }
 
 export type OrderStatus = 'confirmed' | 'delivered' | 'cancelled'

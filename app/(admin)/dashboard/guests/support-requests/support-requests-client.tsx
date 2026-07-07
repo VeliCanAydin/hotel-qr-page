@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import { useAutoRefresh } from "@/hooks/use-auto-refresh"
 import { format, isToday, parseISO, isValid } from "date-fns"
 import { CalendarDays, ChevronDown, Clock3, MessageSquareText, Search, UsersRound } from "lucide-react"
@@ -24,7 +25,7 @@ import { cn } from "@/lib/utils"
 import type { GuestSupportRequest } from "@/lib/actions/support-requests"
 
 type ServerRequest = GuestSupportRequest & { createdAtFormatted?: string }
-type Props = { initialRequests: ServerRequest[] }
+type Props = { initialRequests: ServerRequest[]; totalCount: number; limit: number }
 
 const TYPE_LABELS: Record<string, string> = {
   support: 'Support',
@@ -184,7 +185,8 @@ function SupportRequestCard({
   )
 }
 
-export default function SupportRequestsClient({ initialRequests }: Props) {
+export default function SupportRequestsClient({ initialRequests, totalCount, limit }: Props) {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<"all" | "support" | "complaint">('all')
   const [statusFilter, setStatusFilter] = useState<"all" | "open" | "in-progress" | "resolved">('all')
@@ -192,17 +194,18 @@ export default function SupportRequestsClient({ initialRequests }: Props) {
   const [requests, setRequests] = useState<ServerRequest[]>(initialRequests)
 
   // Poll for new requests; sync local state when the server sends fresh data
-  // and announce records we haven't seen in this session.
+  // and announce records we haven't seen in this session. Compared by highest
+  // known id so "Load older" pages don't announce old requests as new.
   useAutoRefresh(30_000)
-  const knownRequestIds = useRef<Set<number> | null>(null)
+  const maxKnownRequestId = useRef<number | null>(null)
   useEffect(() => {
     setRequests(initialRequests)
 
-    const previous = knownRequestIds.current
-    knownRequestIds.current = new Set(initialRequests.map((r) => r.id))
-    if (!previous) return
+    const previousMax = maxKnownRequestId.current
+    maxKnownRequestId.current = Math.max(0, ...initialRequests.map((r) => r.id))
+    if (previousMax === null) return
 
-    const fresh = initialRequests.filter((r) => !previous.has(r.id))
+    const fresh = initialRequests.filter((r) => r.id > previousMax)
     if (fresh.length === 1) {
       toast.info(`New ${TYPE_LABELS[fresh[0].requestType]?.toLowerCase() ?? 'request'} — Room ${fresh[0].roomNumber || '?'}`, {
         description: fresh[0].subject,
@@ -386,6 +389,17 @@ export default function SupportRequestsClient({ initialRequests }: Props) {
           </div>
         )}
       </div>
+
+      {totalCount > initialRequests.length && (
+        <div className="flex items-center justify-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            Showing the latest {initialRequests.length} of {totalCount} requests
+          </span>
+          <Button variant="outline" size="sm" onClick={() => router.replace(`?limit=${limit + 100}`)}>
+            Load older
+          </Button>
+        </div>
+      )}
 
       <Dialog open={!!detail} onOpenChange={(open) => !open && setDetail(null)}>
         {detail && (

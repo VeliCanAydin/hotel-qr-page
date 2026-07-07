@@ -22,11 +22,13 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { Plus, Pencil, Trash2 } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 import { categoryLabels, type RoomServiceItem } from "@/lib/types/room-service"
 import {
   createRoomServiceItem,
   updateRoomServiceItem,
   deleteRoomServiceItem,
+  setRoomServiceItemAvailability,
 } from "@/lib/actions/room-service-items"
 
 type Category = RoomServiceItem["category"]
@@ -96,6 +98,15 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
     }
   }
 
+  function handleAvailabilityToggle(item: RoomServiceItem, isAvailable: boolean) {
+    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, isAvailable } : i)))
+    toast.promise(setRoomServiceItemAvailability(item.id, isAvailable), {
+      loading: "Updating...",
+      success: `"${item.name}" is now ${isAvailable ? "available" : "sold out"}`,
+      error: "Failed to update availability",
+    })
+  }
+
   function handleDelete() {
     if (!deleteId) return
     const id = deleteId
@@ -138,12 +149,13 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
                   <TableHead>Category</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead className="hidden lg:table-cell">Description</TableHead>
+                  <TableHead className="w-[110px]">Available</TableHead>
                   <TableHead className="w-[90px] text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((item) => (
-                  <TableRow key={item.id}>
+                  <TableRow key={item.id} className={item.isAvailable === false ? "opacity-60" : undefined}>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">{categoryLabels[item.category]}</Badge>
@@ -153,6 +165,18 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-muted-foreground text-sm max-w-xs truncate">
                       {item.description}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={item.isAvailable !== false}
+                          onCheckedChange={(checked) => handleAvailabilityToggle(item, checked)}
+                          aria-label={`Toggle availability of ${item.name}`}
+                        />
+                        {item.isAvailable === false && (
+                          <Badge variant="secondary" className="text-xs">Sold out</Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
@@ -171,7 +195,7 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
                 ))}
                 {filtered.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-10">
+                    <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
                       No items in this category
                     </TableCell>
                   </TableRow>
