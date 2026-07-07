@@ -10,6 +10,9 @@ interface AIApiResponse {
     created_at: string;
 }
 
+const MAX_MESSAGE_LENGTH = 2000;
+const UPSTREAM_TIMEOUT_MS = 20_000;
+
 export async function POST(request: NextRequest) {
     try {
         const { message, sessionId } = await request.json();
@@ -17,6 +20,13 @@ export async function POST(request: NextRequest) {
         if (!message || typeof message !== 'string') {
             return NextResponse.json(
                 { error: 'Mesaj gerekli' },
+                { status: 400 }
+            );
+        }
+
+        if (message.length > MAX_MESSAGE_LENGTH) {
+            return NextResponse.json(
+                { error: `Mesaj en fazla ${MAX_MESSAGE_LENGTH} karakter olabilir` },
                 { status: 400 }
             );
         }
@@ -33,6 +43,7 @@ export async function POST(request: NextRequest) {
                 message: message,
                 session_id: sessionId || null,
             }),
+            signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
         });
 
         if (!response.ok) {
@@ -40,6 +51,11 @@ export async function POST(request: NextRequest) {
         }
 
         const data: AIApiResponse = await response.json();
+
+        // Maliyet takibi — şimdilik tek gözlemlenebilirlik noktası bu log.
+        console.log(
+            `[ai-chat] session=${data.session_id} tokens=${data.tokens_used} cost_usd=${data.cost_usd} latency_ms=${data.latency_ms}`
+        );
 
         // API'den gelen yanıtı frontend'e ilet (Cevap ve session_id dahil)
         return NextResponse.json({
@@ -50,6 +66,13 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         console.error('AI Chat API Error:', error);
+
+        if (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')) {
+            return NextResponse.json(
+                { error: 'AI servisi zamanında yanıt vermedi. Lütfen tekrar deneyin.' },
+                { status: 504 }
+            );
+        }
 
         return NextResponse.json(
             {

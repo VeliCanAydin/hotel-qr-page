@@ -1,10 +1,11 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { reservations } from '@/lib/db/schema'
-import { desc, eq } from 'drizzle-orm'
+import { reservations, roomServiceOrders } from '@/lib/db/schema'
+import { and, desc, eq, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
+import { todayISO } from '@/lib/dates'
 
 export type Reservation = {
   id: number
@@ -83,7 +84,7 @@ function validateInput(data: ReturnType<typeof normalizeInput>) {
 }
 
 async function generateReservationCode(): Promise<string> {
-  const year = new Date().getFullYear()
+  const year = todayISO().slice(0, 4)
   for (let attempt = 0; attempt < 10; attempt++) {
     const code = `DOS-${year}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
     const [existing] = await db
@@ -150,6 +151,19 @@ export async function updateReservationStatus(
 
   revalidatePath(RESERVATIONS_PAGE)
   return updated
+}
+
+/** Orders the kitchen hasn't finished yet — the check-out flow warns staff
+ *  before ending a stay that still has one in flight. */
+export async function getOpenRoomServiceOrderCount(reservationCode: string): Promise<number> {
+  await requireAdmin(RESERVATIONS_PAGE)
+  return db.$count(
+    roomServiceOrders,
+    and(
+      eq(roomServiceOrders.reservationCode, reservationCode),
+      inArray(roomServiceOrders.status, ['pending', 'confirmed'])
+    )
+  )
 }
 
 export async function deleteReservation(id: number): Promise<void> {

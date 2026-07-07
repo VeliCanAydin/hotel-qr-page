@@ -5,6 +5,8 @@
 // Dates are computed relative to "today" at seed time so the demo guests can
 // always log in to the portal after a fresh `npm run db:seed`.
 
+import { toHotelDateISO } from '@/lib/dates'
+
 export type RoomType = 'standard' | 'deluxe' | 'suite' | 'villa'
 export type BoardType = 'room-only' | 'bed-breakfast' | 'half-board' | 'full-board' | 'all-inclusive'
 export type ReservationStatus = 'confirmed' | 'checked-in' | 'checked-out'
@@ -32,9 +34,7 @@ export interface GuestReservation {
 function daysFromToday(offset: number): string {
   const date = new Date()
   date.setDate(date.getDate() + offset)
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${date.getFullYear()}-${month}-${day}`
+  return toHotelDateISO(date)
 }
 
 export const mockReservations: GuestReservation[] = [

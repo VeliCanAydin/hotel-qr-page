@@ -3,6 +3,7 @@
 import { db } from '@/lib/db'
 import { roomServiceOrders, roomServiceItems } from '@/lib/db/schema'
 import { verifyGuestToken, requireAdmin, GUEST_SESSION_COOKIE } from '@/lib/auth'
+import { findActiveReservation } from '@/lib/reservations'
 import { cookies } from 'next/headers'
 import { desc, eq, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
@@ -32,6 +33,14 @@ export async function createRoomServiceOrder(
   const guest = await verifyGuestToken(token)
   if (!guest) {
     return { error: 'Session expired', redirectTo: '/login?redirect=/room-service/cart' }
+  }
+
+  // The DB is the authority, not the token: this drops orders from guests who
+  // were checked out mid-session, and delivers to the current room if the
+  // guest moved after logging in.
+  const reservation = await findActiveReservation(guest.reservationCode)
+  if (!reservation) {
+    return { error: 'Your stay has ended.', redirectTo: '/login?redirect=/room-service/cart' }
   }
 
   if (!items.length) {
@@ -65,9 +74,9 @@ export async function createRoomServiceOrder(
   const [order] = await db
     .insert(roomServiceOrders)
     .values({
-      reservationCode: guest.reservationCode,
-      roomNumber: guest.roomNumber,
-      guestSurname: guest.surname,
+      reservationCode: reservation.reservationCode,
+      roomNumber: reservation.roomNumber,
+      guestSurname: reservation.surname,
       items: JSON.stringify(safeItems),
       totalAmount,
       note,

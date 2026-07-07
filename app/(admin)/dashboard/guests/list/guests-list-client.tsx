@@ -25,6 +25,7 @@ import {
   updateReservation,
   updateReservationStatus,
   deleteReservation,
+  getOpenRoomServiceOrderCount,
   type Reservation,
   type ReservationInput,
   type ReservationStatus,
@@ -102,6 +103,10 @@ export default function GuestsListClient({
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<ReservationInput>(EMPTY_FORM)
   const [deleteTarget, setDeleteTarget] = useState<Reservation | null>(null)
+  const [checkoutWarning, setCheckoutWarning] = useState<{
+    reservation: Reservation
+    openOrders: number
+  } | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
   const counts = useMemo(() => {
@@ -212,6 +217,20 @@ export default function GuestsListClient({
     } catch {
       // toast.promise already surfaced the error
     }
+  }
+
+  async function handleCheckOut(reservation: Reservation) {
+    let openOrders = 0
+    try {
+      openOrders = await getOpenRoomServiceOrderCount(reservation.reservationCode)
+    } catch {
+      // The count is advisory — fall through to a plain check-out if it fails.
+    }
+    if (openOrders > 0) {
+      setCheckoutWarning({ reservation, openOrders })
+      return
+    }
+    await handleStatusChange(reservation, "checked-out")
   }
 
   async function handleDelete() {
@@ -383,7 +402,7 @@ export default function GuestsListClient({
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleStatusChange(detailGuest, "checked-out")}
+                      onClick={() => handleCheckOut(detailGuest)}
                     >
                       <LogOut className="h-4 w-4 mr-1" />
                       Check Out
@@ -677,6 +696,39 @@ export default function GuestsListClient({
             </Button>
           </DialogFooter>
         </DialogContent>
+      </Dialog>
+
+      {/* Check-out with open orders confirm dialog */}
+      <Dialog open={!!checkoutWarning} onOpenChange={(open) => !open && setCheckoutWarning(null)}>
+        {checkoutWarning && (
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Open Room Service Orders</DialogTitle>
+              <DialogDescription>
+                Room {checkoutWarning.reservation.roomNumber} (
+                {checkoutWarning.reservation.guestName}) still has{" "}
+                {checkoutWarning.openOrders} open room service{" "}
+                {checkoutWarning.openOrders === 1 ? "order" : "orders"}. Checking out ends the
+                guest&apos;s portal access, so they won&apos;t be able to track or cancel them.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setCheckoutWarning(null)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  const reservation = checkoutWarning.reservation
+                  setCheckoutWarning(null)
+                  handleStatusChange(reservation, "checked-out")
+                }}
+              >
+                <LogOut className="h-4 w-4 mr-1" />
+                Check Out Anyway
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
       </Dialog>
 
       {/* Delete confirm dialog */}

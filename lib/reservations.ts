@@ -1,23 +1,18 @@
-import { and, desc, eq, gte, ne, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, lte, ne, sql } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { reservations } from '@/lib/db/schema'
+import { todayISO } from '@/lib/dates'
 
 export type Reservation = typeof reservations.$inferSelect
 
-// Local calendar date as YYYY-MM-DD — checkIn/checkOut columns are text in the
-// same format, so string comparison is safe.
-function todayISO(): string {
-  const now = new Date()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${now.getFullYear()}-${month}-${day}`
-}
-
-/** Login-time lookup — room + surname (case-insensitive), stay not ended. */
+/** Login-time lookup — room + surname (case-insensitive), stay started and not
+ *  ended. The checkIn bound also picks the right reservation when today's
+ *  departing and arriving guests briefly coexist on the same room. */
 export async function findReservationForLogin(
   roomNumber: string,
   surname: string
 ): Promise<Reservation | null> {
+  const today = todayISO()
   const rows = await db
     .select()
     .from(reservations)
@@ -26,7 +21,8 @@ export async function findReservationForLogin(
         eq(reservations.roomNumber, roomNumber.trim()),
         sql`lower(${reservations.surname}) = ${surname.trim().toLowerCase()}`,
         ne(reservations.status, 'checked-out'),
-        gte(reservations.checkOut, todayISO())
+        lte(reservations.checkIn, today),
+        gte(reservations.checkOut, today)
       )
     )
     .orderBy(desc(reservations.checkOut))
@@ -40,6 +36,7 @@ export async function findReservationForLogin(
 export async function findActiveReservation(
   reservationCode: string
 ): Promise<Reservation | null> {
+  const today = todayISO()
   const rows = await db
     .select()
     .from(reservations)
@@ -47,7 +44,8 @@ export async function findActiveReservation(
       and(
         eq(reservations.reservationCode, reservationCode),
         ne(reservations.status, 'checked-out'),
-        gte(reservations.checkOut, todayISO())
+        lte(reservations.checkIn, today),
+        gte(reservations.checkOut, today)
       )
     )
     .limit(1)
