@@ -3,9 +3,9 @@ import { verifyToken } from "@/lib/auth"
 import { db } from '@/lib/db'
 import { adminUsers } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { AppSidebar } from "@/components/ui/admin/app-sidebar"
+import { AppSidebar } from "@/components/admin/app-sidebar"
 import { getAccessControlSnapshot } from '@/lib/access-store'
-import { AdminBreadcrumb } from "@/components/ui/admin/admin-breadcrumb"
+import { AdminBreadcrumb } from "@/components/admin/admin-breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { Toaster } from "@/components/ui/sonner"
 import {

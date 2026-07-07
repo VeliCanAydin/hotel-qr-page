@@ -4,7 +4,7 @@ import { menuItems, menuItemImages, menuCategories, restaurants } from "@/lib/db
 import { eq, asc } from "drizzle-orm"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MenuItemCard } from "@/components/a-la-carte/MenuItemCard"
-import type { MenuItem } from "@/lib/data/aLaCarteMenu"
+import type { MenuItem } from "@/lib/data/a-la-carte-menu"
 
 export const dynamic = 'force-dynamic'
 

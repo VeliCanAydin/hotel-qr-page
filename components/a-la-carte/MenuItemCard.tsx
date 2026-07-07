@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
-import type { MenuItem } from "@/lib/data/aLaCarteMenu";
+import type { MenuItem } from "@/lib/data/a-la-carte-menu";
 import { ALLERGENS as STATIC_ALLERGENS } from "@/lib/data/allergens";
 
 interface MenuItemCardProps {

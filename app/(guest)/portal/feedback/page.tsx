@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
-import { GuestFeedbackForm } from '@/components/ui/guest/guest-feedback-form'
+import { GuestFeedbackForm } from '@/components/guest/guest-feedback-form'
 
 export default async function GuestFeedbackPage() {
   const cookieStore = await cookies()

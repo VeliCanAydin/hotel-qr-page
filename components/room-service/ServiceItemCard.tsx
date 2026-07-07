@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/context/CartContext';
-import type { RoomServiceItem } from '@/lib/data/roomServiceData';
+import type { RoomServiceItem } from '@/lib/data/room-service-data';
 import { Plus, Minus } from 'lucide-react';
 
 interface ServiceItemCardProps {

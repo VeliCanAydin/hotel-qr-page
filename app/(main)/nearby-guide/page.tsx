@@ -7,7 +7,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getNearbyGuideItems } from "@/lib/actions/nearby-guide"
-import { nearbyGuideIconMap, type NearbyGuideItem } from "@/lib/data/nearbyGuide"
+import { nearbyGuideIconMap, type NearbyGuideItem } from "@/lib/data/nearby-guide"
 
 export const metadata: Metadata = {
   title: "Nearby Guide | Dosinia Luxury Hotel",

@@ -7,11 +7,11 @@ async function seed() {
   const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, nearbyGuideItems: nearbyGuideItemsTable } = await import('./schema')
   const { hashPassword } = await import('../auth')
   const { ADMIN_PAGE_PERMISSIONS, DEFAULT_ADMIN_ROLE_PRESETS } = await import('../permissions')
-  const { menuItems: menuData } = await import('../data/aLaCarteMenu')
-  const { roomServiceItems: roomData } = await import('../data/roomServiceData')
-  const { nearbyGuideItems: nearbyGuideData } = await import('../data/nearbyGuide')
+  const { menuItems: menuData } = await import('../data/a-la-carte-menu')
+  const { roomServiceItems: roomData } = await import('../data/room-service-data')
+  const { nearbyGuideItems: nearbyGuideData } = await import('../data/nearby-guide')
   const { hotelEvents } = await import('./event-seed-data')
-  const { weeklySchedule } = await import('../data/kidsClubData')
+  const { weeklySchedule } = await import('../data/kids-club-data')
 
   console.log('Seeding database...')
 
@@ -460,7 +460,7 @@ async function seed() {
   // Demo reservations (upsert by code — refreshes dates/status on re-seed so
   // the demo guests can always log in to the portal)
   const { reservations } = await import('./schema')
-  const { mockReservations } = await import('../data/mockReservations')
+  const { mockReservations } = await import('./seed-reservations')
   for (const reservation of mockReservations) {
     const { notes, ...rest } = reservation
     const values = { ...rest, notes: notes ?? '' }

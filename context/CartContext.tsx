@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import type { RoomServiceItem } from '@/lib/data/roomServiceData';
+import type { RoomServiceItem } from '@/lib/data/room-service-data';
 
 export interface CartItem extends RoomServiceItem {
     quantity: number;

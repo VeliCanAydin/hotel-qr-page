@@ -22,12 +22,12 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { Plus, Pencil, Trash2 } from "lucide-react"
-import { categoryLabels, type RoomServiceItem } from "@/lib/data/roomServiceData"
+import { categoryLabels, type RoomServiceItem } from "@/lib/data/room-service-data"
 import {
   createRoomServiceItem,
   updateRoomServiceItem,
   deleteRoomServiceItem,
-} from "@/lib/actions/room-service"
+} from "@/lib/actions/room-service-items"
 
 type Category = RoomServiceItem["category"]
 type TabValue = Category | "all"

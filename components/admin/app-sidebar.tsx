@@ -11,9 +11,9 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import { NavMain } from "@/components/ui/admin/nav-main"
-import { NavUser } from "@/components/ui/admin/nav-user"
-import { TeamSwitcher } from "@/components/ui/admin/team-switcher"
+import { NavMain } from "@/components/admin/nav-main"
+import { NavUser } from "@/components/admin/nav-user"
+import { TeamSwitcher } from "@/components/admin/team-switcher"
 import {
   Sidebar,
   SidebarContent,

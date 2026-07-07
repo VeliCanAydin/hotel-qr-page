@@ -4,7 +4,7 @@ loadEnvConfig(process.cwd())
 async function seed() {
   const { db } = await import('./index')
   const { kidsActivities } = await import('./schema')
-  const { weeklySchedule } = await import('../data/kidsClubData')
+  const { weeklySchedule } = await import('../data/kids-club-data')
 
   console.log('Seeding kids club schedule...')
 

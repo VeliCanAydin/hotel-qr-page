@@ -2,8 +2,8 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
-import { GuestHeader } from '@/components/ui/guest/guest-header'
-import { PortalTabs } from '@/components/ui/guest/portal-tabs'
+import { GuestHeader } from '@/components/guest/guest-header'
+import { PortalTabs } from '@/components/guest/portal-tabs'
 import { Badge } from '@/components/ui/badge'
 
 const STATUS_LABELS: Record<string, string> = {

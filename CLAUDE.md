@@ -40,7 +40,7 @@
 
 ### `ADMIN_PAGE_PERMISSIONS` (lib/permissions.ts) — tek sayfa listesi
 
-Admin sidebar **bu listeden üretilir** (`components/ui/admin/app-sidebar.tsx`), Access Control UI bu listeyi gösterir, proxy bu listeye göre yol çözer. **Yeni admin sayfası eklerken bu listeye kayıt eklemeyi unutursan sayfa sidebar'da görünmez ve Super Admin dışında kimse giremez.**
+Admin sidebar **bu listeden üretilir** (`components/admin/app-sidebar.tsx`), Access Control UI bu listeyi gösterir, proxy bu listeye göre yol çözer. **Yeni admin sayfası eklerken bu listeye kayıt eklemeyi unutursan sayfa sidebar'da görünmez ve Super Admin dışında kimse giremez.**
 
 Roller: Super Admin (her şey), Content Manager, Service Manager, Guest Relations. Preset'ler `DEFAULT_ADMIN_ROLE_PRESETS`'te; DB'deki `admin_role_pages` satırları preset'i override eder.
 
@@ -57,15 +57,15 @@ Roller: Super Admin (her şey), Content Manager, Service Manager, Guest Relation
 
 ```
 app/
-├── (main)/            # Public misafir sitesi + /api/ai-chat, /api/feedback vb.
+├── (main)/            # Public misafir sitesi
 ├── (guest)/portal/    # Girişli misafir portalı (layout'lar findActiveReservation ile korur)
 ├── (admin)/dashboard/ # Admin panel: content/, services/, orders/, events/, guests/, settings/
 ├── (auth)/login/      # Misafir + personel giriş
-└── api/               # admin/* (feedback, support), upload, blob-image, allergens
+└── api/               # TÜM API route'ları: admin/*, ai-chat, feedback, guest-context, upload, blob-image, allergens vb.
 components/
-├── ui/                # shadcn bileşenleri
-├── ui/admin/          # Sidebar (ADMIN_PAGE_PERMISSIONS'tan üretilir), nav, breadcrumb
-├── ui/guest/          # Portal header, tabs, feedback formu
+├── ui/                # SADECE shadcn primitive'leri
+├── admin/             # Sidebar (ADMIN_PAGE_PERMISSIONS'tan üretilir), nav, breadcrumb
+├── guest/             # Portal header, tabs, feedback formu, MyPlanView, PersonalizedStayPlanner
 └── [feature]/         # Feature bileşenleri
 lib/
 ├── auth.ts            # JWT, requireAdmin, guest token
@@ -74,8 +74,8 @@ lib/
 ├── reservations.ts    # Misafir login/oturum lookup'ları (server-only, action DEĞİL)
 ├── access-store.ts    # Access Control UI action'ları
 ├── actions/           # Server action'lar (admin mutasyonları requireAdmin'li)
-├── db/                # schema.ts, index.ts, seed.ts, seed-* yardımcıları, migrations/
-└── data/              # Statik seed kaynakları (SİLME — seed.ts bunlardan besleniyor)
+├── db/                # schema.ts, index.ts, seed.ts, seed-* yardımcıları (demo rezervasyonlar dahil), migrations/
+└── data/              # Statik seed kaynakları + paylaşılan tip/sabitler (SİLME — seed.ts ve runtime kodu besleniyor)
 hooks/
 ├── use-mobile.ts
 └── use-auto-refresh.ts # 30sn router.refresh() polling (orders & support ekranları)
