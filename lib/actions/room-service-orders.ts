@@ -5,8 +5,10 @@ import { roomServiceOrders, roomServiceItems } from '@/lib/db/schema'
 import { verifyGuestToken, requireAdmin, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 import { cookies } from 'next/headers'
+import { after } from 'next/server'
 import { desc, eq, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { sendPushToReservation } from '@/lib/push'
 
 export type OrderItem = {
   id: string
@@ -127,7 +129,7 @@ export async function updateOrderStatus(
   cancelledBy: 'guest' | 'staff' = 'staff'
 ): Promise<void> {
   await requireAdmin('/dashboard/orders/room-service-orders')
-  await db
+  const [order] = await db
     .update(roomServiceOrders)
     .set({
       status,
@@ -136,6 +138,30 @@ export async function updateOrderStatus(
         : {}),
     })
     .where(eq(roomServiceOrders.id, orderId))
+    .returning()
+
+  // Push after the response is sent — staff shouldn't wait on push-service HTTP.
+  if (order) {
+    const push = {
+      confirmed: {
+        title: 'Order confirmed',
+        body: `Your room service order #${order.id} is being prepared.`,
+      },
+      delivered: {
+        title: 'Order delivered',
+        body: `Your room service order #${order.id} has been delivered. Enjoy!`,
+      },
+      cancelled: {
+        title: 'Order cancelled',
+        body: cancellationReason
+          ? `Your room service order #${order.id} was cancelled: ${cancellationReason}`
+          : `Your room service order #${order.id} was cancelled.`,
+      },
+    }[status]
+    after(() =>
+      sendPushToReservation(order.reservationCode, { ...push, url: '/portal/room-service' })
+    )
+  }
 
   revalidatePath('/dashboard/orders/room-service-orders')
 }

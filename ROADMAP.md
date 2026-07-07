@@ -55,7 +55,11 @@ Her biri kendi başına mini proje; başlamadan önce ayrıca tasarım konuşmas
 - [ ] **Restoran/spa slot rezervasyonu** — kapasiteli zaman dilimi modeli (slot tablosu,
   çakışma kontrolü, iptal akışı), admin doluluk ekranı, misafir takvim UI. Eşzamanlılık
   (aynı slota iki kişi) doğru kurgulanmalı.
-- [ ] **Web Push bildirimleri** — sipariş durumu ve rezervasyon onayı için. Service worker,
-  subscription saklama, izin UX'i, iOS Safari kısıtları.
+- [x] **Web Push bildirimleri** — sipariş durumu (onay/teslim/iptal), destek isteği yanıtı ve
+  check-in onayı push atıyor. `web-push` + VAPID (`lib/push.ts`, env: `NEXT_PUBLIC_VAPID_PUBLIC_KEY`,
+  `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`), `push_subscriptions` tablosu rezervasyon koduna bağlı,
+  `public/sw.js` yalnız push (offline kapsam dışı). Portal ana sayfasında izin kartı; iOS'ta
+  ana ekrana ekleme yönergesi gösteriliyor (push yalnız kurulu PWA'da). Check-out subscription'ları
+  siliyor; push servisi 404/410 dönen endpoint'ler otomatik temizleniyor.
 - [ ] **Folyo/harcama özeti + express checkout** — önce sistem-içi harcamaların (oda servisi)
   özeti, tam sürüm PMS entegrasyonuna bağlı.

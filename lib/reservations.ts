@@ -31,6 +31,29 @@ export async function findReservationForLogin(
   return rows[0] ?? null
 }
 
+/** Current occupant of a room, if any — used to route room-keyed events
+ *  (e.g. support request updates) to the right stay's push subscriptions. */
+export async function findActiveReservationByRoom(
+  roomNumber: string
+): Promise<Reservation | null> {
+  const today = todayISO()
+  const rows = await db
+    .select()
+    .from(reservations)
+    .where(
+      and(
+        eq(reservations.roomNumber, roomNumber.trim()),
+        ne(reservations.status, 'checked-out'),
+        lte(reservations.checkIn, today),
+        gte(reservations.checkOut, today)
+      )
+    )
+    .orderBy(desc(reservations.checkOut))
+    .limit(1)
+
+  return rows[0] ?? null
+}
+
 /** Post-login lookup — reservationCode is unique per stay. Returns null once
  *  the stay ended or staff checked the guest out, which drops portal access. */
 export async function findActiveReservation(

@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, real, serial, text, time, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { boolean, index, integer, pgTable, real, serial, text, time, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 
 export const hotelInfo = pgTable('hotel_info', {
   id: integer('id').primaryKey().default(1),
@@ -288,3 +288,14 @@ export const reservations = pgTable('reservations', {
   notes:           text('notes').notNull().default(''),
   createdAt:       timestamp('created_at').defaultNow().notNull(),
 })
+
+export const pushSubscriptions = pgTable('push_subscriptions', {
+  id: serial('id').primaryKey(),
+  reservationCode: text('reservation_code').notNull(), // one guest stay, many devices
+  endpoint: text('endpoint').notNull().unique(),
+  p256dh: text('p256dh').notNull(),
+  auth: text('auth').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => [
+  index('push_subscriptions_reservation_code_idx').on(table.reservationCode),
+])

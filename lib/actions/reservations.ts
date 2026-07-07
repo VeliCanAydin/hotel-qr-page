@@ -4,8 +4,10 @@ import { db } from '@/lib/db'
 import { reservations, roomServiceOrders } from '@/lib/db/schema'
 import { and, desc, eq, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
 import { todayISO } from '@/lib/dates'
+import { deletePushSubscriptionsForReservation, sendPushToReservation } from '@/lib/push'
 
 export type Reservation = {
   id: number
@@ -148,6 +150,19 @@ export async function updateReservationStatus(
     .where(eq(reservations.id, id))
     .returning()
   if (!updated) throw new Error('Reservation not found')
+
+  if (status === 'checked-in') {
+    after(() =>
+      sendPushToReservation(updated.reservationCode, {
+        title: 'Check-in confirmed',
+        body: `Welcome! Your check-in for room ${updated.roomNumber} is confirmed.`,
+        url: '/portal',
+      })
+    )
+  } else if (status === 'checked-out') {
+    // The stay is over — its devices should stop receiving notifications.
+    after(() => deletePushSubscriptionsForReservation(updated.reservationCode))
+  }
 
   revalidatePath(RESERVATIONS_PAGE)
   return updated

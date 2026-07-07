@@ -2,10 +2,12 @@
 
 import { and, desc, eq } from 'drizzle-orm'
 import { cookies } from 'next/headers'
+import { after } from 'next/server'
 import { db } from '@/lib/db'
 import { guestSupportRequests } from '@/lib/db/schema'
 import { requireAdmin, verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
-import { findActiveReservation } from '@/lib/reservations'
+import { findActiveReservation, findActiveReservationByRoom } from '@/lib/reservations'
+import { sendPushToReservation } from '@/lib/push'
 
 export type GuestSupportRequest = typeof guestSupportRequests.$inferSelect
 
@@ -158,6 +160,24 @@ export async function updateGuestSupportRequest(
     })
     .where(eq(guestSupportRequests.id, requestId))
     .returning()
+
+  // Requests only store a room number, so route the push through whoever
+  // currently occupies that room. Runs after the response — staff shouldn't
+  // wait on push-service HTTP.
+  if (updated && updated.roomNumber) {
+    after(async () => {
+      const reservation = await findActiveReservationByRoom(updated.roomNumber)
+      if (!reservation) return
+      const response = updated.staffResponse.trim()
+      await sendPushToReservation(reservation.reservationCode, {
+        title: updated.status === 'resolved' ? 'Request resolved' : 'Request update',
+        body: response
+          ? `"${updated.subject}" — ${response.slice(0, 140)}`
+          : `Your request "${updated.subject}" is being handled by our team.`,
+        url: '/portal',
+      })
+    })
+  }
 
   return updated ?? null
 }

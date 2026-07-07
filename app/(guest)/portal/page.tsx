@@ -4,6 +4,7 @@ import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { QuickRequests } from '@/components/guest/quick-requests'
+import { PushNotificationCard } from '@/components/guest/push-notification-card'
 import {
   Users,
   BedDouble,
@@ -116,6 +117,9 @@ export default async function PortalPage() {
 
       {/* One-tap housekeeping / front-desk requests */}
       <QuickRequests />
+
+      {/* Web push opt-in for order/request status updates */}
+      <PushNotificationCard />
     </div>
   )
 }

@@ -72,6 +72,7 @@ lib/
 ├── page-access.ts     # DB-öncelikli sayfa izni (fail-closed)
 ├── permissions.ts     # ADMIN_PAGE_PERMISSIONS + rol preset'leri (TEK KAYNAK)
 ├── reservations.ts    # Misafir login/oturum lookup'ları (server-only, action DEĞİL)
+├── push.ts            # Web push gönderici — VAPID + subscription temizliği (server-only, action DEĞİL)
 ├── access-store.ts    # Access Control UI action'ları
 ├── actions/           # Server action'lar (admin mutasyonları requireAdmin'li)
 ├── types/             # Paylaşılan domain tipleri + UI sabitleri (HotelEvent+categoryColors, RoomServiceItem+categoryLabels, MenuItem, NearbyGuide*+iconMap)
@@ -133,8 +134,9 @@ proxy.ts               # Route koruması (Next 16 middleware)
 - **AI Chat:** `POST /api/ai-chat` → `AI_BACKEND_URL` env'deki dış servise proxy
 - **Kalori takibi:** `POST /api/calorie-vision` → `CALORIE_API_URL`
 - **Görseller:** Vercel Blob (private) → `/api/blob-image` proxy'siyle servis edilir; Unsplash remote pattern
+- **Web Push:** `web-push` + VAPID — gönderim `lib/push.ts` (server-only, action DEĞİL), subscription action'ları `lib/actions/push-subscriptions.ts`, service worker `public/sw.js` (yalnız push), misafir izin kartı portal ana sayfasında
 
-`.env.local` anahtarları: `DATABASE_URL`, `JWT_SECRET`, `BLOB_READ_WRITE_TOKEN`, `AI_BACKEND_URL`, `CALORIE_API_URL` (+ seed için `SEED_ADMIN_PASSWORD`, `SEED_STAFF_PASSWORD`)
+`.env.local` anahtarları: `DATABASE_URL`, `JWT_SECRET`, `BLOB_READ_WRITE_TOKEN`, `AI_BACKEND_URL`, `CALORIE_API_URL`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (+ seed için `SEED_ADMIN_PASSWORD`, `SEED_STAFF_PASSWORD`)
 
 ---
 
