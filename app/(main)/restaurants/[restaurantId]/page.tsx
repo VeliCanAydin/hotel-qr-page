@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation"
-import { db } from "@/lib/db"
-import { menuItems, menuItemImages, menuCategories, restaurants } from "@/lib/db/schema"
-import { eq, asc } from "drizzle-orm"
+import { getPublicRestaurantMenu, getPublicRestaurants } from "@/lib/content"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MenuItemCard } from "@/components/a-la-carte/menu-item-card"
 import type { MenuItem } from "@/lib/types/menu"
 
-export const dynamic = 'force-dynamic'
+
+// Prerender the menus of known restaurants; ones added later render on demand.
+export async function generateStaticParams() {
+  const rows = await getPublicRestaurants()
+  return rows.map((restaurant) => ({ restaurantId: restaurant.id }))
+}
 
 export default async function RestaurantMenuPage({
   params,
@@ -15,14 +18,9 @@ export default async function RestaurantMenuPage({
 }) {
   const { restaurantId } = await params
 
-  const [restaurantRows, items, images, allCategories] = await Promise.all([
-    db.select().from(restaurants).where(eq(restaurants.id, restaurantId)).limit(1),
-    db.select().from(menuItems).where(eq(menuItems.restaurantId, restaurantId)),
-    db.select().from(menuItemImages),
-    db.select().from(menuCategories).orderBy(asc(menuCategories.orderIndex)),
-  ])
+  const { restaurant, items, images, categories: allCategories } =
+    await getPublicRestaurantMenu(restaurantId)
 
-  const restaurant = restaurantRows[0]
   if (!restaurant) notFound()
 
   const imageMap = Object.fromEntries(images.map((img) => [img.itemId, img.proxyUrl]))

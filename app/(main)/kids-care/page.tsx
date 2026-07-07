@@ -2,18 +2,12 @@ import Image from "next/image"
 import { ShieldCheck, PartyPopper, SmilePlus } from "lucide-react"
 import Benefits from "@/components/kids-care/benefits"
 import ServiceCard from "@/components/kids-care/service-card"
-import { db } from "@/lib/db"
-import { kidsActivities, kidsServices, kidsServiceItems } from "@/lib/db/schema"
-import { asc } from "drizzle-orm"
+import { getPublicKidsContent } from "@/lib/content"
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 export default async function KidsCarePage() {
-  const [services, items, activityRows] = await Promise.all([
-    db.select().from(kidsServices).orderBy(asc(kidsServices.orderIndex)),
-    db.select().from(kidsServiceItems).orderBy(asc(kidsServiceItems.orderIndex)),
-    db.select().from(kidsActivities).orderBy(asc(kidsActivities.orderIndex)),
-  ])
+  const { services, serviceItems: items, activities: activityRows } = await getPublicKidsContent()
 
   const itemsByService: Record<string, { trigger: string; content: string }[]> = {}
   for (const item of items) {

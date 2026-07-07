@@ -2,9 +2,10 @@
 
 import { db } from '@/lib/db'
 import { events } from '@/lib/db/schema'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { eq } from 'drizzle-orm'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 type EventInput = {
   id: string
@@ -21,17 +22,17 @@ type EventInput = {
 export async function createEvent(event: EventInput) {
   await requireAdmin('/dashboard/events/list')
   await db.insert(events).values({ ...event, color: event.color ?? null })
-  revalidatePath('/events')
+  updateTag(CONTENT_TAGS.events)
 }
 
 export async function updateEvent(id: string, data: Omit<EventInput, 'id'>) {
   await requireAdmin('/dashboard/events/list')
   await db.update(events).set({ ...data, color: data.color ?? null }).where(eq(events.id, id))
-  revalidatePath('/events')
+  updateTag(CONTENT_TAGS.events)
 }
 
 export async function deleteEvent(id: string) {
   await requireAdmin('/dashboard/events/list')
   await db.delete(events).where(eq(events.id, id))
-  revalidatePath('/events')
+  updateTag(CONTENT_TAGS.events)
 }

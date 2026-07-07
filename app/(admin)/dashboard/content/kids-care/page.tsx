@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic'
 
 import { db } from '@/lib/db'
 import { kidsActivities, kidsServices, kidsServiceItems } from '@/lib/db/schema'

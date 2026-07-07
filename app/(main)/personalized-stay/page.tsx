@@ -1,15 +1,12 @@
 import Image from "next/image"
-import { asc } from "drizzle-orm"
 
 import PersonalizedStayPlanner from "../../../components/guest/personalized-stay-planner"
-import { db } from "@/lib/db"
-import { events } from "@/lib/db/schema"
+import { getPublicEvents } from "@/lib/content"
 import type { HotelEvent } from "@/lib/types/events"
 
-export const dynamic = 'force-dynamic'
 
 export default async function PersonalizedStayPage() {
-  const rows = await db.select().from(events).orderBy(asc(events.date), asc(events.startTime), asc(events.title))
+  const rows = await getPublicEvents()
   const allEvents: HotelEvent[] = rows.map((event) => ({
     ...event,
     category: event.category as HotelEvent['category'],

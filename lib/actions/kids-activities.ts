@@ -2,13 +2,13 @@
 
 import { db } from '@/lib/db'
 import { kidsActivities } from '@/lib/db/schema'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { eq } from 'drizzle-orm'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 function revalidate() {
-  revalidatePath('/kids-care')
-  revalidatePath('/dashboard/content/kids-care')
+  updateTag(CONTENT_TAGS.kidsCare)
 }
 
 export async function createKidsActivity(

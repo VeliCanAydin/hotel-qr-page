@@ -4,8 +4,11 @@ import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 
 export async function GET() {
+  // Outside the try: during prerender cookies() rejects with a control-flow
+  // sentinel that must not be swallowed by the catch below.
+  const cookieStore = await cookies()
+
   try {
-    const cookieStore = await cookies()
     const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
 
     if (!token) {

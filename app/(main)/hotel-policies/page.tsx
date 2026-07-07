@@ -13,17 +13,16 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { getHotelInfo } from "@/lib/actions/hotel-info"
+import { getPublicHotelInfo } from "@/lib/content"
 
 export const metadata: Metadata = {
   title: "Hotel Policies | Dosinia Luxury Hotel",
   description: "Check-in and check-out times, cancellation terms, and general house rules.",
 }
 
-export const dynamic = "force-dynamic"
 
 export default async function HotelPoliciesPage() {
-  const info = await getHotelInfo()
+  const info = await getPublicHotelInfo()
 
   const policies = [
     {

@@ -1,13 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ServiceItemCard } from '@/components/room-service/service-item-card'
 import { categoryLabels, type RoomServiceItem } from '@/lib/types/room-service'
-import { db } from '@/lib/db'
-import { roomServiceItems } from '@/lib/db/schema'
+import { getPublicRoomServiceItems } from '@/lib/content'
 
 const CATEGORIES = ['food', 'beverages', 'other-services'] as const
 
 export default async function RoomService() {
-  const items = await db.select().from(roomServiceItems)
+  const items = await getPublicRoomServiceItems()
 
   const getByCategory = (category: string) =>
     items.filter((item) => item.category === category)

@@ -1,7 +1,7 @@
-import { getBeachPoolsInfo } from "@/lib/actions/beach-pools"
+import { getPublicBeachPoolsInfo } from "@/lib/content"
 import BeachPoolsContent from "./beach-pools-content"
 
 export default async function BeachPage() {
-  const info = await getBeachPoolsInfo()
+  const info = await getPublicBeachPoolsInfo()
   return <BeachPoolsContent info={info} />
 }

@@ -1,8 +1,9 @@
 'use server'
 
 import { asc, eq } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 import { db } from '@/lib/db'
 import { nearbyGuideItems as nearbyGuideItemsTable } from '@/lib/db/schema'
@@ -58,8 +59,7 @@ export async function getNearbyGuideItems(): Promise<NearbyGuideItem[]> {
 export async function createNearbyGuideItem(data: NearbyGuideItem) {
   await requireAdmin('/dashboard/content/nearby-guide')
   await db.insert(nearbyGuideItemsTable).values(normalizeItem(data))
-  revalidatePath('/nearby-guide')
-  revalidatePath('/dashboard/content/nearby-guide')
+  updateTag(CONTENT_TAGS.nearbyGuide)
 }
 
 export async function updateNearbyGuideItem(id: string, data: Omit<NearbyGuideItem, 'id'>) {
@@ -68,13 +68,11 @@ export async function updateNearbyGuideItem(id: string, data: Omit<NearbyGuideIt
     .update(nearbyGuideItemsTable)
     .set(normalizeItem({ id, ...data }))
     .where(eq(nearbyGuideItemsTable.id, id))
-  revalidatePath('/nearby-guide')
-  revalidatePath('/dashboard/content/nearby-guide')
+  updateTag(CONTENT_TAGS.nearbyGuide)
 }
 
 export async function deleteNearbyGuideItem(id: string) {
   await requireAdmin('/dashboard/content/nearby-guide')
   await db.delete(nearbyGuideItemsTable).where(eq(nearbyGuideItemsTable.id, id))
-  revalidatePath('/nearby-guide')
-  revalidatePath('/dashboard/content/nearby-guide')
+  updateTag(CONTENT_TAGS.nearbyGuide)
 }

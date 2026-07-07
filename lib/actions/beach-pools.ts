@@ -3,8 +3,9 @@
 import { db } from '@/lib/db'
 import { beachPoolsInfo } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 export type BeachPoolsInfoData = {
   beachDescription: string
@@ -68,5 +69,5 @@ export async function updateBeachPoolsInfo(data: BeachPoolsInfoData) {
   }
   await db.insert(beachPoolsInfo).values({ id: 1 }).onConflictDoNothing()
   await db.update(beachPoolsInfo).set(toSave).where(eq(beachPoolsInfo.id, 1))
-  revalidatePath('/beach-pools')
+  updateTag(CONTENT_TAGS.beachPools)
 }

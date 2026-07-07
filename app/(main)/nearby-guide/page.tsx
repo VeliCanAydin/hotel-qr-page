@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getNearbyGuideItems } from "@/lib/actions/nearby-guide"
+import { getPublicNearbyGuideItems } from "@/lib/content"
 import { nearbyGuideIconMap, type NearbyGuideItem } from "@/lib/types/nearby-guide"
 
 export const metadata: Metadata = {
@@ -87,10 +87,9 @@ function NearbyPlaceCard({ place }: { place: NearbyGuideItem }) {
   )
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function NearbyGuidePage() {
-  const nearbyGuideItems = await getNearbyGuideItems()
+  const nearbyGuideItems = await getPublicNearbyGuideItems()
   const nearbyEssentials = nearbyGuideItems.filter((item) => item.section === "Nearby Essentials")
   const touristAttractions = nearbyGuideItems.filter((item) => item.section === "Tourist Attractions")
 

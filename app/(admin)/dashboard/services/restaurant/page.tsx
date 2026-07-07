@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic'
 
 import { db } from '@/lib/db'
 import { menuItems, menuItemImages, menuCategories } from '@/lib/db/schema'

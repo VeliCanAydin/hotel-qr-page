@@ -92,10 +92,12 @@ export default function CalorieTrackerPage() {
         return `${year}-${month}-${day}`;
     };
 
-    const todayStr = getLocalDateString();
+    // Set after mount: prerendered HTML can't read the current clock
+    const [todayStr, setTodayStr] = useState('');
 
     useEffect(() => {
         setMounted(true);
+        setTodayStr(getLocalDateString());
         // Load data from localStorage
         const storedLogs = localStorage.getItem('guest-calorie-logs');
         const storedGoal = localStorage.getItem('guest-calorie-goal');

@@ -3,8 +3,9 @@
 import { db } from '@/lib/db'
 import { kidsServices, kidsServiceItems } from '@/lib/db/schema'
 import { eq, asc } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 export type KidsServiceInput = {
   id: string
@@ -16,8 +17,7 @@ export type KidsServiceInput = {
 }
 
 function revalidate() {
-  revalidatePath('/kids-care')
-  revalidatePath('/dashboard/content/kids-care')
+  updateTag(CONTENT_TAGS.kidsCare)
 }
 
 export async function createKidsService(data: KidsServiceInput) {

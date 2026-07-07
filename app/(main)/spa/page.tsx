@@ -1,10 +1,10 @@
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import ServiceCard from "@/components/spa-wellness/service-card"
-import { getSpaServices } from "@/lib/actions/spa-services"
+import { getPublicSpaServices } from "@/lib/content"
 
 export default async function SpaPage() {
-  const services = await getSpaServices()
+  const services = await getPublicSpaServices()
 
   return (
     <div className="min-h-screen">

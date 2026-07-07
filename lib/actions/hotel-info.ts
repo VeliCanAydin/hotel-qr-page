@@ -3,8 +3,9 @@
 import { db } from '@/lib/db'
 import { hotelInfo } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 export type HotelInfoData = {
   phone: string
@@ -32,7 +33,10 @@ const DEFAULTS: HotelInfoData = {
   aboutText: '',
 }
 
+// Admin-only: includes wifiPassword. The public site reads the cached copy in
+// lib/content.ts instead, so this action must not be callable anonymously.
 export async function getHotelInfo(): Promise<HotelInfoData> {
+  await requireAdmin('/dashboard/content/hotel-info')
   const [row] = await db.select().from(hotelInfo).where(eq(hotelInfo.id, 1)).limit(1)
   return row ?? DEFAULTS
 }
@@ -43,5 +47,5 @@ export async function updateHotelInfo(data: HotelInfoData) {
     .insert(hotelInfo)
     .values({ id: 1, ...data })
     .onConflictDoUpdate({ target: hotelInfo.id, set: data })
-  revalidatePath('/hotel-info')
+  updateTag(CONTENT_TAGS.hotelInfo)
 }

@@ -3,8 +3,9 @@
 import { db } from '@/lib/db'
 import { menuTemplates, menuTemplateItems, menuItems, menuItemImages } from '@/lib/db/schema'
 import { eq, asc, sql } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 export type TemplateItemInput = {
   name: string
@@ -122,7 +123,7 @@ export async function loadMenuTemplate(templateId: string, restaurantId: string)
   }
 
   revalidatePath('/dashboard/services/restaurant')
-  revalidatePath('/restaurants/a-la-carte')
+  updateTag(CONTENT_TAGS.menuItems)
 }
 
 export async function deleteMenuTemplate(id: string) {

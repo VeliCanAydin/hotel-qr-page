@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { MapPin, Mail, Phone, ExternalLink } from "lucide-react";
+import { FooterYear } from "@/components/footer-year";
 
 export default function Footer() {
     return (
@@ -120,7 +121,7 @@ export default function Footer() {
                     </Link>
                 </div>
                 <p className="text-center text-sm text-muted-foreground">
-                    &copy; {new Date().getFullYear()} Dosinia Luxury Hotel. All rights reserved.
+                    &copy; <FooterYear /> Dosinia Luxury Hotel. All rights reserved.
                 </p>
             </div>
         </footer>

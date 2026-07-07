@@ -6,7 +6,7 @@ import { EventCard } from "./event-card";
 
 interface TimelineProps {
   events: HotelEvent[];
-  selectedDate: Date;
+  selectedDate?: Date;
   onEventClick: (event: HotelEvent) => void;
 }
 
@@ -16,12 +16,14 @@ const TIMELINE_END_HOUR = 24;
 const HOUR_HEIGHT = 60; // pixels per hour
 
 export function Timeline({ events, selectedDate, onEventClick }: TimelineProps) {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  // Set after mount: prerendered HTML can't read the current clock
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const nowLineRef = useRef<HTMLDivElement>(null);
 
-  // Update current time every minute
+  // Set current time on mount, then update every minute
   useEffect(() => {
+    setCurrentTime(new Date());
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
@@ -39,9 +41,10 @@ export function Timeline({ events, selectedDate, onEventClick }: TimelineProps) 
     }
   }, [selectedDate]);
 
-  // Check if selected date is today
-  const isToday = (date: Date) => {
-    const today = new Date();
+  // Check if selected date is today (false until the clock is known)
+  const isToday = (date?: Date) => {
+    if (!date || !currentTime) return false;
+    const today = currentTime;
     return (
       date.getDate() === today.getDate() &&
       date.getMonth() === today.getMonth() &&
@@ -51,6 +54,7 @@ export function Timeline({ events, selectedDate, onEventClick }: TimelineProps) 
 
   // Calculate position of the "now" line
   const getNowLinePosition = () => {
+    if (!currentTime) return 0;
     const hours = currentTime.getHours();
     const minutes = currentTime.getMinutes();
     const totalMinutes = hours * 60 + minutes;

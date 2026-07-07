@@ -2,8 +2,9 @@
 
 import { db } from '@/lib/db'
 import { roomServiceItems } from '@/lib/db/schema'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 import { eq } from 'drizzle-orm'
 
 type RoomServiceItemInput = {
@@ -18,17 +19,17 @@ type RoomServiceItemInput = {
 export async function createRoomServiceItem(item: RoomServiceItemInput) {
   await requireAdmin('/dashboard/services/room-service')
   await db.insert(roomServiceItems).values(item)
-  revalidatePath('/room-service')
+  updateTag(CONTENT_TAGS.roomServiceItems)
 }
 
 export async function updateRoomServiceItem(id: string, data: Omit<RoomServiceItemInput, 'id'>) {
   await requireAdmin('/dashboard/services/room-service')
   await db.update(roomServiceItems).set(data).where(eq(roomServiceItems.id, id))
-  revalidatePath('/room-service')
+  updateTag(CONTENT_TAGS.roomServiceItems)
 }
 
 export async function deleteRoomServiceItem(id: string) {
   await requireAdmin('/dashboard/services/room-service')
   await db.delete(roomServiceItems).where(eq(roomServiceItems.id, id))
-  revalidatePath('/room-service')
+  updateTag(CONTENT_TAGS.roomServiceItems)
 }

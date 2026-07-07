@@ -1,12 +1,8 @@
 import RestaurantCard from "@/components/restaurant-card"
 import { Suspense } from "react"
 import RestaurantCardSkeleton from "@/components/restaurant-card-skeleton"
-import { db } from "@/lib/db"
-import { restaurants } from "@/lib/db/schema"
-import { asc } from "drizzle-orm"
-import { getHotelInfo } from "@/lib/actions/hotel-info"
+import { getPublicHotelInfo, getPublicRestaurants } from "@/lib/content"
 
-export const dynamic = 'force-dynamic'
 
 // Images for the original three restaurants; new ones get the default
 const RESTAURANT_IMAGES: Record<string, string> = {
@@ -18,8 +14,8 @@ const DEFAULT_IMAGE = '/azure.png'
 
 export default async function RestaurantsPage() {
   const [restaurantRows, hotelInfo] = await Promise.all([
-    db.select().from(restaurants).orderBy(asc(restaurants.orderIndex)),
-    getHotelInfo(),
+    getPublicRestaurants(),
+    getPublicHotelInfo(),
   ])
 
   return (

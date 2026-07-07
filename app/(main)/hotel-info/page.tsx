@@ -11,11 +11,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { getHotelInfo } from "@/lib/actions/hotel-info"
+import { getPublicHotelInfo } from "@/lib/content"
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from "@/lib/auth"
 
 export default async function HotelInfoPage() {
-  const info = await getHotelInfo()
+  const info = await getPublicHotelInfo()
 
   const cookieStore = await cookies()
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value

@@ -80,11 +80,17 @@ export default function PersonalizedStayPlanner({
   storageKey: string
   guestName: string
 }) {
-  const days = useMemo(() => {
-    const todayKey = getLocalDateKey(new Date())
+  // Known after mount: prerendered HTML can't read the current clock. Until
+  // then all stay dates show; past days drop out once the clock is known.
+  const [todayKey, setTodayKey] = useState<string | null>(null)
+  useEffect(() => {
+    setTodayKey(getLocalDateKey(new Date()))
+  }, [])
 
-    return sortUniqueDates(stayDates).filter((date) => date >= todayKey)
-  }, [stayDates])
+  const days = useMemo(() => {
+    const sorted = sortUniqueDates(stayDates)
+    return todayKey ? sorted.filter((date) => date >= todayKey) : sorted
+  }, [stayDates, todayKey])
   const groupedEvents = useMemo(() => groupEventsByCategory(events), [events])
   const eventById = useMemo(() => new Map(events.map((event) => [event.id, event])), [events])
 

@@ -2,9 +2,10 @@
 
 import { db } from '@/lib/db'
 import { menuItems, menuCategories, menuItemImages } from '@/lib/db/schema'
-import { revalidatePath } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { eq } from 'drizzle-orm'
 import { requireAdmin } from '@/lib/auth'
+import { CONTENT_TAGS } from '@/lib/cache-tags'
 
 type MenuItemInput = {
   id: string
@@ -24,8 +25,7 @@ export async function createMenuItem(item: MenuItemInput) {
     isVegetarian: item.isVegetarian ?? false,
     allergens: JSON.stringify(item.allergens ?? []),
   })
-  revalidatePath(`/restaurants/${item.restaurantId}`)
-  revalidatePath('/dashboard/services/restaurant')
+  updateTag(CONTENT_TAGS.menuItems)
 }
 
 export async function updateMenuItem(id: string, data: Omit<MenuItemInput, 'id'>) {
@@ -35,21 +35,20 @@ export async function updateMenuItem(id: string, data: Omit<MenuItemInput, 'id'>
     isVegetarian: data.isVegetarian ?? false,
     allergens: JSON.stringify(data.allergens ?? []),
   }).where(eq(menuItems.id, id))
-  revalidatePath(`/restaurants/${data.restaurantId}`)
-  revalidatePath('/dashboard/services/restaurant')
+  updateTag(CONTENT_TAGS.menuItems)
 }
 
 export async function deleteMenuItem(id: string) {
   await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuItems).where(eq(menuItems.id, id))
   await db.delete(menuItemImages).where(eq(menuItemImages.itemId, id))
-  revalidatePath('/restaurants/a-la-carte')
+  updateTag(CONTENT_TAGS.menuItems)
 }
 
 export async function deleteMenuItemImage(itemId: string) {
   await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuItemImages).where(eq(menuItemImages.itemId, itemId))
-  revalidatePath('/restaurants/a-la-carte')
+  updateTag(CONTENT_TAGS.menuItems)
 }
 
 export async function upsertMenuItemImage(itemId: string, proxyUrl: string) {
@@ -58,7 +57,7 @@ export async function upsertMenuItemImage(itemId: string, proxyUrl: string) {
     .insert(menuItemImages)
     .values({ itemId, proxyUrl })
     .onConflictDoUpdate({ target: menuItemImages.itemId, set: { proxyUrl } })
-  revalidatePath('/restaurants/a-la-carte')
+  updateTag(CONTENT_TAGS.menuItems)
 }
 
 export async function getMenuCategories() {
@@ -68,5 +67,5 @@ export async function getMenuCategories() {
 export async function createMenuCategory(id: string, label: string) {
   await requireAdmin('/dashboard/services/restaurant')
   await db.insert(menuCategories).values({ id, label }).onConflictDoNothing()
-  revalidatePath('/dashboard/services/restaurant')
+  updateTag(CONTENT_TAGS.menuItems)
 }

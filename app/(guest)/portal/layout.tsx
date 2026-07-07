@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
@@ -18,7 +19,9 @@ const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'outline'> = {
   'checked-out': 'secondary',
 }
 
-export default async function PortalLayout({
+// Reads the guest session (cookies + DB), so it renders inside the layout's
+// <Suspense> boundary; portal pages are covered by the same boundary.
+async function PortalShell({
   children,
 }: {
   children: React.ReactNode
@@ -54,5 +57,17 @@ export default async function PortalLayout({
         </div>
       </main>
     </div>
+  )
+}
+
+export default function PortalLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <PortalShell>{children}</PortalShell>
+    </Suspense>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { EventDetailsDrawer, Timeline } from "@/components/events"
 import type { HotelEvent } from "@/lib/types/events"
@@ -13,9 +13,14 @@ function formatDateLocal(date: Date): string {
 }
 
 export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }) {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  // Selected after mount: prerendered HTML can't read the current clock
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    setSelectedDate((current) => current ?? new Date())
+  }, [])
 
   const eventsForSelectedDate = useMemo(() => {
     if (!selectedDate) return []
@@ -47,6 +52,18 @@ export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }
     if (!nextOpen) {
       setSelectedEventId(null)
     }
+  }
+
+  // The calendar reads today's date internally, which prerendered HTML can't
+  // do — render it only after mount, once selectedDate is set.
+  if (!selectedDate) {
+    return (
+      <div className="mx-auto flex max-w-2xl flex-col gap-6 p-3 sm:p-4">
+        <div className="flex justify-center">
+          <div className="h-80 w-full max-w-sm animate-pulse rounded-lg border bg-muted" />
+        </div>
+      </div>
+    )
   }
 
   return (

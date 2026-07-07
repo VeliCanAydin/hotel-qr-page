@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { cookies } from "next/headers"
 import { verifyToken } from "@/lib/auth"
 import { db } from '@/lib/db'
@@ -14,7 +15,9 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export default async function AdminLayout({
+// Reads the admin session (cookies + DB), so it renders inside the layout's
+// <Suspense> boundary; dashboard pages are covered by the same boundary.
+async function AdminShell({
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -73,5 +76,17 @@ export default async function AdminLayout({
             </SidebarInset>
             <Toaster richColors position="bottom-right" />
         </SidebarProvider>
+    );
+}
+
+export default function AdminLayout({
+    children,
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
+    return (
+        <Suspense>
+            <AdminShell>{children}</AdminShell>
+        </Suspense>
     );
 }
