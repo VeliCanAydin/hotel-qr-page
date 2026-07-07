@@ -2,9 +2,9 @@
 
 import { Menu, ArrowLeft, Home, ShoppingCart, CircleUserRound, LayoutDashboard, LogOut } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { ModeToggle } from './ModeToggle';
+import { ModeToggle } from './mode-toggle';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/CartContext';
+import { useCart } from '@/context/cart-context';
 import { Badge } from '@/components/ui/badge';
 import {
     DropdownMenu,

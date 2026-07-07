@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
-import Header from "@/components/Header";
-import FooterWrapper from "@/components/FooterWrapper";
+import Header from "@/components/header";
+import FooterWrapper from "@/components/footer-wrapper";
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 

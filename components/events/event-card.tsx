@@ -3,7 +3,7 @@
 import { Clock } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { categoryColors, type HotelEvent } from "@/lib/data/events"
+import { categoryColors, type HotelEvent } from "@/lib/types/events"
 import { cn } from "@/lib/utils"
 
 interface EventCardProps {

@@ -74,14 +74,17 @@ lib/
 ├── reservations.ts    # Misafir login/oturum lookup'ları (server-only, action DEĞİL)
 ├── access-store.ts    # Access Control UI action'ları
 ├── actions/           # Server action'lar (admin mutasyonları requireAdmin'li)
+├── types/             # Paylaşılan domain tipleri + UI sabitleri (HotelEvent+categoryColors, RoomServiceItem+categoryLabels, MenuItem, NearbyGuide*+iconMap)
 ├── db/                # schema.ts, index.ts, seed.ts, seed-* yardımcıları (demo rezervasyonlar dahil), migrations/
-└── data/              # Statik seed kaynakları + paylaşılan tip/sabitler (SİLME — seed.ts ve runtime kodu besleniyor)
+└── data/              # Statik seed kaynakları (SİLME — seed.ts besleniyor; allergens.ts runtime'da da kullanılıyor)
 hooks/
 ├── use-mobile.ts
 └── use-auto-refresh.ts # 30sn router.refresh() polling (orders & support ekranları)
-context/CartContext.tsx # Oda servisi sepeti (localStorage)
+context/cart-context.tsx # Oda servisi sepeti (localStorage)
 proxy.ts               # Route koruması (Next 16 middleware)
 ```
+
+**Dosya adlandırma:** tüm `.ts`/`.tsx` dosyaları kebab-case (`event-card.tsx`, `cart-context.tsx`). PascalCase dosya adı ekleme.
 
 ---
 

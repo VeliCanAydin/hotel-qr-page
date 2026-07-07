@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
-import { CartProvider } from "@/context/CartContext";
+import { CartProvider } from "@/context/cart-context";
 import "./globals.css";
 import { Manrope } from "next/font/google";
-import { HMRBodyUnlocker } from "@/components/HMRBodyUnlocker";
+import { HMRBodyUnlocker } from "@/components/hmr-body-unlocker";
 
 const manrope = Manrope({
   weight: ["400", "500", "700"],

@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import ServiceCard from "@/components/spa-wellness/ServiceCard"
+import ServiceCard from "@/components/spa-wellness/service-card"
 import { getWellnessServices } from "@/lib/actions/wellness-services"
 
 export default async function WellnessPage() {

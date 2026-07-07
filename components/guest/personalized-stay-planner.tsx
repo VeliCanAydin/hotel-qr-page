@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import type { HotelEvent } from "@/lib/data/events"
+import type { HotelEvent } from "@/lib/types/events"
 
 type PlanState = Record<string, string[]>
 

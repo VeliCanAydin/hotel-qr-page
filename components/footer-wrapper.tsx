@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Footer from "./Footer";
+import Footer from "./footer";
 
 const HIDDEN_FOOTER_ROUTES = ["/ai-assistant"];
 

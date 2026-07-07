@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { EventDetailsDrawer, Timeline } from "@/components/events"
-import type { HotelEvent } from "@/lib/data/events"
+import type { HotelEvent } from "@/lib/types/events"
 
 function formatDateLocal(date: Date): string {
   const y = date.getFullYear()

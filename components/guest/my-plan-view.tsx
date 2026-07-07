@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { HotelEvent } from "@/lib/data/events"
+import type { HotelEvent } from "@/lib/types/events"
 
 type PlanState = Record<string, string[]>
 

@@ -1,8 +1,8 @@
 'use client';
 
 import Image from "next/image";
-import AccordionKidsCare from '@/components/kids-care/AccordionKidsCare';
-import ScheduleDrawer from '@/components/kids-care/ScheduleDrawer';
+import AccordionKidsCare from '@/components/kids-care/accordion-kids-care';
+import ScheduleDrawer from '@/components/kids-care/schedule-drawer';
 
 export type Activity = {
     time: string;

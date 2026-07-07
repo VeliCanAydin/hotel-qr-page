@@ -1,10 +1,10 @@
 import Image from "next/image"
 import { asc } from "drizzle-orm"
 
-import PersonalizedStayPlanner from "../../../components/guest/PersonalizedStayPlanner"
+import PersonalizedStayPlanner from "../../../components/guest/personalized-stay-planner"
 import { db } from "@/lib/db"
 import { events } from "@/lib/db/schema"
-import type { HotelEvent } from "@/lib/data/events"
+import type { HotelEvent } from "@/lib/types/events"
 
 export const dynamic = 'force-dynamic'
 

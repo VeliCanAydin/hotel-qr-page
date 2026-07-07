@@ -1,9 +1,9 @@
 import { asc } from "drizzle-orm"
 
-import MyPlanView from "@/components/guest/MyPlanView"
+import MyPlanView from "@/components/guest/my-plan-view"
 import { db } from "@/lib/db"
 import { events } from "@/lib/db/schema"
-import type { HotelEvent } from "@/lib/data/events"
+import type { HotelEvent } from "@/lib/types/events"
 
 export const dynamic = "force-dynamic"
 

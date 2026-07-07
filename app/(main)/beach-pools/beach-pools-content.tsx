@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/carousel"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import ArtisticGallery from "@/components/beach-pools/ArtisticGallery"
+import ArtisticGallery from "@/components/beach-pools/artistic-gallery"
 import type { BeachPoolsInfoData } from "@/lib/actions/beach-pools"
 
 const beachImages = [

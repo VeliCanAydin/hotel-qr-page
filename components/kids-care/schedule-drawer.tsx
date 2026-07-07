@@ -9,7 +9,7 @@ import {
     DrawerTitle,
     DrawerDescription
 } from "@/components/ui/drawer";
-import WeeklyScheduleCarousel from "@/components/kids-care/WeeklyScheduleCarousel";
+import WeeklyScheduleCarousel from "@/components/kids-care/weekly-schedule-carousel";
 
 interface Activity {
     time: string;

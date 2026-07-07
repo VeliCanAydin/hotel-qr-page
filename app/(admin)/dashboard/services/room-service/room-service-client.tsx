@@ -22,7 +22,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { Plus, Pencil, Trash2 } from "lucide-react"
-import { categoryLabels, type RoomServiceItem } from "@/lib/data/room-service-data"
+import { categoryLabels, type RoomServiceItem } from "@/lib/types/room-service"
 import {
   createRoomServiceItem,
   updateRoomServiceItem,

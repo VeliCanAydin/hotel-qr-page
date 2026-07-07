@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useCart } from '@/context/CartContext';
-import type { RoomServiceItem } from '@/lib/data/room-service-data';
+import { useCart } from '@/context/cart-context';
+import type { RoomServiceItem } from '@/lib/types/room-service';
 import { Plus, Minus } from 'lucide-react';
 
 interface ServiceItemCardProps {

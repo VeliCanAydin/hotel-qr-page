@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { HotelEvent } from "@/lib/data/events";
-import { EventCard } from "./EventCard";
+import { HotelEvent } from "@/lib/types/events";
+import { EventCard } from "./event-card";
 
 interface TimelineProps {
   events: HotelEvent[];

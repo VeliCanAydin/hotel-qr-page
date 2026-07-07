@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ModeToggle } from '@/components/ModeToggle'
+import { ModeToggle } from '@/components/mode-toggle'
 import { guestLogout } from '@/lib/actions/guest-auth'
 import type { Reservation } from '@/lib/reservations'
 

@@ -1,4 +1,4 @@
-import PageCard from '../../components/PageCard'
+import PageCard from '../../components/page-card'
 import { pages } from '../../lib/pages'
  
 export default function HomePage() {

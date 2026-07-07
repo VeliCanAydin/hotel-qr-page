@@ -6,7 +6,8 @@ import { requireAdmin } from '@/lib/auth'
 
 import { db } from '@/lib/db'
 import { nearbyGuideItems as nearbyGuideItemsTable } from '@/lib/db/schema'
-import { nearbyGuideItems as seedNearbyGuideItems, type NearbyGuideIconKey, type NearbyGuideItem, type NearbyGuideSection } from '@/lib/data/nearby-guide'
+import { nearbyGuideItems as seedNearbyGuideItems } from '@/lib/data/nearby-guide'
+import type { NearbyGuideIconKey, NearbyGuideItem, NearbyGuideSection } from '@/lib/types/nearby-guide'
 
 function normalizePhone(phone: string | null | undefined) {
   const trimmed = phone?.trim() ?? ''

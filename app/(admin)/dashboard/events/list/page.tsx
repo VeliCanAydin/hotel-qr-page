@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { db } from '@/lib/db'
 import { events } from '@/lib/db/schema'
 import { asc } from 'drizzle-orm'
-import { type HotelEvent } from '@/lib/data/events'
+import { type HotelEvent } from '@/lib/types/events'
 import EventsClient from './events-client'
 
 export default async function EventsListPage() {

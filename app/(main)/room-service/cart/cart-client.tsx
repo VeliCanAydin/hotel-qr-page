@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import { useCart } from '@/context/CartContext';
+import { useCart } from '@/context/cart-context';
 import { Minus, Plus, Trash2, ShoppingBag, LogIn, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';

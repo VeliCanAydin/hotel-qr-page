@@ -13,7 +13,7 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer"
 import { cn } from "@/lib/utils"
-import { categoryColors, type HotelEvent } from "@/lib/data/events"
+import { categoryColors, type HotelEvent } from "@/lib/types/events"
 
 type EventDetailsDrawerProps = {
   event: HotelEvent | null

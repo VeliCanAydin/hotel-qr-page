@@ -1,4 +1,4 @@
-import type { HotelEvent } from '@/lib/data/events'
+import type { HotelEvent } from '@/lib/types/events'
 
 type EventSlot = {
   dayOffset: number

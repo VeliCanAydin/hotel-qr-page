@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ServiceItemCard } from '@/components/room-service/ServiceItemCard'
-import { categoryLabels, type RoomServiceItem } from '@/lib/data/room-service-data'
+import { ServiceItemCard } from '@/components/room-service/service-item-card'
+import { categoryLabels, type RoomServiceItem } from '@/lib/types/room-service'
 import { db } from '@/lib/db'
 import { roomServiceItems } from '@/lib/db/schema'
 

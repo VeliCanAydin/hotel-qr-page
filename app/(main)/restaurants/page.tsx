@@ -1,6 +1,6 @@
-import RestaurantCard from "@/components/RestaurantCard"
+import RestaurantCard from "@/components/restaurant-card"
 import { Suspense } from "react"
-import RestaurantCardSkeleton from "@/components/RestaurantCardSkeleton"
+import RestaurantCardSkeleton from "@/components/restaurant-card-skeleton"
 import { db } from "@/lib/db"
 import { restaurants } from "@/lib/db/schema"
 import { asc } from "drizzle-orm"

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db"
 import { events } from "@/lib/db/schema"
 import { asc } from "drizzle-orm"
-import type { HotelEvent } from "@/lib/data/events"
+import type { HotelEvent } from "@/lib/types/events"
 import EventsContent from "./events-content"
 
 export default async function PageEvent() {

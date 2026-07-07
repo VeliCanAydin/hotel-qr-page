@@ -3,8 +3,8 @@ import { db } from "@/lib/db"
 import { menuItems, menuItemImages, menuCategories, restaurants } from "@/lib/db/schema"
 import { eq, asc } from "drizzle-orm"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MenuItemCard } from "@/components/a-la-carte/MenuItemCard"
-import type { MenuItem } from "@/lib/data/a-la-carte-menu"
+import { MenuItemCard } from "@/components/a-la-carte/menu-item-card"
+import type { MenuItem } from "@/lib/types/menu"
 
 export const dynamic = 'force-dynamic'
 
