@@ -473,5 +473,25 @@
     "tripTypes": { "business": "Geschäftlich", "leisure": "Freizeit", "family": "Familie", "solo": "Allein", "couple": "Paar" },
     "ratingCategories": { "cleanliness": "Sauberkeit", "staff": "Personal & Service", "comfort": "Komfort", "value": "Preis-Leistung", "food": "Speisen & Getränke" },
     "ratingLabels": { "1": "Schlecht", "2": "Mäßig", "3": "Gut", "4": "Sehr gut", "5": "Ausgezeichnet" }
+  },
+  "cookiePolicy": {
+    "title": "Cookie-Richtlinie",
+    "intro": "Diese Seite erklärt, welche Cookies und welchen Browser-Speicher diese Website verwendet und warum. Wir halten es bewusst einfach: Wir verwenden nur das, was für die Funktion der Website unbedingt erforderlich ist.",
+    "whatWeUse": "Was wir verwenden",
+    "essentialTitle": "Notwendige Sitzungs-Cookies",
+    "essentialP1": "Wenn Sie sich mit Ihrer Zimmernummer anmelden, setzen wir ein sicheres, verschlüsseltes Sitzungs-Cookie (<code>guest-session</code>), damit die Website weiß, wer Sie während Ihres Aufenthalts sind. Es läuft automatisch beim Check-out oder nach 24 Stunden ab.",
+    "essentialP2": "Hotelmitarbeiter, die sich im Admin-Bereich anmelden, erhalten ein entsprechendes <code>admin-session</code>-Cookie.",
+    "essentialP3": "Diese Cookies sind <strong>unbedingt erforderlich</strong> — die Anmeldefunktionen können ohne sie nicht funktionieren — und werden niemals für Tracking oder Werbung verwendet.",
+    "localStorageTitle": "Lokaler Speicher",
+    "localP1": "Einige Komfortfunktionen speichern Daten nur auf Ihrem eigenen Gerät im lokalen Speicher Ihres Browsers — sie werden niemals an unsere Server gesendet:",
+    "localItem1": "Inhalt Ihres Zimmerservice-Warenkorbs",
+    "localItem2": "Ihr personalisierter Aufenthaltsplan (ausgewählte Veranstaltungen)",
+    "localItem3": "Ihre Hell-/Dunkel-Themenpräferenz",
+    "localP2": "Das Löschen Ihrer Browserdaten entfernt diese Informationen.",
+    "whatWeDont": "Was wir nicht verwenden",
+    "dontP": "Wir verwenden auf dieser Website keine Werbe-Cookies, kein seitenübergreifendes Tracking und keine Analyse-Cookies von Drittanbietern. Da wir nur unbedingt erforderliche Cookies verwenden, ist kein Cookie-Einwilligungsbanner erforderlich.",
+    "managing": "Cookies verwalten",
+    "managingP": "Sie können Cookies jederzeit über Ihre Browsereinstellungen löschen oder blockieren. Beachten Sie, dass das Blockieren notwendiger Cookies verhindert, dass Sie sich im Gäste-Portal anmelden oder Zimmerservice-Bestellungen aufgeben können.",
+    "questions": "Fragen? Kontaktieren Sie uns unter <email></email>."
   }
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Cookie, ShieldCheck, Database, Settings2 } from "lucide-react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: "How this website uses cookies and local storage.",
 }
 
+const code = (chunks: React.ReactNode) => <code className="text-foreground">{chunks}</code>
+const strong = (chunks: React.ReactNode) => <strong className="text-foreground">{chunks}</strong>
+
 export default async function CookiePolicyPage({
   params,
 }: {
@@ -17,46 +20,35 @@ export default async function CookiePolicyPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("cookiePolicy")
   return (
     <main className="max-w-4xl mx-auto px-4 py-8 flex flex-col gap-8">
       <section className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
           <Cookie className="size-6 text-primary" />
-          <h1 className="text-2xl font-bold">Cookie Policy</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
         </div>
         <p className="text-muted-foreground leading-relaxed">
-          This page explains which cookies and browser storage this website uses and why. We keep
-          it deliberately simple: we only use what is strictly necessary for the site to work.
+          {t("intro")}
         </p>
       </section>
 
       <Separator />
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold">What We Use</h2>
+        <h2 className="text-xl font-semibold">{t("whatWeUse")}</h2>
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <ShieldCheck className="size-4 text-primary" />
-                Essential Session Cookies
+                {t("essentialTitle")}
               </CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground leading-relaxed space-y-2">
-              <p>
-                When you sign in with your room number, we set a secure, encrypted session cookie
-                (<code className="text-foreground">guest-session</code>) so the site remembers who
-                you are during your stay. It expires automatically at check-out or after 24 hours.
-              </p>
-              <p>
-                Hotel staff signing in to the admin panel receive an equivalent{" "}
-                <code className="text-foreground">admin-session</code> cookie.
-              </p>
-              <p>
-                These cookies are <strong className="text-foreground">strictly necessary</strong> —
-                the sign-in features cannot work without them — and are never used for tracking or
-                advertising.
-              </p>
+              <p>{t.rich("essentialP1", { code })}</p>
+              <p>{t.rich("essentialP2", { code })}</p>
+              <p>{t.rich("essentialP3", { strong })}</p>
             </CardContent>
           </Card>
 
@@ -64,20 +56,17 @@ export default async function CookiePolicyPage({
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <Database className="size-4 text-primary" />
-                Local Storage
+                {t("localStorageTitle")}
               </CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground leading-relaxed space-y-2">
-              <p>
-                Some convenience features store data only on your own device using your browser's
-                local storage — it is never sent to our servers:
-              </p>
+              <p>{t("localP1")}</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Your room service cart contents</li>
-                <li>Your personalized stay plan (selected events)</li>
-                <li>Your light/dark theme preference</li>
+                <li>{t("localItem1")}</li>
+                <li>{t("localItem2")}</li>
+                <li>{t("localItem3")}</li>
               </ul>
-              <p>Clearing your browser data removes this information.</p>
+              <p>{t("localP2")}</p>
             </CardContent>
           </Card>
         </div>
@@ -88,30 +77,28 @@ export default async function CookiePolicyPage({
       <section className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold flex items-center gap-2">
           <Settings2 className="size-5 text-primary" />
-          What We Don&apos;t Use
+          {t("whatWeDont")}
         </h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          We do not use advertising cookies, cross-site tracking, or third-party analytics cookies
-          on this website. Because we only use strictly necessary cookies, no cookie consent
-          banner is required.
+          {t("dontP")}
         </p>
       </section>
 
       <Separator />
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold">Managing Cookies</h2>
+        <h2 className="text-xl font-semibold">{t("managing")}</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          You can delete or block cookies at any time through your browser settings. Note that
-          blocking essential cookies will prevent you from signing in to the guest portal or
-          placing room service orders.
+          {t("managingP")}
         </p>
         <p className="text-xs text-muted-foreground">
-          Questions? Contact us at{" "}
-          <a href="mailto:info@dosiniahotels.com" className="underline hover:text-primary transition-colors">
-            info@dosiniahotels.com
-          </a>
-          .
+          {t.rich("questions", {
+            email: () => (
+              <a href="mailto:info@dosiniahotels.com" className="underline hover:text-primary transition-colors">
+                info@dosiniahotels.com
+              </a>
+            ),
+          })}
         </p>
       </section>
     </main>

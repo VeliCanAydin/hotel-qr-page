@@ -472,5 +472,25 @@
     "tripTypes": { "business": "Business", "leisure": "Leisure", "family": "Family", "solo": "Solo", "couple": "Couple" },
     "ratingCategories": { "cleanliness": "Cleanliness", "staff": "Staff & Service", "comfort": "Comfort", "value": "Value for Money", "food": "Food & Beverage" },
     "ratingLabels": { "1": "Poor", "2": "Fair", "3": "Good", "4": "Very good", "5": "Excellent" }
+  },
+  "cookiePolicy": {
+    "title": "Cookie Policy",
+    "intro": "This page explains which cookies and browser storage this website uses and why. We keep it deliberately simple: we only use what is strictly necessary for the site to work.",
+    "whatWeUse": "What We Use",
+    "essentialTitle": "Essential Session Cookies",
+    "essentialP1": "When you sign in with your room number, we set a secure, encrypted session cookie (<code>guest-session</code>) so the site remembers who you are during your stay. It expires automatically at check-out or after 24 hours.",
+    "essentialP2": "Hotel staff signing in to the admin panel receive an equivalent <code>admin-session</code> cookie.",
+    "essentialP3": "These cookies are <strong>strictly necessary</strong> — the sign-in features cannot work without them — and are never used for tracking or advertising.",
+    "localStorageTitle": "Local Storage",
+    "localP1": "Some convenience features store data only on your own device using your browser's local storage — it is never sent to our servers:",
+    "localItem1": "Your room service cart contents",
+    "localItem2": "Your personalized stay plan (selected events)",
+    "localItem3": "Your light/dark theme preference",
+    "localP2": "Clearing your browser data removes this information.",
+    "whatWeDont": "What We Don't Use",
+    "dontP": "We do not use advertising cookies, cross-site tracking, or third-party analytics cookies on this website. Because we only use strictly necessary cookies, no cookie consent banner is required.",
+    "managing": "Managing Cookies",
+    "managingP": "You can delete or block cookies at any time through your browser settings. Note that blocking essential cookies will prevent you from signing in to the guest portal or placing room service orders.",
+    "questions": "Questions? Contact us at <email></email>."
   }
 }

@@ -472,5 +472,25 @@
     "tripTypes": { "business": "İş", "leisure": "Tatil", "family": "Aile", "solo": "Yalnız", "couple": "Çift" },
     "ratingCategories": { "cleanliness": "Temizlik", "staff": "Personel & Hizmet", "comfort": "Konfor", "value": "Fiyat/Performans", "food": "Yiyecek & İçecek" },
     "ratingLabels": { "1": "Kötü", "2": "İdare eder", "3": "İyi", "4": "Çok iyi", "5": "Mükemmel" }
+  },
+  "cookiePolicy": {
+    "title": "Çerez Politikası",
+    "intro": "Bu sayfa, bu web sitesinin hangi çerezleri ve tarayıcı depolamasını neden kullandığını açıklar. Bunu bilinçli olarak basit tutuyoruz: yalnızca sitenin çalışması için kesinlikle gerekli olanları kullanıyoruz.",
+    "whatWeUse": "Ne Kullanıyoruz",
+    "essentialTitle": "Zorunlu Oturum Çerezleri",
+    "essentialP1": "Oda numaranızla giriş yaptığınızda, site konaklamanız boyunca kim olduğunuzu hatırlaması için güvenli, şifreli bir oturum çerezi (<code>guest-session</code>) ayarlarız. Çıkışta veya 24 saat sonra otomatik olarak sona erer.",
+    "essentialP2": "Yönetim paneline giriş yapan otel personeli, eşdeğer bir <code>admin-session</code> çerezi alır.",
+    "essentialP3": "Bu çerezler <strong>kesinlikle gereklidir</strong> — giriş özellikleri onlarsız çalışamaz — ve asla takip veya reklam için kullanılmaz.",
+    "localStorageTitle": "Yerel Depolama",
+    "localP1": "Bazı kolaylık özellikleri, verileri yalnızca tarayıcınızın yerel depolamasını kullanarak kendi cihazınızda saklar — bu veriler asla sunucularımıza gönderilmez:",
+    "localItem1": "Oda servisi sepetinizin içeriği",
+    "localItem2": "Kişiselleştirilmiş konaklama planınız (seçilen etkinlikler)",
+    "localItem3": "Açık/koyu tema tercihiniz",
+    "localP2": "Tarayıcı verilerinizi temizlemek bu bilgileri kaldırır.",
+    "whatWeDont": "Ne Kullanmıyoruz",
+    "dontP": "Bu web sitesinde reklam çerezleri, siteler arası takip veya üçüncü taraf analiz çerezleri kullanmıyoruz. Yalnızca kesinlikle gerekli çerezleri kullandığımız için çerez onay banner'ı gerekmez.",
+    "managing": "Çerezleri Yönetme",
+    "managingP": "Tarayıcı ayarlarınızdan çerezleri istediğiniz zaman silebilir veya engelleyebilirsiniz. Zorunlu çerezleri engellemenin, misafir portalına giriş yapmanızı veya oda servisi siparişi vermenizi engelleyeceğini unutmayın.",
+    "questions": "Sorularınız mı var? Bize <email></email> adresinden ulaşın."
   }
 }
