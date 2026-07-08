@@ -167,5 +167,21 @@
   },
   "menuItemCard": {
     "vegetarian": "VEGETARISCH"
+  },
+  "events": {
+    "title": "Veranstaltungen",
+    "eventsCount": "{count, plural, =0 {Keine Veranstaltungen geplant} one {# Veranstaltung geplant} other {# Veranstaltungen geplant}}",
+    "noEventsDay": "Für diesen Tag sind keine Veranstaltungen geplant.",
+    "selectDifferent": "Wählen Sie ein anderes Datum, um Veranstaltungen zu sehen.",
+    "addToCalendar": "Zum Kalender hinzufügen",
+    "close": "Schließen",
+    "categories": {
+      "entertainment": "Unterhaltung",
+      "dining": "Essen",
+      "wellness": "Wellness",
+      "kids": "Kinder",
+      "sports": "Sport",
+      "music": "Musik"
+    }
   }
 }

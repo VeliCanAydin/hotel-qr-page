@@ -166,5 +166,21 @@
   },
   "menuItemCard": {
     "vegetarian": "VEJETARYEN"
+  },
+  "events": {
+    "title": "Etkinlikler",
+    "eventsCount": "{count, plural, =0 {Planlanmış etkinlik yok} other {# etkinlik planlandı}}",
+    "noEventsDay": "Bu gün için planlanmış etkinlik yok.",
+    "selectDifferent": "Etkinlikleri görmek için farklı bir tarih seçin.",
+    "addToCalendar": "Takvime ekle",
+    "close": "Kapat",
+    "categories": {
+      "entertainment": "Eğlence",
+      "dining": "Yemek",
+      "wellness": "Wellness",
+      "kids": "Çocuk",
+      "sports": "Spor",
+      "music": "Müzik"
+    }
   }
 }

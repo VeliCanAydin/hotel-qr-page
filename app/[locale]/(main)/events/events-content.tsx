@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Calendar } from "@/components/ui/calendar"
 import { EventDetailsDrawer, Timeline } from "@/components/events"
 import type { HotelEvent } from "@/lib/types/events"
@@ -13,6 +14,7 @@ function formatDateLocal(date: Date): string {
 }
 
 export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }) {
+  const t = useTranslations("events")
   // Selected after mount: prerendered HTML can't read the current clock
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
@@ -83,11 +85,9 @@ export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }
 
       <div className="flex-1 min-w-0">
         <div className="mb-4">
-          <h2 className="text-xl font-semibold">Events</h2>
+          <h2 className="text-xl font-semibold">{t("title")}</h2>
           <p className="text-muted-foreground text-sm">
-            {eventsForSelectedDate.length === 0
-              ? "No events scheduled"
-              : `${eventsForSelectedDate.length} event${eventsForSelectedDate.length > 1 ? "s" : ""} scheduled`}
+            {t("eventsCount", { count: eventsForSelectedDate.length })}
           </p>
         </div>
 
@@ -95,8 +95,8 @@ export default function EventsContent({ allEvents }: { allEvents: HotelEvent[] }
           <Timeline events={eventsForSelectedDate} selectedDate={selectedDate} onEventClick={openEventDrawer} />
         ) : (
           <div className="border rounded-lg p-8 text-center text-muted-foreground">
-            <p>No events scheduled for this day.</p>
-            <p className="text-sm mt-2">Select a different date to view events.</p>
+            <p>{t("noEventsDay")}</p>
+            <p className="text-sm mt-2">{t("selectDifferent")}</p>
           </div>
         )}
       </div>
