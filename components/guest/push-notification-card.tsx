@@ -9,6 +9,7 @@ import { usePushSubscription } from '@/hooks/use-push-subscription'
 
 export function PushNotificationCard() {
   const t = useTranslations('portal')
+  const tErrors = useTranslations('errors')
   const { status, isBusy, subscribe, unsubscribe } = usePushSubscription()
 
   // Browsers with no Push API at all get nothing — a card they can't act on
@@ -19,7 +20,7 @@ export function PushNotificationCard() {
   async function handleToggle(enable: boolean) {
     const result = enable ? await subscribe() : await unsubscribe()
     if ('error' in result) {
-      toast.info(result.error)
+      toast.info(tErrors.has(result.error) ? tErrors(result.error) : tErrors('generic'))
     } else {
       toast.success(enable ? t('notifOn') : t('notifOff'))
     }

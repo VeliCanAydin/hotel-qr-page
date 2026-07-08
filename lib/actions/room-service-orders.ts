@@ -17,6 +17,7 @@ export type OrderItem = {
   quantity: number
 }
 
+// `error` values are keys in the `errors` messages namespace — the client translates them.
 export type CreateOrderResult =
   | { orderId: number }
   | { error: string; redirectTo?: string }
@@ -29,12 +30,12 @@ export async function createRoomServiceOrder(
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
 
   if (!token) {
-    return { error: 'Not authenticated', redirectTo: '/login?redirect=/room-service/cart' }
+    return { error: 'notAuthenticated', redirectTo: '/login?redirect=/room-service/cart' }
   }
 
   const guest = await verifyGuestToken(token)
   if (!guest) {
-    return { error: 'Session expired', redirectTo: '/login?redirect=/room-service/cart' }
+    return { error: 'sessionExpired', redirectTo: '/login?redirect=/room-service/cart' }
   }
 
   // The DB is the authority, not the token: this drops orders from guests who
@@ -42,11 +43,11 @@ export async function createRoomServiceOrder(
   // guest moved after logging in.
   const reservation = await findActiveReservation(guest.reservationCode)
   if (!reservation) {
-    return { error: 'Your stay has ended.', redirectTo: '/login?redirect=/room-service/cart' }
+    return { error: 'stayEnded', redirectTo: '/login?redirect=/room-service/cart' }
   }
 
   if (!items.length) {
-    return { error: 'Your cart is empty.' }
+    return { error: 'cartEmpty' }
   }
 
   // Never trust client-side prices — rebuild every line from the catalog.
@@ -60,7 +61,7 @@ export async function createRoomServiceOrder(
   for (const item of items) {
     const catalogItem = catalog.get(item.id)
     if (!catalogItem || !catalogItem.isAvailable) {
-      return { error: 'Some items in your cart are no longer available. Please refresh and try again.' }
+      return { error: 'itemsUnavailable' }
     }
     const quantity = Math.min(Math.max(Math.trunc(item.quantity), 1), 99)
     safeItems.push({
@@ -173,19 +174,19 @@ export async function cancelGuestOrder(
   const cookieStore = await cookies()
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
 
-  if (!token) return { error: 'Not authenticated' }
+  if (!token) return { error: 'notAuthenticated' }
 
   const guest = await verifyGuestToken(token)
-  if (!guest) return { error: 'Session expired' }
+  if (!guest) return { error: 'sessionExpired' }
 
   const [order] = await db
     .select()
     .from(roomServiceOrders)
     .where(eq(roomServiceOrders.id, orderId))
 
-  if (!order) return { error: 'Order not found' }
-  if (order.reservationCode !== guest.reservationCode) return { error: 'Unauthorized' }
-  if (order.status !== 'pending') return { error: 'Only pending orders can be cancelled' }
+  if (!order) return { error: 'orderNotFound' }
+  if (order.reservationCode !== guest.reservationCode) return { error: 'unauthorized' }
+  if (order.status !== 'pending') return { error: 'orderNotCancellable' }
 
   await db
     .update(roomServiceOrders)

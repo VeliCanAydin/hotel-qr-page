@@ -20,6 +20,7 @@ function GuestLoginForm() {
   const redirectPath = searchParams.get('redirect') ?? ''
   const [state, formAction, isPending] = useActionState(guestLogin, { error: "" })
   const t = useTranslations('login')
+  const tErrors = useTranslations('errors')
 
   useEffect(() => {
     if (state.redirectTo) {
@@ -56,7 +57,7 @@ function GuestLoginForm() {
       {state.error && (
         <div className="flex items-center gap-2 text-sm text-destructive">
           <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{state.error}</span>
+          <span>{tErrors.has(state.error) ? tErrors(state.error) : tErrors('generic')}</span>
         </div>
       )}
 

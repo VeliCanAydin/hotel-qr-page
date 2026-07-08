@@ -590,5 +590,32 @@
     "report2023Desc": "Full overview of our 2023 environmental, social and governance performance.",
     "downloadPdf": "Download PDF",
     "pdfNote": "PDF files will be available once uploaded. Contact us at <email></email> to request a report directly."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "stayEnded": "Your stay has ended.",
+    "notAuthenticated": "Please sign in to continue.",
+    "missingCredentials": "Room number and surname are required.",
+    "reservationNotFound": "No reservation found. Please check your room number and surname.",
+    "unknownRequestType": "Unknown request type.",
+    "requestAlreadyOpen": "This request is already on its way — our team will be with you shortly.",
+    "cartEmpty": "Your cart is empty.",
+    "itemsUnavailable": "Some items in your cart are no longer available. Please refresh and try again.",
+    "orderNotFound": "Order not found.",
+    "orderNotCancellable": "Only pending orders can be cancelled.",
+    "unauthorized": "You are not allowed to do this.",
+    "invalidSubscription": "Invalid subscription.",
+    "pushNotConfigured": "Notifications are not configured.",
+    "pushNotAllowed": "Notifications were not allowed.",
+    "pushFailed": "Could not update notifications. Please try again.",
+    "invalidFeedback": "Invalid feedback data.",
+    "feedbackSaveFailed": "Feedback could not be saved. Please try again.",
+    "invalidSupportRequest": "Invalid support/complaint data.",
+    "supportSaveFailed": "Your request could not be saved. Please try again.",
+    "noFile": "No file was provided.",
+    "notImageFile": "Only image files can be uploaded.",
+    "fileTooLarge": "File size must be 5 MB or less.",
+    "uploadFailed": "Upload failed. Please try again."
   }
 }

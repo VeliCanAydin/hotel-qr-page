@@ -65,20 +65,21 @@ const QUICK_REQUEST_TEMPLATES = {
 
 export type QuickRequestKey = keyof typeof QUICK_REQUEST_TEMPLATES
 
+// `error` values are keys in the `errors` messages namespace — the client translates them.
 export async function createGuestQuickRequest(
   key: QuickRequestKey,
   note?: string
 ): Promise<{ ok: true } | { error: string }> {
   const template = QUICK_REQUEST_TEMPLATES[key]
-  if (!template) return { error: 'Unknown request type.' }
+  if (!template) return { error: 'unknownRequestType' }
 
   const cookieStore = await cookies()
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
   const guest = token ? await verifyGuestToken(token) : null
-  if (!guest) return { error: 'Your session has expired. Please sign in again.' }
+  if (!guest) return { error: 'sessionExpired' }
 
   const reservation = await findActiveReservation(guest.reservationCode)
-  if (!reservation) return { error: 'Your stay has ended.' }
+  if (!reservation) return { error: 'stayEnded' }
 
   // One open request per type per room — resubmitting won't flood the staff queue.
   const [existing] = await db
@@ -93,7 +94,7 @@ export async function createGuestQuickRequest(
     )
     .limit(1)
   if (existing) {
-    return { error: 'This request is already on its way — our team will be with you shortly.' }
+    return { error: 'requestAlreadyOpen' }
   }
 
   const trimmedNote = note?.trim().slice(0, 500)

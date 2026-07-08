@@ -17,8 +17,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const parsed = supportSchema.safeParse(body)
 
+    // `error` values are keys in the `errors` messages namespace — the client translates them.
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid support/complaint data.' }, { status: 400 })
+      return NextResponse.json({ error: 'invalidSupportRequest' }, { status: 400 })
     }
 
     await createGuestSupportRequest(parsed.data)
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[support-request] submit error:', error)
     return NextResponse.json(
-      { error: 'Support/complaint request could not be saved. Please try again.' },
+      { error: 'supportSaveFailed' },
       { status: 500 }
     )
   }

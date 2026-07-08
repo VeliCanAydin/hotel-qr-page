@@ -23,17 +23,18 @@ async function getActiveGuestReservation() {
   return findActiveReservation(guest.reservationCode)
 }
 
+// `error` values are keys in the `errors` messages namespace — the client translates them.
 export async function subscribeToPush(
   sub: PushSubscriptionInput
 ): Promise<{ ok: true } | { error: string }> {
   const reservation = await getActiveGuestReservation()
-  if (!reservation) return { error: 'Your session has expired. Please sign in again.' }
+  if (!reservation) return { error: 'sessionExpired' }
 
   if (!sub?.endpoint || !sub.keys?.p256dh || !sub.keys?.auth) {
-    return { error: 'Invalid subscription.' }
+    return { error: 'invalidSubscription' }
   }
   if (!sub.endpoint.startsWith('https://')) {
-    return { error: 'Invalid subscription.' }
+    return { error: 'invalidSubscription' }
   }
 
   // Same device re-subscribing (e.g. a returning guest on a new stay) moves
@@ -63,7 +64,7 @@ export async function unsubscribeFromPush(
   endpoint: string
 ): Promise<{ ok: true } | { error: string }> {
   const reservation = await getActiveGuestReservation()
-  if (!reservation) return { error: 'Your session has expired. Please sign in again.' }
+  if (!reservation) return { error: 'sessionExpired' }
 
   // Scoped to the caller's own reservation — a guest can't delete another
   // stay's subscriptions even with a stolen endpoint URL.

@@ -25,6 +25,7 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
   const [orderError, setOrderError] = useState('');
   const router = useRouter();
   const t = useTranslations('cart');
+  const tErrors = useTranslations('errors');
 
   const handlePlaceOrder = async () => {
     setIsSubmitting(true);
@@ -166,7 +167,7 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
         <CardFooter className="p-4 pt-0 flex-col gap-2">
           {orderError ? (
             <p className="w-full text-sm text-destructive" role="alert">
-              {orderError}
+              {tErrors.has(orderError) ? tErrors(orderError) : tErrors('generic')}
             </p>
           ) : null}
           {isLoggedIn ? (

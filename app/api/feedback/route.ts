@@ -38,9 +38,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const parsed = feedbackSchema.safeParse(body)
 
+    // `error` values are keys in the `errors` messages namespace — the client translates them.
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Invalid feedback data.' },
+        { error: 'invalidFeedback' },
         { status: 400 }
       )
     }
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     console.error('[feedback] submit error:', error)
 
     return NextResponse.json(
-      { error: 'Feedback could not be saved. Please try again.' },
+      { error: 'feedbackSaveFailed' },
       { status: 500 }
     )
   }

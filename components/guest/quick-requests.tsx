@@ -22,6 +22,7 @@ const REQUESTS: { key: QuickRequestKey; labelKey: string; icon: LucideIcon }[] =
 
 export function QuickRequests() {
   const t = useTranslations('portal')
+  const tErrors = useTranslations('errors')
   const [pending, setPending] = useState<(typeof REQUESTS)[number] | null>(null)
   const [note, setNote] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -37,7 +38,7 @@ export function QuickRequests() {
     try {
       const result = await createGuestQuickRequest(pending.key, note)
       if ('error' in result) {
-        toast.info(result.error)
+        toast.info(tErrors.has(result.error) ? tErrors(result.error) : tErrors('generic'))
       } else {
         toast.success(t('requestSent'))
       }

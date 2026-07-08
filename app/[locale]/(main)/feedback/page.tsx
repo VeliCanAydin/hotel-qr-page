@@ -227,6 +227,7 @@ function SubmitBar({
 
 export default function FeedbackPage() {
   const t = useTranslations("fb");
+  const tErrors = useTranslations("errors");
   const [mode, setMode] = useState<FeedbackMode | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitTitle, setSubmitTitle] = useState(t("thankYou"));
@@ -339,8 +340,10 @@ export default function FeedbackPage() {
       });
 
       if (!response.ok) {
-        const result = await response.json().catch(() => null);
-        throw new Error(result?.error ?? t("errFeedbackFailed"));
+        const result = (await response.json().catch(() => null)) as { error?: string } | null;
+        // The API returns error codes from the `errors` messages namespace
+        const code = result?.error;
+        throw new Error(code && tErrors.has(code) ? tErrors(code) : t("errFeedbackFailed"));
       }
 
       setSubmitTitle(t("thankYou"));
@@ -385,7 +388,8 @@ export default function FeedbackPage() {
       const uploadPayload = (await uploadResponse.json().catch(() => null)) as { url?: string; error?: string } | null;
 
       if (!uploadResponse.ok || !uploadPayload?.url) {
-        throw new Error(uploadPayload?.error || t("errImageUpload"));
+        const code = uploadPayload?.error;
+        throw new Error(code && tErrors.has(code) ? tErrors(code) : t("errImageUpload"));
       }
 
       const requestResponse = await fetch("/api/support-request", {
@@ -405,7 +409,8 @@ export default function FeedbackPage() {
       const requestPayload = (await requestResponse.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
 
       if (!requestResponse.ok || !requestPayload?.ok) {
-        throw new Error(requestPayload?.error || t("errRequestSaved"));
+        const code = requestPayload?.error;
+        throw new Error(code && tErrors.has(code) ? tErrors(code) : t("errRequestSaved"));
       }
 
       setSubmitTitle(t("requestReceived"));

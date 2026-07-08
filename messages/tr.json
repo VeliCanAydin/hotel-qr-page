@@ -590,5 +590,32 @@
     "report2023Desc": "2023 çevresel, sosyal ve yönetişim performansımızın tam özeti.",
     "downloadPdf": "PDF İndir",
     "pdfNote": "PDF dosyaları yüklendiğinde erişilebilir olacaktır. Bir raporu doğrudan talep etmek için bize <email></email> adresinden ulaşın."
+  },
+  "errors": {
+    "generic": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+    "sessionExpired": "Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.",
+    "stayEnded": "Konaklamanız sona erdi.",
+    "notAuthenticated": "Devam etmek için lütfen giriş yapın.",
+    "missingCredentials": "Oda numarası ve soyad zorunludur.",
+    "reservationNotFound": "Rezervasyon bulunamadı. Lütfen oda numaranızı ve soyadınızı kontrol edin.",
+    "unknownRequestType": "Bilinmeyen talep türü.",
+    "requestAlreadyOpen": "Bu talebiniz zaten yolda — ekibimiz kısa süre içinde sizinle olacak.",
+    "cartEmpty": "Sepetiniz boş.",
+    "itemsUnavailable": "Sepetinizdeki bazı ürünler artık mevcut değil. Lütfen sayfayı yenileyip tekrar deneyin.",
+    "orderNotFound": "Sipariş bulunamadı.",
+    "orderNotCancellable": "Yalnızca bekleyen siparişler iptal edilebilir.",
+    "unauthorized": "Bu işlem için yetkiniz yok.",
+    "invalidSubscription": "Geçersiz abonelik.",
+    "pushNotConfigured": "Bildirimler yapılandırılmamış.",
+    "pushNotAllowed": "Bildirimlere izin verilmedi.",
+    "pushFailed": "Bildirimler güncellenemedi. Lütfen tekrar deneyin.",
+    "invalidFeedback": "Geçersiz geri bildirim verisi.",
+    "feedbackSaveFailed": "Geri bildirim kaydedilemedi. Lütfen tekrar deneyin.",
+    "invalidSupportRequest": "Geçersiz destek/şikayet verisi.",
+    "supportSaveFailed": "Talebiniz kaydedilemedi. Lütfen tekrar deneyin.",
+    "noFile": "Dosya seçilmedi.",
+    "notImageFile": "Yalnızca görsel dosyaları yüklenebilir.",
+    "fileTooLarge": "Dosya boyutu en fazla 5 MB olabilir.",
+    "uploadFailed": "Yükleme başarısız oldu. Lütfen tekrar deneyin."
   }
 }

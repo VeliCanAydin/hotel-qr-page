@@ -591,5 +591,32 @@
     "report2023Desc": "Vollständiger Überblick über unsere Umwelt-, Sozial- und Governance-Leistung 2023.",
     "downloadPdf": "PDF herunterladen",
     "pdfNote": "PDF-Dateien werden nach dem Hochladen verfügbar sein. Kontaktieren Sie uns unter <email></email>, um einen Bericht direkt anzufordern."
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "stayEnded": "Ihr Aufenthalt ist beendet.",
+    "notAuthenticated": "Bitte melden Sie sich an, um fortzufahren.",
+    "missingCredentials": "Zimmernummer und Nachname sind erforderlich.",
+    "reservationNotFound": "Keine Reservierung gefunden. Bitte überprüfen Sie Zimmernummer und Nachnamen.",
+    "unknownRequestType": "Unbekannter Anfragetyp.",
+    "requestAlreadyOpen": "Diese Anfrage ist bereits unterwegs — unser Team ist in Kürze bei Ihnen.",
+    "cartEmpty": "Ihr Warenkorb ist leer.",
+    "itemsUnavailable": "Einige Artikel in Ihrem Warenkorb sind nicht mehr verfügbar. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut.",
+    "orderNotFound": "Bestellung nicht gefunden.",
+    "orderNotCancellable": "Nur ausstehende Bestellungen können storniert werden.",
+    "unauthorized": "Sie sind dazu nicht berechtigt.",
+    "invalidSubscription": "Ungültiges Abonnement.",
+    "pushNotConfigured": "Benachrichtigungen sind nicht konfiguriert.",
+    "pushNotAllowed": "Benachrichtigungen wurden nicht erlaubt.",
+    "pushFailed": "Benachrichtigungen konnten nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+    "invalidFeedback": "Ungültige Feedback-Daten.",
+    "feedbackSaveFailed": "Feedback konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+    "invalidSupportRequest": "Ungültige Support-/Beschwerdedaten.",
+    "supportSaveFailed": "Ihre Anfrage konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+    "noFile": "Keine Datei ausgewählt.",
+    "notImageFile": "Es können nur Bilddateien hochgeladen werden.",
+    "fileTooLarge": "Die Datei darf höchstens 5 MB groß sein.",
+    "uploadFailed": "Upload fehlgeschlagen. Bitte versuchen Sie es erneut."
   }
 }

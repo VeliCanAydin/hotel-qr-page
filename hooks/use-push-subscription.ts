@@ -51,9 +51,10 @@ export function usePushSubscription() {
     }
   }, [])
 
+  // `error` values are keys in the `errors` messages namespace — the caller translates them.
   const subscribe = useCallback(async (): Promise<{ ok: true } | { error: string }> => {
     const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-    if (!vapidKey) return { error: 'Notifications are not configured.' }
+    if (!vapidKey) return { error: 'pushNotConfigured' }
 
     setIsBusy(true)
     try {
@@ -63,7 +64,7 @@ export function usePushSubscription() {
       const permission = await Notification.requestPermission()
       if (permission !== 'granted') {
         setStatus(permission === 'denied' ? 'denied' : 'idle')
-        return { error: 'Notifications were not allowed.' }
+        return { error: 'pushNotAllowed' }
       }
 
       const subscription = await registration.pushManager.subscribe({
@@ -73,7 +74,7 @@ export function usePushSubscription() {
 
       const json = subscription.toJSON()
       if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) {
-        return { error: 'Subscription failed. Please try again.' }
+        return { error: 'pushFailed' }
       }
 
       const result = await subscribeToPush({
@@ -88,7 +89,7 @@ export function usePushSubscription() {
       setStatus('subscribed')
       return { ok: true }
     } catch {
-      return { error: 'Could not enable notifications. Please try again.' }
+      return { error: 'pushFailed' }
     } finally {
       setIsBusy(false)
     }
@@ -106,7 +107,7 @@ export function usePushSubscription() {
       setStatus('idle')
       return { ok: true }
     } catch {
-      return { error: 'Could not disable notifications. Please try again.' }
+      return { error: 'pushFailed' }
     } finally {
       setIsBusy(false)
     }

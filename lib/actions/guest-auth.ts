@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { findReservationForLogin } from '@/lib/reservations'
 import { signGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 
+// `error` is a key in the `errors` messages namespace — the client translates it.
 export type GuestLoginState = { error: string; redirectTo?: string }
 
 export async function guestLogin(
@@ -22,13 +23,13 @@ export async function guestLogin(
       : '/'
 
   if (!roomNumber || !surname) {
-    return { error: 'Room number and surname are required.' }
+    return { error: 'missingCredentials' }
   }
 
   const reservation = await findReservationForLogin(roomNumber, surname)
 
   if (!reservation) {
-    return { error: 'No reservation found. Please check your room number and surname.' }
+    return { error: 'reservationNotFound' }
   }
 
   const token = await signGuestToken({
