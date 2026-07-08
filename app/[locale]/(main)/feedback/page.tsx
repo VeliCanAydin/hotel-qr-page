@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { format } from "date-fns";
 import {
   AlertTriangle,
@@ -33,35 +34,27 @@ type FeedbackMode = "rating" | "support";
 type SupportCategory = "support" | "complaint";
 
 const supportIssueCategories = [
-  { value: "food-and-beverage", label: "Food & Beverage" },
-  { value: "room-issue", label: "Room Issue" },
-  { value: "pool-problem", label: "Pool Problem" },
-  { value: "cleanliness", label: "Cleanliness" },
-  { value: "maintenance", label: "Maintenance" },
-  { value: "noise-disturbance", label: "Noise Disturbance" },
-  { value: "air-conditioning", label: "Air Conditioning" },
-  { value: "wifi", label: "Wi-Fi" },
-  { value: "housekeeping", label: "Housekeeping" },
-  { value: "other", label: "Other" },
-];
+  "food-and-beverage",
+  "room-issue",
+  "pool-problem",
+  "cleanliness",
+  "maintenance",
+  "noise-disturbance",
+  "air-conditioning",
+  "wifi",
+  "housekeeping",
+  "other",
+] as const;
 
-const tripTypes = [
-  { value: "business", label: "Business" },
-  { value: "leisure", label: "Leisure" },
-  { value: "family", label: "Family" },
-  { value: "solo", label: "Solo" },
-  { value: "couple", label: "Couple" },
-];
+const tripTypes = ["business", "leisure", "family", "solo", "couple"] as const;
 
 const categories = [
-  { key: "cleanliness", label: "Cleanliness", icon: BrushCleaning },
-  { key: "staff", label: "Staff & Service", icon: UsersRound },
-  { key: "comfort", label: "Comfort", icon: Bed },
-  { key: "value", label: "Value for Money", icon: CircleDollarSign },
-  { key: "food", label: "Food & Beverage", icon: UtensilsCrossed },
-];
-
-const RATING_LABELS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
+  { key: "cleanliness", icon: BrushCleaning },
+  { key: "staff", icon: UsersRound },
+  { key: "comfort", icon: Bed },
+  { key: "value", icon: CircleDollarSign },
+  { key: "food", icon: UtensilsCrossed },
+] as const;
 
 /* ---------- small building blocks ---------- */
 
@@ -88,18 +81,19 @@ function Stars({
   allowClear?: boolean;
   label?: string;
 }) {
+  const t = useTranslations("fb");
   const [hoverValue, setHoverValue] = useState(0);
   const starSize = size === "lg" ? "size-11" : "size-8";
 
   return (
-    <div className="flex gap-0.5" role="radiogroup" aria-label={label ?? "Rating"}>
+    <div className="flex gap-0.5" role="radiogroup" aria-label={label ?? t("ratingLabel")}>
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
           type="button"
           role="radio"
           aria-checked={value === star}
-          aria-label={`${star} of 5`}
+          aria-label={t("starOf5", { star })}
           className={cn("transition-transform duration-100 hover:scale-110 active:scale-95 p-0.5", starSize)}
           onMouseEnter={() => setHoverValue(star)}
           onMouseLeave={() => setHoverValue(0)}
@@ -120,6 +114,7 @@ function Stars({
 }
 
 function RecommendScale({ value, onChange }: { value: number | null; onChange: (value: number | null) => void }) {
+  const t = useTranslations("fb");
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-11 gap-1">
@@ -145,8 +140,8 @@ function RecommendScale({ value, onChange }: { value: number | null; onChange: (
         ))}
       </div>
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span>Not likely</span>
-        <span>Very likely</span>
+        <span>{t("notLikely")}</span>
+        <span>{t("veryLikely")}</span>
       </div>
     </div>
   );
@@ -183,9 +178,10 @@ function Chip({
 }
 
 function FlowHeader({ title, onBack }: { title: string; onBack: () => void }) {
+  const t = useTranslations("fb");
   return (
     <div className="flex items-center gap-1 pt-2">
-      <Button type="button" variant="ghost" size="icon" className="-ml-2" onClick={onBack} aria-label="Go back">
+      <Button type="button" variant="ghost" size="icon" className="-ml-2" onClick={onBack} aria-label={t("goBack")}>
         <ArrowLeft className="size-4" />
       </Button>
       <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
@@ -204,6 +200,7 @@ function SubmitBar({
   summary?: React.ReactNode;
   label: string;
 }) {
+  const t = useTranslations("fb");
   return (
     <div className="sticky bottom-0 -mx-4 mt-2 border-t bg-background/95 px-4 py-3 backdrop-blur supports-backdrop-filter:bg-background/80">
       {error ? (
@@ -219,7 +216,7 @@ function SubmitBar({
           ) : (
             <Send className="size-4 mr-2" />
           )}
-          {isSubmitting ? "Sending..." : label}
+          {isSubmitting ? t("sending") : label}
         </Button>
       </div>
     </div>
@@ -229,10 +226,11 @@ function SubmitBar({
 /* ---------- page ---------- */
 
 export default function FeedbackPage() {
+  const t = useTranslations("fb");
   const [mode, setMode] = useState<FeedbackMode | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [submitTitle, setSubmitTitle] = useState("Thank You!");
-  const [submitDescription, setSubmitDescription] = useState("Your feedback has been submitted successfully.");
+  const [submitTitle, setSubmitTitle] = useState(t("thankYou"));
+  const [submitDescription, setSubmitDescription] = useState(t("feedbackSuccess"));
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -342,14 +340,14 @@ export default function FeedbackPage() {
 
       if (!response.ok) {
         const result = await response.json().catch(() => null);
-        throw new Error(result?.error ?? "Feedback submission failed");
+        throw new Error(result?.error ?? t("errFeedbackFailed"));
       }
 
-      setSubmitTitle("Thank You!");
-      setSubmitDescription("Your rating has been submitted successfully. We truly appreciate your time.");
+      setSubmitTitle(t("thankYou"));
+      setSubmitDescription(t("ratingSuccess"));
       setIsSubmitted(true);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Feedback could not be saved.");
+      setSubmitError(error instanceof Error ? error.message : t("errFeedbackSaved"));
     } finally {
       setIsSubmitting(false);
     }
@@ -374,7 +372,7 @@ export default function FeedbackPage() {
     setSubmitError("");
 
     if (!supportImageFile) {
-      setSubmitError("Please upload an image for your request.");
+      setSubmitError(t("errImageRequired"));
       setIsSubmitting(false);
       return;
     }
@@ -387,7 +385,7 @@ export default function FeedbackPage() {
       const uploadPayload = (await uploadResponse.json().catch(() => null)) as { url?: string; error?: string } | null;
 
       if (!uploadResponse.ok || !uploadPayload?.url) {
-        throw new Error(uploadPayload?.error || "Image upload failed.");
+        throw new Error(uploadPayload?.error || t("errImageUpload"));
       }
 
       const requestResponse = await fetch("/api/support-request", {
@@ -407,14 +405,14 @@ export default function FeedbackPage() {
       const requestPayload = (await requestResponse.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
 
       if (!requestResponse.ok || !requestPayload?.ok) {
-        throw new Error(requestPayload?.error || "Request could not be saved.");
+        throw new Error(requestPayload?.error || t("errRequestSaved"));
       }
 
-      setSubmitTitle("Request Received");
-      setSubmitDescription("Your support/complaint request has been sent to the Guest Relations team.");
+      setSubmitTitle(t("requestReceived"));
+      setSubmitDescription(t("requestSuccess"));
       setIsSubmitted(true);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Request could not be sent.");
+      setSubmitError(error instanceof Error ? error.message : t("errRequestSent"));
     } finally {
       setIsSubmitting(false);
     }
@@ -439,7 +437,7 @@ export default function FeedbackPage() {
               goHome();
             }}
           >
-            Submit Another
+            {t("submitAnother")}
           </Button>
         </div>
       </div>
@@ -451,10 +449,10 @@ export default function FeedbackPage() {
   if (!mode) {
     return (
       <div className="mx-auto w-full max-w-xl px-4 py-10">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Dosinia · Guest Feedback</p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">How was your stay?</h1>
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">{t("brandLabel")}</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">{t("howWasStay")}</h1>
         <p className="mt-2 text-muted-foreground">
-          Praise or problem — every message goes straight to our Guest Relations team.
+          {t("praiseOrProblem")}
         </p>
 
         <div className="mt-8 flex flex-col gap-3">
@@ -467,8 +465,8 @@ export default function FeedbackPage() {
               <Star className="size-5 fill-amber-400 text-amber-400" />
             </span>
             <span className="flex-1">
-              <span className="block font-semibold">Rate your stay</span>
-              <span className="block text-sm text-muted-foreground">A quick rating, plus anything you want us to know</span>
+              <span className="block font-semibold">{t("rateYourStay")}</span>
+              <span className="block text-sm text-muted-foreground">{t("rateYourStayDesc")}</span>
             </span>
             <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
           </button>
@@ -482,8 +480,8 @@ export default function FeedbackPage() {
               <AlertTriangle className="size-5 text-destructive" />
             </span>
             <span className="flex-1">
-              <span className="block font-semibold">Report an issue</span>
-              <span className="block text-sm text-muted-foreground">Something wrong right now? We&apos;ll get on it</span>
+              <span className="block font-semibold">{t("reportIssue")}</span>
+              <span className="block text-sm text-muted-foreground">{t("reportIssueDesc")}</span>
             </span>
             <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
           </button>
@@ -497,13 +495,13 @@ export default function FeedbackPage() {
   if (mode === "rating") {
     return (
       <form onSubmit={handleRatingSubmit} className="mx-auto w-full max-w-xl px-4 pb-6">
-        <FlowHeader title="Rate your stay" onBack={goHome} />
+        <FlowHeader title={t("rateYourStay")} onBack={goHome} />
 
         {/* 01 — overall */}
         <section className="flex flex-col items-center gap-3 py-10">
-          <Stars value={overallRating} onChange={setOverallRating} size="lg" label="Overall rating" />
+          <Stars value={overallRating} onChange={setOverallRating} size="lg" label={t("ratingLabel")} />
           <p className={cn("text-sm transition-colors", overallRating ? "font-medium text-foreground" : "text-muted-foreground")}>
-            {overallRating ? RATING_LABELS[overallRating - 1] : "Tap a star to begin"}
+            {overallRating ? t(`ratingLabels.${overallRating}`) : t("tapStar")}
           </p>
         </section>
 
@@ -511,19 +509,19 @@ export default function FeedbackPage() {
           <div className="flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* 02 — categories */}
             <section className="flex flex-col gap-4">
-              <SectionHeader step="01" title="In detail" hint="Optional — rate what you like" />
+              <SectionHeader step="01" title={t("inDetail")} hint={t("inDetailHint")} />
               <div className="flex flex-col divide-y">
                 {categories.map((cat) => (
                   <div key={cat.key} className="flex items-center justify-between gap-3 py-2.5">
                     <div className="flex min-w-0 items-center gap-3">
                       <cat.icon className="size-4 shrink-0 text-muted-foreground" />
-                      <span className="truncate text-sm">{cat.label}</span>
+                      <span className="truncate text-sm">{t(`ratingCategories.${cat.key}`)}</span>
                     </div>
                     <Stars
                       value={categoryRatings[cat.key as keyof typeof categoryRatings]}
                       onChange={(v) => handleCategoryChange(cat.key, v)}
                       allowClear
-                      label={cat.label}
+                      label={t(`ratingCategories.${cat.key}`)}
                     />
                   </div>
                 ))}
@@ -532,18 +530,18 @@ export default function FeedbackPage() {
 
             {/* 03 — recommend */}
             <section className="flex flex-col gap-4">
-              <SectionHeader step="02" title="Would you recommend us?" hint="Optional" />
+              <SectionHeader step="02" title={t("recommendUs")} hint={t("optional")} />
               <RecommendScale value={npsScore} onChange={setNpsScore} />
             </section>
 
             {/* 04 — words */}
             <section className="flex flex-col gap-4">
-              <SectionHeader step="03" title="In your words" />
+              <SectionHeader step="03" title={t("inYourWords")} />
               <div className="space-y-2">
-                <Label htmlFor="positive" className="text-sm text-muted-foreground">What did you enjoy most?</Label>
+                <Label htmlFor="positive" className="text-sm text-muted-foreground">{t("enjoyMost")}</Label>
                 <Textarea
                   id="positive"
-                  placeholder="The view, the breakfast, someone on the team..."
+                  placeholder={t("enjoyPlaceholder")}
                   value={positive}
                   onChange={(e) => setPositive(e.target.value)}
                   rows={3}
@@ -554,11 +552,11 @@ export default function FeedbackPage() {
                   htmlFor="negative"
                   className={cn("text-sm", showImprovementEmphasis ? "font-medium text-destructive" : "text-muted-foreground")}
                 >
-                  {showImprovementEmphasis ? "We're sorry — what went wrong?" : "What could we do better?"}
+                  {showImprovementEmphasis ? t("whatWrong") : t("whatBetter")}
                 </Label>
                 <Textarea
                   id="negative"
-                  placeholder={showImprovementEmphasis ? "Please tell us what happened, we read every word." : "Anything we should improve..."}
+                  placeholder={showImprovementEmphasis ? t("whatWrongPlaceholder") : t("whatBetterPlaceholder")}
                   value={negative}
                   onChange={(e) => setNegative(e.target.value)}
                   rows={showImprovementEmphasis ? 4 : 3}
@@ -566,7 +564,7 @@ export default function FeedbackPage() {
                 />
                 {showImprovementEmphasis && (
                   <p className="text-xs text-muted-foreground">
-                    Leave your email below and our team will personally follow up.
+                    {t("followUp")}
                   </p>
                 )}
               </div>
@@ -574,11 +572,11 @@ export default function FeedbackPage() {
 
             {/* 05 — about you */}
             <section className="flex flex-col gap-4">
-              <SectionHeader step="04" title="About you" hint="Optional" />
+              <SectionHeader step="04" title={t("aboutYou")} hint={t("optional")} />
               <div className="grid gap-3 sm:grid-cols-2">
-                <Input placeholder="Name" aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} />
-                <Input type="email" placeholder="Email" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <Input type="number" placeholder="Room number" aria-label="Room number" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
+                <Input placeholder={t("namePlaceholder")} aria-label={t("namePlaceholder")} value={name} onChange={(e) => setName(e.target.value)} />
+                <Input type="email" placeholder={t("emailPlaceholder")} aria-label={t("emailPlaceholder")} value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input type="number" placeholder={t("roomPlaceholder")} aria-label={t("roomPlaceholder")} value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -591,7 +589,7 @@ export default function FeedbackPage() {
                         ? dateRange.to
                           ? <>{format(dateRange.from, "LLL dd")} – {format(dateRange.to, "LLL dd, y")}</>
                           : format(dateRange.from, "LLL dd, y")
-                        : <span>Dates of stay</span>}
+                        : <span>{t("datesOfStay")}</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -603,11 +601,11 @@ export default function FeedbackPage() {
               <div className="flex flex-wrap gap-2">
                 {tripTypes.map((type) => (
                   <Chip
-                    key={type.value}
-                    selected={tripType === type.value}
-                    onClick={() => setTripType(tripType === type.value ? "" : type.value)}
+                    key={type}
+                    selected={tripType === type}
+                    onClick={() => setTripType(tripType === type ? "" : type)}
                   >
-                    {type.label}
+                    {t(`tripTypes.${type}`)}
                   </Chip>
                 ))}
               </div>
@@ -620,20 +618,20 @@ export default function FeedbackPage() {
                   onChange={(e) => setConsent(e.target.checked)}
                   className="mt-0.5 size-4 rounded border-input"
                 />
-                <span>May we use your feedback as a testimonial on our website?</span>
+                <span>{t("testimonial")}</span>
               </label>
             </section>
 
             <SubmitBar
               isSubmitting={isSubmitting}
               error={submitError}
-              label="Send feedback"
+              label={t("sendFeedback")}
               summary={
                 <span className="flex items-center gap-1.5">
                   <Star className="size-3.5 fill-amber-400 text-amber-400" />
                   <span className="tabular-nums">{overallRating}/5</span>
                   <span className="text-muted-foreground/60">·</span>
-                  {RATING_LABELS[overallRating - 1]}
+                  {t(`ratingLabels.${overallRating}`)}
                 </span>
               }
             />
@@ -647,12 +645,12 @@ export default function FeedbackPage() {
 
   return (
     <form onSubmit={handleSupportSubmit} className="mx-auto w-full max-w-xl px-4 pb-6">
-      <FlowHeader title="Report an issue" onBack={goHome} />
+      <FlowHeader title={t("reportIssue")} onBack={goHome} />
 
       <div className="flex flex-col gap-10 pt-6">
         {/* 01 — what */}
         <section className="flex flex-col gap-4">
-          <SectionHeader step="01" title="What's the issue?" />
+          <SectionHeader step="01" title={t("whatsIssue")} />
 
           <div className="grid grid-cols-2 gap-1 rounded-full border p-1">
             <button
@@ -664,7 +662,7 @@ export default function FeedbackPage() {
                 supportCategory === "support" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              Support request
+              {t("supportRequest")}
             </button>
             <button
               type="button"
@@ -675,19 +673,19 @@ export default function FeedbackPage() {
                 supportCategory === "complaint" ? "bg-destructive text-white" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              Complaint
+              {t("complaint")}
             </button>
           </div>
 
           <div className="flex flex-wrap gap-2">
             {supportIssueCategories.map((category) => (
               <Chip
-                key={category.value}
-                selected={supportIssueCategory === category.value}
-                onClick={() => setSupportIssueCategory(category.value)}
+                key={category}
+                selected={supportIssueCategory === category}
+                onClick={() => setSupportIssueCategory(category)}
                 tone={supportCategory === "complaint" ? "destructive" : "default"}
               >
-                {category.label}
+                {t(`issueCategories.${category}`)}
               </Chip>
             ))}
           </div>
@@ -695,12 +693,12 @@ export default function FeedbackPage() {
 
         {/* 02 — details */}
         <section className="flex flex-col gap-4">
-          <SectionHeader step="02" title="The details" />
+          <SectionHeader step="02" title={t("theDetails")} />
           <div className="space-y-2">
-            <Label htmlFor="support-subject" className="text-sm text-muted-foreground">Subject</Label>
+            <Label htmlFor="support-subject" className="text-sm text-muted-foreground">{t("subject")}</Label>
             <Input
               id="support-subject"
-              placeholder="e.g. Air conditioning is not working"
+              placeholder={t("subjectPlaceholder")}
               value={supportSubject}
               onChange={(e) => setSupportSubject(e.target.value)}
               minLength={3}
@@ -708,10 +706,10 @@ export default function FeedbackPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="support-message" className="text-sm text-muted-foreground">Description</Label>
+            <Label htmlFor="support-message" className="text-sm text-muted-foreground">{t("description")}</Label>
             <Textarea
               id="support-message"
-              placeholder="What happened, where, and since when..."
+              placeholder={t("descriptionPlaceholder")}
               rows={5}
               value={supportMessage}
               onChange={(e) => setSupportMessage(e.target.value)}
@@ -722,7 +720,7 @@ export default function FeedbackPage() {
 
           <div className="space-y-2">
             <Label htmlFor="support-image" className="text-sm text-muted-foreground">
-              Photo <span className="text-xs">(required — it helps us fix it faster)</span>
+              {t("photo")} <span className="text-xs">{t("photoRequired")}</span>
             </Label>
             {supportImagePreview ? (
               <div className="overflow-hidden rounded-xl border">
@@ -734,7 +732,7 @@ export default function FeedbackPage() {
                     htmlFor="support-image"
                     className="cursor-pointer text-xs font-medium underline underline-offset-2 hover:text-primary"
                   >
-                    Change photo
+                    {t("changePhoto")}
                   </label>
                 </div>
               </div>
@@ -744,8 +742,8 @@ export default function FeedbackPage() {
                 className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-8 text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
               >
                 <ImagePlus className="size-6" />
-                <span className="text-sm font-medium">Add a photo</span>
-                <span className="text-xs">PNG, JPG or WebP — max 5 MB</span>
+                <span className="text-sm font-medium">{t("addPhoto")}</span>
+                <span className="text-xs">{t("photoHint")}</span>
               </label>
             )}
             <input
@@ -760,13 +758,13 @@ export default function FeedbackPage() {
 
         {/* 03 — who */}
         <section className="flex flex-col gap-4">
-          <SectionHeader step="03" title="Your room" />
+          <SectionHeader step="03" title={t("yourRoom")} />
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="support-name" className="text-sm text-muted-foreground">Full name</Label>
+              <Label htmlFor="support-name" className="text-sm text-muted-foreground">{t("fullName")}</Label>
               <Input
                 id="support-name"
-                placeholder="Your full name"
+                placeholder={t("fullNamePlaceholder")}
                 value={supportName}
                 onChange={(e) => setSupportName(e.target.value)}
                 readOnly={supportGuestLocked}
@@ -774,7 +772,7 @@ export default function FeedbackPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="support-room" className="text-sm text-muted-foreground">Room number</Label>
+              <Label htmlFor="support-room" className="text-sm text-muted-foreground">{t("roomNumber")}</Label>
               <Input
                 id="support-room"
                 placeholder="304"
@@ -788,7 +786,7 @@ export default function FeedbackPage() {
           {supportGuestLocked && (
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Lock className="size-3" />
-              Filled automatically from your sign-in.
+              {t("filledAuto")}
             </p>
           )}
         </section>
@@ -796,11 +794,11 @@ export default function FeedbackPage() {
         <SubmitBar
           isSubmitting={isSubmitting}
           error={submitError}
-          label="Send request"
+          label={t("sendRequest")}
           summary={
             <span>
-              {supportCategory === "complaint" ? "Complaint" : "Support"} ·{" "}
-              {supportIssueCategories.find((c) => c.value === supportIssueCategory)?.label}
+              {supportCategory === "complaint" ? t("complaint") : t("support")} ·{" "}
+              {t(`issueCategories.${supportIssueCategory}`)}
             </span>
           }
         />
