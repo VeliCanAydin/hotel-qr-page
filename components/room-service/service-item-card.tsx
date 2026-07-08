@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useTranslations } from 'next-intl';
 import { useCart } from '@/context/cart-context';
 import type { RoomServiceItem } from '@/lib/types/room-service';
 import { Plus, Minus } from 'lucide-react';
@@ -12,6 +13,7 @@ interface ServiceItemCardProps {
 }
 
 export function ServiceItemCard({ item, showSeparator = true }: ServiceItemCardProps) {
+    const t = useTranslations('roomService');
     const { items, addToCart, updateQuantity } = useCart();
     const cartItem = items.find((i) => i.id === item.id);
     const quantity = cartItem?.quantity ?? 0;
@@ -23,7 +25,7 @@ export function ServiceItemCard({ item, showSeparator = true }: ServiceItemCardP
                     <div className="flex items-start justify-between gap-2">
                         <h3 className="font-semibold text-foreground">{item.name}</h3>
                         <span className="shrink-0 font-semibold text-foreground">
-                            {item.price === 0 ? 'Free' : `$${item.price.toFixed(2)}`}
+                            {item.price === 0 ? t('free') : `$${item.price.toFixed(2)}`}
                         </span>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">
@@ -38,7 +40,7 @@ export function ServiceItemCard({ item, showSeparator = true }: ServiceItemCardP
                             onClick={() => addToCart(item)}
                         >
                             <Plus className="h-4 w-4 mr-1" />
-                            Add
+                            {t('add')}
                         </Button>
                     ) : (
                         <div className="flex items-center gap-1">

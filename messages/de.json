@@ -103,5 +103,34 @@
     "galleryIntro": "Entdecken Sie unsere schönen Strand- und Poolbereiche in diesen atemberaubenden Fotos.",
     "galleryDesktop": "Klicken Sie auf ein Bild, um es in voller Größe zu sehen, oder halten Sie es gedrückt für eine schnelle Vorschau.",
     "galleryMobile": "Zum Vergrößern tippen oder für eine schnelle Vorschau gedrückt halten."
+  },
+  "roomService": {
+    "title": "Zimmerservice",
+    "subtitle": "Bestellen Sie Speisen und Getränke und fordern Sie Services auf Ihr Zimmer an.",
+    "categories": {
+      "food": "Speisen",
+      "beverages": "Getränke",
+      "other-services": "Weitere Services"
+    },
+    "free": "Kostenlos",
+    "add": "Hinzufügen"
+  },
+  "cart": {
+    "orderPlaced": "Bestellung aufgegeben!",
+    "orderPlacedDesc": "Ihre Bestellung ist eingegangen. Wir liefern sie in Kürze auf Ihr Zimmer.",
+    "backToRoomService": "Zurück zum Zimmerservice",
+    "empty": "Ihr Warenkorb ist leer",
+    "emptyDesc": "Fügen Sie Artikel aus dem Zimmerservice-Menü hinzu, um zu beginnen.",
+    "browse": "Zimmerservice durchsuchen",
+    "title": "Ihr Warenkorb",
+    "subtitle": "Überprüfen Sie Ihre Artikel, bevor Sie bestellen.",
+    "free": "Kostenlos",
+    "priceEach": "{price} pro Stück",
+    "orderNote": "Bestellhinweis",
+    "orderNotePlaceholder": "Fügen Sie besondere Anweisungen oder Wünsche für Ihre Bestellung hinzu...",
+    "total": "Gesamt",
+    "placingOrder": "Bestellung wird aufgegeben...",
+    "placeOrder": "Bestellen",
+    "loginToOrder": "Zum Bestellen anmelden"
   }
 }

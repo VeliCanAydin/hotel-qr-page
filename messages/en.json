@@ -102,5 +102,34 @@
     "galleryIntro": "Explore our beautiful beach and pool areas through these stunning photos.",
     "galleryDesktop": "Click on any image to view it in full size, or press and hold for a quick preview.",
     "galleryMobile": "Tap to view full size, or press and hold for a quick preview."
+  },
+  "roomService": {
+    "title": "Room Service",
+    "subtitle": "Order food, beverages, and request services to your room.",
+    "categories": {
+      "food": "Food",
+      "beverages": "Beverages",
+      "other-services": "Other Services"
+    },
+    "free": "Free",
+    "add": "Add"
+  },
+  "cart": {
+    "orderPlaced": "Order Placed!",
+    "orderPlacedDesc": "Your order has been received. We'll deliver it to your room shortly.",
+    "backToRoomService": "Back to Room Service",
+    "empty": "Your cart is empty",
+    "emptyDesc": "Add items from the room service menu to get started.",
+    "browse": "Browse Room Service",
+    "title": "Your Cart",
+    "subtitle": "Review your items before placing your order.",
+    "free": "Free",
+    "priceEach": "{price} each",
+    "orderNote": "Order Note",
+    "orderNotePlaceholder": "Add any special instructions or requests for your order...",
+    "total": "Total",
+    "placingOrder": "Placing Order...",
+    "placeOrder": "Place Order",
+    "loginToOrder": "Log in to place an order"
   }
 }

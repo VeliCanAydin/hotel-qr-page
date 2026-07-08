@@ -1,7 +1,7 @@
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ServiceItemCard } from '@/components/room-service/service-item-card'
-import { categoryLabels, type RoomServiceItem } from '@/lib/types/room-service'
+import { type RoomServiceItem } from '@/lib/types/room-service'
 import { getPublicRoomServiceItems } from '@/lib/content'
 
 const CATEGORIES = ['food', 'beverages', 'other-services'] as const
@@ -13,6 +13,7 @@ export default async function RoomService({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations('roomService')
   const items = await getPublicRoomServiceItems()
 
   const getByCategory = (category: string) =>
@@ -20,16 +21,16 @@ export default async function RoomService({
 
   return (
     <div className="p-4">
-      <h2 className="text-3xl font-bold mb-4">Room Service</h2>
+      <h2 className="text-3xl font-bold mb-4">{t('title')}</h2>
       <p className="text-muted-foreground mb-6">
-        Order food, beverages, and request services to your room.
+        {t('subtitle')}
       </p>
 
       <Tabs defaultValue="food" className="w-full">
         <TabsList className="w-full grid grid-cols-3 mb-4">
           {CATEGORIES.map((category) => (
             <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">
-              {categoryLabels[category]}
+              {t(`categories.${category}`)}
             </TabsTrigger>
           ))}
         </TabsList>

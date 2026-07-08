@@ -102,5 +102,34 @@
     "galleryIntro": "Muhteşem fotoğraflarla plaj ve havuz alanlarımızı keşfedin.",
     "galleryDesktop": "Tam boyutta görmek için herhangi bir görsele tıklayın veya hızlı önizleme için basılı tutun.",
     "galleryMobile": "Tam boyut için dokunun veya hızlı önizleme için basılı tutun."
+  },
+  "roomService": {
+    "title": "Oda Servisi",
+    "subtitle": "Odanıza yemek, içecek sipariş edin ve hizmet talep edin.",
+    "categories": {
+      "food": "Yemek",
+      "beverages": "İçecekler",
+      "other-services": "Diğer Hizmetler"
+    },
+    "free": "Ücretsiz",
+    "add": "Ekle"
+  },
+  "cart": {
+    "orderPlaced": "Sipariş Alındı!",
+    "orderPlacedDesc": "Siparişiniz alındı. Kısa süre içinde odanıza teslim edeceğiz.",
+    "backToRoomService": "Oda Servisine Dön",
+    "empty": "Sepetiniz boş",
+    "emptyDesc": "Başlamak için oda servisi menüsünden ürün ekleyin.",
+    "browse": "Oda Servisine Göz At",
+    "title": "Sepetiniz",
+    "subtitle": "Sipariş vermeden önce ürünlerinizi gözden geçirin.",
+    "free": "Ücretsiz",
+    "priceEach": "birim {price}",
+    "orderNote": "Sipariş Notu",
+    "orderNotePlaceholder": "Siparişiniz için özel talimat veya istekleri buraya yazın...",
+    "total": "Toplam",
+    "placingOrder": "Sipariş Veriliyor...",
+    "placeOrder": "Sipariş Ver",
+    "loginToOrder": "Sipariş vermek için giriş yapın"
   }
 }

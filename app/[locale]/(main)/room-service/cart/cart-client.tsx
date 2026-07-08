@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useCart } from '@/context/cart-context';
 import { Minus, Plus, Trash2, ShoppingBag, LogIn, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
 import { createRoomServiceOrder } from '@/lib/actions/room-service-orders';
 import type { OrderItem } from '@/lib/actions/room-service-orders';
@@ -23,6 +24,7 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderError, setOrderError] = useState('');
   const router = useRouter();
+  const t = useTranslations('cart');
 
   const handlePlaceOrder = async () => {
     setIsSubmitting(true);
@@ -56,12 +58,12 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
     return (
       <div className="p-4 flex flex-col items-center justify-center min-h-[60vh]">
         <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Order Placed!</h2>
+        <h2 className="text-2xl font-bold mb-2">{t('orderPlaced')}</h2>
         <p className="text-muted-foreground mb-6 text-center">
-          Your order has been received. We'll deliver it to your room shortly.
+          {t('orderPlacedDesc')}
         </p>
         <Link href="/room-service">
-          <Button>Back to Room Service</Button>
+          <Button>{t('backToRoomService')}</Button>
         </Link>
       </div>
     );
@@ -71,12 +73,12 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
     return (
       <div className="p-4 flex flex-col items-center justify-center min-h-[60vh]">
         <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
+        <h2 className="text-2xl font-bold mb-2">{t('empty')}</h2>
         <p className="text-muted-foreground mb-6 text-center">
-          Add items from the room service menu to get started.
+          {t('emptyDesc')}
         </p>
         <Link href="/room-service">
-          <Button>Browse Room Service</Button>
+          <Button>{t('browse')}</Button>
         </Link>
       </div>
     );
@@ -84,9 +86,9 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
 
   return (
     <div className="p-4">
-      <h2 className="text-3xl font-bold mb-4">Your Cart</h2>
+      <h2 className="text-3xl font-bold mb-4">{t('title')}</h2>
       <p className="text-muted-foreground mb-6">
-        Review your items before placing your order.
+        {t('subtitle')}
       </p>
 
       <div className="space-y-4">
@@ -97,7 +99,7 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
                 <div className="flex-1">
                   <h3 className="font-semibold">{item.name}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {item.price === 0 ? 'Free' : `$${item.price.toFixed(2)} each`}
+                    {item.price === 0 ? t('free') : t('priceEach', { price: `$${item.price.toFixed(2)}` })}
                   </p>
                 </div>
                 <Button
@@ -130,7 +132,7 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
                   </Button>
                 </div>
                 <span className="font-semibold">
-                  {item.price === 0 ? 'Free' : `$${(item.price * item.quantity).toFixed(2)}`}
+                  {item.price === 0 ? t('free') : `$${(item.price * item.quantity).toFixed(2)}`}
                 </span>
               </div>
             </CardContent>
@@ -142,11 +144,11 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
 
       <Card className="py-4">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Order Note</CardTitle>
+          <CardTitle className="text-lg">{t('orderNote')}</CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           <Textarea
-            placeholder="Add any special instructions or requests for your order..."
+            placeholder={t('orderNotePlaceholder')}
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
@@ -157,7 +159,7 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
       <Card className="mt-4 py-4">
         <CardContent className="p-4">
           <div className="flex justify-between items-center text-lg font-semibold">
-            <span>Total</span>
+            <span>{t('total')}</span>
             <span>${getTotalPrice().toFixed(2)}</span>
           </div>
         </CardContent>
@@ -174,13 +176,13 @@ export default function CartClient({ isLoggedIn }: CartClientProps) {
               onClick={handlePlaceOrder}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Placing Order...' : 'Place Order'}
+              {isSubmitting ? t('placingOrder') : t('placeOrder')}
             </Button>
           ) : (
             <Link href="/login?redirect=/room-service/cart" className="w-full">
               <Button className="w-full" size="lg" variant="secondary">
                 <LogIn className="h-4 w-4 mr-2" />
-                Log in to place an order
+                {t('loginToOrder')}
               </Button>
             </Link>
           )}
