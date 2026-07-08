@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { BadgeCheck, Clock3, MapPinned, Phone } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -34,8 +34,9 @@ function getToneClasses(tone: string) {
   }
 }
 
-function NearbyPlaceCard({ place }: { place: NearbyGuideItem }) {
+async function NearbyPlaceCard({ place }: { place: NearbyGuideItem }) {
   const Icon = nearbyGuideIconMap[place.iconKey]
+  const t = await getTranslations("nearbyGuidePage")
 
   return (
     <Card className="overflow-hidden border-border/60 shadow-sm transition-all duration-200 hover:shadow-md">
@@ -70,7 +71,7 @@ function NearbyPlaceCard({ place }: { place: NearbyGuideItem }) {
           >
             <Button variant="outline" size="sm" className="gap-2 rounded-full">
               <MapPinned className="size-4" />
-              Map
+              {t("map")}
             </Button>
           </a>
 
@@ -78,7 +79,7 @@ function NearbyPlaceCard({ place }: { place: NearbyGuideItem }) {
             <a href={`tel:${place.phone.replace(/\D/g, "")}`}>
               <Button variant="outline" size="sm" className="gap-2 rounded-full">
                 <Phone className="size-4" />
-                Call
+                {t("call")}
               </Button>
             </a>
           ) : null}
@@ -96,6 +97,7 @@ export default async function NearbyGuidePage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("nearbyGuidePage")
   const nearbyGuideItems = await getPublicNearbyGuideItems()
   const nearbyEssentials = nearbyGuideItems.filter((item) => item.section === "Nearby Essentials")
   const touristAttractions = nearbyGuideItems.filter((item) => item.section === "Tourist Attractions")
@@ -105,9 +107,9 @@ export default async function NearbyGuidePage({
       <section className="space-y-2">
         <div className="flex items-center gap-2">
           <MapPinned className="size-5 text-emerald-600" />
-          <h1 className="text-2xl font-semibold tracking-tight">Nearby Guide</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
         </div>
-        <p className="text-sm text-muted-foreground">The nearest places are listed below.</p>
+        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </section>
 
       <Separator />
@@ -115,10 +117,10 @@ export default async function NearbyGuidePage({
       <Tabs defaultValue="essentials" className="w-full">
         <TabsList className="grid w-full grid-cols-2 rounded-full p-1">
           <TabsTrigger value="essentials" className="rounded-full">
-            Nearby Essentials
+            {t("essentials")}
           </TabsTrigger>
           <TabsTrigger value="attractions" className="rounded-full">
-            Tourist Attractions
+            {t("attractions")}
           </TabsTrigger>
         </TabsList>
 

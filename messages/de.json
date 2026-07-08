@@ -132,5 +132,13 @@
     "placingOrder": "Bestellung wird aufgegeben...",
     "placeOrder": "Bestellen",
     "loginToOrder": "Zum Bestellen anmelden"
+  },
+  "nearbyGuidePage": {
+    "title": "Umgebungsführer",
+    "subtitle": "Die nächstgelegenen Orte sind unten aufgeführt.",
+    "essentials": "Wichtiges in der Nähe",
+    "attractions": "Sehenswürdigkeiten",
+    "map": "Karte",
+    "call": "Anrufen"
   }
 }
