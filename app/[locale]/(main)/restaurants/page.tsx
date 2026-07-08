@@ -1,6 +1,6 @@
 import RestaurantCard from "@/components/restaurant-card"
 import { Suspense } from "react"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import RestaurantCardSkeleton from "@/components/restaurant-card-skeleton"
 import { getPublicHotelInfo, getPublicRestaurants } from "@/lib/content"
 
@@ -20,6 +20,7 @@ export default async function RestaurantsPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("restaurants")
   const [restaurantRows, hotelInfo] = await Promise.all([
     getPublicRestaurants(),
     getPublicHotelInfo(),
@@ -27,7 +28,7 @@ export default async function RestaurantsPage({
 
   return (
     <div className="p-4">
-      <h2 className="text-3xl font-bold mb-4">Restaurants</h2>
+      <h2 className="text-3xl font-bold mb-4">{t("title")}</h2>
       {restaurantRows.map((r) => (
         <Suspense key={r.id} fallback={<RestaurantCardSkeleton />}>
           <RestaurantCard
@@ -42,9 +43,9 @@ export default async function RestaurantsPage({
             contactPhone={hotelInfo.phone}
             contactWhatsapp={hotelInfo.whatsapp}
             highlights={[
-              r.reservation ? 'Reservation required' : 'No reservation needed',
+              r.reservation ? t("reservationRequired") : t("noReservation"),
               r.cuisine,
-              r.openTime && r.closeTime ? `Open ${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` : '',
+              r.openTime && r.closeTime ? t("openHighlight", { hours: `${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` }) : '',
             ].filter(Boolean)}
           />
         </Suspense>

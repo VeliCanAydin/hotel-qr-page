@@ -140,5 +140,32 @@
     "attractions": "Sehenswürdigkeiten",
     "map": "Karte",
     "call": "Anrufen"
+  },
+  "restaurants": {
+    "title": "Restaurants",
+    "reservationRequired": "Reservierung erforderlich",
+    "noReservation": "Keine Reservierung nötig",
+    "openHighlight": "Geöffnet {hours}"
+  },
+  "restaurantCard": {
+    "details": "Details",
+    "openingHours": "Öffnungszeiten",
+    "cuisine": "Küche",
+    "highlights": "Highlights",
+    "viewMenu": "Menü ansehen",
+    "makeReservation": "Reservieren",
+    "close": "Schließen",
+    "reserveTitle": "Tisch reservieren im {name}",
+    "reserveDesc": "Tischreservierungen werden von unserem Empfangsteam bearbeitet. Kontaktieren Sie uns per Telefon oder WhatsApp, und wir arrangieren es für Sie.",
+    "callReception": "Empfang anrufen — {phone}",
+    "messageWhatsapp": "Per WhatsApp schreiben",
+    "visitReception": "Bitte wenden Sie sich für eine Reservierung an die Rezeption.",
+    "whatsappText": "Hallo, ich möchte einen Tisch im {name} reservieren."
+  },
+  "restaurantMenu": {
+    "notAvailable": "Das Menü ist noch nicht verfügbar."
+  },
+  "menuItemCard": {
+    "vegetarian": "VEGETARISCH"
   }
 }

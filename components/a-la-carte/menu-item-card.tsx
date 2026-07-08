@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import type { MenuItem } from "@/lib/types/menu";
 import { ALLERGENS as STATIC_ALLERGENS } from "@/lib/data/allergens";
 
@@ -12,6 +13,7 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) {
+    const t = useTranslations("menuItemCard")
     const [activeAllergen, setActiveAllergen] = useState<string | null>(null)
     const [allergenMeta, setAllergenMeta] = useState<{ id: string; label: string; icon: string }[]>(STATIC_ALLERGENS)
 
@@ -64,7 +66,7 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
                             variant="outline" 
                             className="w-fit border-green-600 text-green-600 dark:border-green-500 dark:text-green-500 text-[10px] px-1.5 py-0"
                         >
-                            VEGETARIAN
+                            {t("vegetarian")}
                         </Badge>
                     )}
                     {allergens.length > 0 && (

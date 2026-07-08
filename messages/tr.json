@@ -139,5 +139,32 @@
     "attractions": "Turistik Yerler",
     "map": "Harita",
     "call": "Ara"
+  },
+  "restaurants": {
+    "title": "Restoranlar",
+    "reservationRequired": "Rezervasyon gerekli",
+    "noReservation": "Rezervasyon gerekmiyor",
+    "openHighlight": "Açık {hours}"
+  },
+  "restaurantCard": {
+    "details": "Detaylar",
+    "openingHours": "Çalışma Saatleri",
+    "cuisine": "Mutfak",
+    "highlights": "Öne Çıkanlar",
+    "viewMenu": "Menüyü Gör",
+    "makeReservation": "Rezervasyon Yap",
+    "close": "Kapat",
+    "reserveTitle": "{name} için Masa Ayırt",
+    "reserveDesc": "Masa rezervasyonları resepsiyon ekibimiz tarafından yönetilir. Telefon veya WhatsApp'tan bize ulaşın, sizin için ayarlayalım.",
+    "callReception": "Resepsiyonu Ara — {phone}",
+    "messageWhatsapp": "WhatsApp'tan Yaz",
+    "visitReception": "Rezervasyon için lütfen resepsiyona uğrayın.",
+    "whatsappText": "Merhaba, {name} restoranında bir masa ayırtmak istiyorum."
+  },
+  "restaurantMenu": {
+    "notAvailable": "Menü henüz mevcut değil."
+  },
+  "menuItemCard": {
+    "vegetarian": "VEJETARYEN"
   }
 }

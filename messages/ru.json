@@ -140,5 +140,32 @@
     "attractions": "Достопримечательности",
     "map": "Карта",
     "call": "Позвонить"
+  },
+  "restaurants": {
+    "title": "Рестораны",
+    "reservationRequired": "Требуется бронирование",
+    "noReservation": "Бронирование не требуется",
+    "openHighlight": "Открыто {hours}"
+  },
+  "restaurantCard": {
+    "details": "Подробнее",
+    "openingHours": "Часы работы",
+    "cuisine": "Кухня",
+    "highlights": "Особенности",
+    "viewMenu": "Смотреть меню",
+    "makeReservation": "Забронировать",
+    "close": "Закрыть",
+    "reserveTitle": "Забронировать столик в {name}",
+    "reserveDesc": "Бронирование столиков осуществляется нашей стойкой регистрации. Свяжитесь с нами по телефону или WhatsApp, и мы всё организуем.",
+    "callReception": "Позвонить на ресепшн — {phone}",
+    "messageWhatsapp": "Написать в WhatsApp",
+    "visitReception": "Пожалуйста, обратитесь на стойку регистрации для бронирования.",
+    "whatsappText": "Здравствуйте, я хотел бы забронировать столик в {name}."
+  },
+  "restaurantMenu": {
+    "notAvailable": "Меню пока недоступно."
+  },
+  "menuItemCard": {
+    "vegetarian": "ВЕГЕТАРИАНСКОЕ"
   }
 }

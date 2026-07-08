@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { getPublicRestaurantMenu, getPublicRestaurants } from "@/lib/content"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MenuItemCard } from "@/components/a-la-carte/menu-item-card"
@@ -19,6 +19,7 @@ export default async function RestaurantMenuPage({
 }) {
   const { locale, restaurantId } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("restaurantMenu")
 
   const { restaurant, items, images, categories: allCategories } =
     await getPublicRestaurantMenu(restaurantId)
@@ -60,7 +61,7 @@ export default async function RestaurantMenuPage({
     return (
       <div className="p-4">
         <h2 className="text-3xl font-bold mb-4">{restaurant.name}</h2>
-        <p className="text-muted-foreground mt-8 text-center">Menu is not available yet.</p>
+        <p className="text-muted-foreground mt-8 text-center">{t("notAvailable")}</p>
       </div>
     )
   }
