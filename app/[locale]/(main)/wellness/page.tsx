@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Badge } from "@/components/ui/badge"
 import ServiceCard from "@/components/spa-wellness/service-card"
 import { getPublicWellnessServices } from "@/lib/content"
@@ -11,6 +11,7 @@ export default async function WellnessPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("wellness")
   const services = await getPublicWellnessServices()
 
   return (
@@ -26,7 +27,7 @@ export default async function WellnessPage({
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4">
           <Badge variant="secondary" className="mb-4 text-sm">
-            Fitness & Wellness
+            {t("badge")}
           </Badge>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-center">
             Dosinia Wellness
@@ -36,10 +37,9 @@ export default async function WellnessPage({
 
       <div className="flex flex-col p-4 gap-4">
         <p className="text-muted-foreground text-lg leading-relaxed">
-          Add value to your holiday by renewing yourself with activities such as fitness, yoga or
-          water sports where you will increase the energy in your body.
+          {t("intro")}
         </p>
-        <h2 className="text-3xl font-bold mb-4">Services</h2>
+        <h2 className="text-3xl font-bold mb-4">{t("services")}</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {services.map((service) => (
             <ServiceCard

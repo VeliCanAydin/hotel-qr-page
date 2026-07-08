@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { getTranslations } from "next-intl/server"
 import { Camera } from "lucide-react"
 import {
   Carousel,
@@ -78,7 +79,8 @@ function formatHours(open: string | null, close: string | null) {
   return `${open.slice(0, 5)} – ${close.slice(0, 5)}`
 }
 
-export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }) {
+export default async function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }) {
+  const t = await getTranslations("beachPools")
   return (
     <div className="min-h-screen">
       <section className="relative h-[50vh] min-h-100 overflow-hidden">
@@ -93,17 +95,16 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4">
           <Badge variant="secondary" className="mb-4 text-sm">
-            Relax & Refresh
+            {t("badge")}
           </Badge>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">Beach & Pools</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">{t("title")}</h1>
         </div>
       </section>
 
       <section className="py-12 px-4 max-w-4xl mx-auto text-center">
-        <h2 className="text-2xl md:text-3xl font-semibold mb-4">Your Paradise Awaits</h2>
+        <h2 className="text-2xl md:text-3xl font-semibold mb-4">{t("paradise")}</h2>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          The beach and pools of our hotel offer peace and fun together while you enjoy the sun. An
-          ideal environment awaits you for a holiday full of both rest and water activities.
+          {t("intro")}
         </p>
       </section>
 
@@ -113,10 +114,10 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
-            <Badge className="mb-2">Beach</Badge>
-            <h2 className="text-2xl md:text-3xl font-semibold">Private Beach</h2>
+            <Badge className="mb-2">{t("beachBadge")}</Badge>
+            <h2 className="text-2xl md:text-3xl font-semibold">{t("privateBeach")}</h2>
             {formatHours(info.beachOpenTime, info.beachCloseTime) && (
-              <p className="text-sm text-muted-foreground mt-1">Hours: {formatHours(info.beachOpenTime, info.beachCloseTime)}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t("hoursLabel")} {formatHours(info.beachOpenTime, info.beachCloseTime)}</p>
             )}
           </div>
 
@@ -135,8 +136,7 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
           </Carousel>
 
           <p className="text-center text-muted-foreground mt-6 max-w-2xl mx-auto">
-            {info.beachDescription ||
-              "Sink your toes into the soft sand and let the crystal-clear waters of the Mediterranean wash your worries away. Our private beach offers the ultimate escape."}
+            {info.beachDescription || t("beachFallback")}
           </p>
           {info.beachNotes && (
             <p className="text-center text-muted-foreground text-sm mt-2 max-w-2xl mx-auto">
@@ -152,8 +152,8 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
-            <Badge className="mb-2">Pools</Badge>
-            <h2 className="text-2xl md:text-3xl font-semibold">Pools</h2>
+            <Badge className="mb-2">{t("poolsBadge")}</Badge>
+            <h2 className="text-2xl md:text-3xl font-semibold">{t("pools")}</h2>
           </div>
 
           <Carousel className="w-full max-w-4xl mx-auto">
@@ -171,8 +171,7 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
           </Carousel>
 
           <p className="text-center text-muted-foreground mt-6 max-w-2xl mx-auto">
-            {info.mainPoolDescription ||
-              "Dive into our luxurious pools, designed for relaxation and enjoyment. Whether you're looking to swim laps or lounge by the water, our pools provide the perfect setting."}
+            {info.mainPoolDescription || t("poolFallback")}
           </p>
 
           {/* Pool details grid */}
@@ -180,18 +179,18 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
             <div className="grid sm:grid-cols-2 gap-6 mt-8 max-w-3xl mx-auto">
               {info.indoorPoolDescription && (
                 <div className="text-center">
-                  <h3 className="font-semibold mb-1">Indoor Pool</h3>
+                  <h3 className="font-semibold mb-1">{t("indoorPool")}</h3>
                   {formatHours(info.indoorPoolOpenTime, info.indoorPoolCloseTime) && (
-                    <p className="text-xs text-muted-foreground mb-2">Hours: {formatHours(info.indoorPoolOpenTime, info.indoorPoolCloseTime)}</p>
+                    <p className="text-xs text-muted-foreground mb-2">{t("hoursLabel")} {formatHours(info.indoorPoolOpenTime, info.indoorPoolCloseTime)}</p>
                   )}
                   <p className="text-sm text-muted-foreground">{info.indoorPoolDescription}</p>
                 </div>
               )}
               {info.kidsPoolDescription && (
                 <div className="text-center">
-                  <h3 className="font-semibold mb-1">Kids Pool</h3>
+                  <h3 className="font-semibold mb-1">{t("kidsPool")}</h3>
                   {formatHours(info.kidsPoolOpenTime, info.kidsPoolCloseTime) && (
-                    <p className="text-xs text-muted-foreground mb-2">Hours: {formatHours(info.kidsPoolOpenTime, info.kidsPoolCloseTime)}</p>
+                    <p className="text-xs text-muted-foreground mb-2">{t("hoursLabel")} {formatHours(info.kidsPoolOpenTime, info.kidsPoolCloseTime)}</p>
                   )}
                   <p className="text-sm text-muted-foreground">{info.kidsPoolDescription}</p>
                 </div>
@@ -215,16 +214,16 @@ export default function BeachPoolsContent({ info }: { info: BeachPoolsInfoData }
           <div className="text-center mb-8">
             <Badge className="mb-2">
               <Camera className="w-3 h-3 mr-1" />
-              Gallery
+              {t("galleryBadge")}
             </Badge>
-            <h2 className="text-2xl md:text-3xl font-semibold mb-2">Capture the Moments</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold mb-2">{t("galleryTitle")}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore our beautiful beach and pool areas through these stunning photos.
+              {t("galleryIntro")}
               <span className="hidden md:inline">
                 {" "}
-                Click on any image to view it in full size, or press and hold for a quick preview.
+                {t("galleryDesktop")}
               </span>
-              <span className="md:hidden"> Tap to view full size, or press and hold for a quick preview.</span>
+              <span className="md:hidden"> {t("galleryMobile")}</span>
             </p>
           </div>
         </div>

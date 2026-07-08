@@ -11,7 +11,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { getPublicHotelInfo } from "@/lib/content"
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from "@/lib/auth"
 
@@ -22,6 +22,7 @@ export default async function HotelInfoPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("hotelInfo")
   const info = await getPublicHotelInfo()
 
   const cookieStore = await cookies()
@@ -32,18 +33,21 @@ export default async function HotelInfoPage({
   const contacts = [
     {
       username: "Phone",
+      name: t("phone"),
       icon: <Phone />,
       label: info.phone,
       link: `tel:${info.phone.replace(/\D/g, "")}`,
     },
     {
       username: "Mail",
+      name: t("mail"),
       icon: <Mail />,
       label: info.email,
       link: `mailto:${info.email}`,
     },
     {
       username: "WhatsApp",
+      name: "WhatsApp",
       icon: <MessageCircleMore />,
       label: info.whatsapp,
       link: `https://api.whatsapp.com/send/?phone=${info.whatsapp.replace(/\D/g, "")}&text=Dosinia+Luxury+Resort&type=phone_number&app_absent=0`,
@@ -65,18 +69,18 @@ export default async function HotelInfoPage({
           <p className="mb-3 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm backdrop-blur-sm">
             Dosinia Luxury Resort
           </p>
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Hotel Information</h1>
+          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">{t("title")}</h1>
         </div>
       </section>
 
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4">
         <div>
-          <h2 className="text-2xl font-bold leading-8 mb-4">About Our Hotel</h2>
+          <h2 className="text-2xl font-bold leading-8 mb-4">{t("about")}</h2>
           <p className="leading-6">{info.aboutText}</p>
         </div>
 
         <div className="flex w-full max-w-md flex-col gap-4">
-          <h2 className="text-2xl font-bold leading-8">Contact</h2>
+          <h2 className="text-2xl font-bold leading-8">{t("contact")}</h2>
           <div className="border rounded-lg">
             {contacts.map((contact, index) => (
               <React.Fragment key={contact.username}>
@@ -84,7 +88,7 @@ export default async function HotelInfoPage({
                   <div className="flex flex-row items-center gap-4">
                     <div>{contact.icon}</div>
                     <div>
-                      <h2>{contact.username}</h2>
+                      <h2>{contact.name}</h2>
                       <span>{contact.label}</span>
                     </div>
                   </div>
@@ -101,41 +105,44 @@ export default async function HotelInfoPage({
         </div>
 
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-bold leading-8">Hotel Services</h2>
+          <h2 className="text-2xl font-bold leading-8">{t("services")}</h2>
           <Accordion type="single" collapsible className="px-4 border rounded-lg">
             <AccordionItem value="wifi">
-              <AccordionTrigger className="text-base">Wi-Fi Settings</AccordionTrigger>
+              <AccordionTrigger className="text-base">{t("wifi")}</AccordionTrigger>
               <AccordionContent>
                 {isGuest ? (
                   <>
-                    <p><strong>Network Name (SSID):</strong> {info.wifiName}</p>
-                    <p><strong>Password:</strong> {info.wifiPassword}</p>
+                    <p><strong>{t("wifiNetwork")}</strong> {info.wifiName}</p>
+                    <p><strong>{t("wifiPasswordLabel")}</strong> {info.wifiPassword}</p>
                   </>
                 ) : (
                   <div className="flex items-center gap-3 py-1 text-muted-foreground">
                     <Lock className="h-4 w-4 shrink-0" />
                     <span className="text-sm">
-                      <Link
-                        href="/login?redirect=/hotel-info"
-                        className="text-foreground underline underline-offset-2 hover:text-primary"
-                      >
-                        Sign in
-                      </Link>
-                      {" "}with your room details to view Wi-Fi credentials.
+                      {t.rich("wifiLocked", {
+                        link: (chunks) => (
+                          <Link
+                            href="/login?redirect=/hotel-info"
+                            className="text-foreground underline underline-offset-2 hover:text-primary"
+                          >
+                            {chunks}
+                          </Link>
+                        ),
+                      })}
                     </span>
                   </div>
                 )}
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="checkin">
-              <AccordionTrigger className="text-base">Check-In & Check-Out Times</AccordionTrigger>
+              <AccordionTrigger className="text-base">{t("checkInOut")}</AccordionTrigger>
               <AccordionContent>
-                <p><strong>{info.checkInStart} – {info.checkInEnd}</strong> for Check-In</p>
-                <p><strong>Until {info.checkOut}</strong> for Check-Out</p>
+                <p>{t.rich("checkIn", { b: (chunks) => <strong>{chunks}</strong>, start: info.checkInStart, end: info.checkInEnd })}</p>
+                <p>{t.rich("checkOut", { b: (chunks) => <strong>{chunks}</strong>, time: info.checkOut })}</p>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="cancellation">
-              <AccordionTrigger className="text-base">Cancellation Policy</AccordionTrigger>
+              <AccordionTrigger className="text-base">{t("cancellation")}</AccordionTrigger>
               <AccordionContent>{info.cancellationPolicy}</AccordionContent>
             </AccordionItem>
           </Accordion>

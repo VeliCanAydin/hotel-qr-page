@@ -44,5 +44,63 @@
     "personalizedStay": { "title": "Personalize Your Stay", "description": "Build a day-by-day event agenda" },
     "feedback": { "title": "Feedback & Support", "description": "Share feedback or report an issue" },
     "nearbyGuide": { "title": "Nearby Guide", "description": "Nearest pharmacy, market, and bus stop" }
+  },
+  "spa": {
+    "badge": "Relax & Rejuvenate",
+    "intro": "You will experience one of the most precious moments of your holiday at Dosinia Spa. With its professional team, excellent hygiene environment and quality spa products, you can relax and start your future moments by feeling refreshed and great.",
+    "services": "Services"
+  },
+  "wellness": {
+    "badge": "Fitness & Wellness",
+    "intro": "Add value to your holiday by renewing yourself with activities such as fitness, yoga or water sports where you will increase the energy in your body.",
+    "services": "Services"
+  },
+  "serviceCard": {
+    "details": "Details",
+    "detailsTitle": "{title} details",
+    "hours": "Hours",
+    "pricing": "Pricing",
+    "paid": "Paid",
+    "free": "Free",
+    "reservation": "Reservation",
+    "reservationRequired": "Reservation required",
+    "noReservation": "No reservation needed",
+    "cancel": "Cancel"
+  },
+  "hotelInfo": {
+    "title": "Hotel Information",
+    "about": "About Our Hotel",
+    "contact": "Contact",
+    "phone": "Phone",
+    "mail": "Mail",
+    "services": "Hotel Services",
+    "wifi": "Wi-Fi Settings",
+    "wifiNetwork": "Network Name (SSID):",
+    "wifiPasswordLabel": "Password:",
+    "wifiLocked": "<link>Sign in</link> with your room details to view Wi-Fi credentials.",
+    "checkInOut": "Check-In & Check-Out Times",
+    "checkIn": "<b>{start} – {end}</b> for Check-In",
+    "checkOut": "<b>Until {time}</b> for Check-Out",
+    "cancellation": "Cancellation Policy"
+  },
+  "beachPools": {
+    "badge": "Relax & Refresh",
+    "title": "Beach & Pools",
+    "paradise": "Your Paradise Awaits",
+    "intro": "The beach and pools of our hotel offer peace and fun together while you enjoy the sun. An ideal environment awaits you for a holiday full of both rest and water activities.",
+    "hoursLabel": "Hours:",
+    "beachBadge": "Beach",
+    "privateBeach": "Private Beach",
+    "beachFallback": "Sink your toes into the soft sand and let the crystal-clear waters of the Mediterranean wash your worries away. Our private beach offers the ultimate escape.",
+    "poolsBadge": "Pools",
+    "pools": "Pools",
+    "poolFallback": "Dive into our luxurious pools, designed for relaxation and enjoyment. Whether you're looking to swim laps or lounge by the water, our pools provide the perfect setting.",
+    "indoorPool": "Indoor Pool",
+    "kidsPool": "Kids Pool",
+    "galleryBadge": "Gallery",
+    "galleryTitle": "Capture the Moments",
+    "galleryIntro": "Explore our beautiful beach and pool areas through these stunning photos.",
+    "galleryDesktop": "Click on any image to view it in full size, or press and hold for a quick preview.",
+    "galleryMobile": "Tap to view full size, or press and hold for a quick preview."
   }
 }

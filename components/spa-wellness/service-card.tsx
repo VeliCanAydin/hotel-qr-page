@@ -1,6 +1,7 @@
 'use client';
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ImageOff } from "lucide-react";
 import {
     Drawer,
@@ -29,6 +30,7 @@ type ServiceCardProps = {
 };
 
 export default function ServiceCard({ data }: ServiceCardProps) {
+    const t = useTranslations("serviceCard");
     return (
         <div className="overflow-hidden">
             {/* Image Section */}
@@ -52,26 +54,26 @@ export default function ServiceCard({ data }: ServiceCardProps) {
                 <h1 className="font-bold text-lg">{data.title}</h1>
                 <p className="text-muted-foreground">{data.description}</p>
                 <Drawer>
-                    <DrawerTrigger asChild><Button variant="default" className="rounded-3xl font-bold px-5">Details</Button></DrawerTrigger>
+                    <DrawerTrigger asChild><Button variant="default" className="rounded-3xl font-bold px-5">{t("details")}</Button></DrawerTrigger>
                     <DrawerContent>
                         <DrawerHeader>
-                            <DrawerTitle>{data.title} details</DrawerTitle>
+                            <DrawerTitle>{t("detailsTitle", { title: data.title })}</DrawerTitle>
                             <DrawerDescription>
                                 {data.description}
                             </DrawerDescription>
                         </DrawerHeader>
                         <div className="px-6 pb-2 flex flex-col gap-2">
                             <div className="flex items-center justify-between">
-                                <span className="font-medium">Hours</span>
+                                <span className="font-medium">{t("hours")}</span>
                                 <span className="text-sm text-muted-foreground">{data.hours}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="font-medium">Pricing</span>
-                                <span className="text-sm text-muted-foreground">{data.isPaid ? "Paid" : "Free"}</span>
+                                <span className="font-medium">{t("pricing")}</span>
+                                <span className="text-sm text-muted-foreground">{data.isPaid ? t("paid") : t("free")}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="font-medium">Reservation</span>
-                                <span className="text-sm text-muted-foreground">{data.reservationRequired ? "Reservation required" : "No reservation needed"}</span>
+                                <span className="font-medium">{t("reservation")}</span>
+                                <span className="text-sm text-muted-foreground">{data.reservationRequired ? t("reservationRequired") : t("noReservation")}</span>
                             </div>
                             {data.badges && data.badges.length > 0 && (
                                 <div className="flex flex-wrap gap-2 pt-2">
@@ -85,7 +87,7 @@ export default function ServiceCard({ data }: ServiceCardProps) {
                         </div>
                         <DrawerFooter>
                             <DrawerClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">{t("cancel")}</Button>
                             </DrawerClose>
                         </DrawerFooter>
                     </DrawerContent>

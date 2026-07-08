@@ -45,5 +45,63 @@
     "personalizedStay": { "title": "Aufenthalt personalisieren", "description": "Erstellen Sie einen Tagesplan für Veranstaltungen" },
     "feedback": { "title": "Feedback & Support", "description": "Feedback teilen oder ein Problem melden" },
     "nearbyGuide": { "title": "Umgebungsführer", "description": "Nächste Apotheke, Supermarkt und Bushaltestelle" }
+  },
+  "spa": {
+    "badge": "Entspannen & Erholen",
+    "intro": "Im Dosinia Spa erleben Sie einen der wertvollsten Momente Ihres Urlaubs. Mit seinem professionellen Team, hervorragender Hygiene und hochwertigen Spa-Produkten können Sie entspannen und erfrischt in kommende Momente starten.",
+    "services": "Leistungen"
+  },
+  "wellness": {
+    "badge": "Fitness & Wellness",
+    "intro": "Verleihen Sie Ihrem Urlaub mehr Wert, indem Sie sich mit Aktivitäten wie Fitness, Yoga oder Wassersport erneuern und Ihre Energie steigern.",
+    "services": "Leistungen"
+  },
+  "serviceCard": {
+    "details": "Details",
+    "detailsTitle": "{title} – Details",
+    "hours": "Öffnungszeiten",
+    "pricing": "Preis",
+    "paid": "Kostenpflichtig",
+    "free": "Kostenlos",
+    "reservation": "Reservierung",
+    "reservationRequired": "Reservierung erforderlich",
+    "noReservation": "Keine Reservierung nötig",
+    "cancel": "Abbrechen"
+  },
+  "hotelInfo": {
+    "title": "Hotelinformationen",
+    "about": "Über unser Hotel",
+    "contact": "Kontakt",
+    "phone": "Telefon",
+    "mail": "E-Mail",
+    "services": "Hotelservices",
+    "wifi": "WLAN-Einstellungen",
+    "wifiNetwork": "Netzwerkname (SSID):",
+    "wifiPasswordLabel": "Passwort:",
+    "wifiLocked": "<link>Melden Sie sich</link> mit Ihren Zimmerdaten an, um die WLAN-Zugangsdaten zu sehen.",
+    "checkInOut": "Check-in- & Check-out-Zeiten",
+    "checkIn": "<b>{start} – {end}</b> für Check-in",
+    "checkOut": "<b>Bis {time}</b> für Check-out",
+    "cancellation": "Stornierungsbedingungen"
+  },
+  "beachPools": {
+    "badge": "Entspannen & Erfrischen",
+    "title": "Strand & Pools",
+    "paradise": "Ihr Paradies erwartet Sie",
+    "intro": "Der Strand und die Pools unseres Hotels bieten Ruhe und Spaß zugleich, während Sie die Sonne genießen. Eine ideale Umgebung für einen Urlaub voller Erholung und Wasseraktivitäten erwartet Sie.",
+    "hoursLabel": "Öffnungszeiten:",
+    "beachBadge": "Strand",
+    "privateBeach": "Privatstrand",
+    "beachFallback": "Vergraben Sie Ihre Füße im weichen Sand und lassen Sie das kristallklare Wasser des Mittelmeers Ihre Sorgen davontragen. Unser Privatstrand bietet die ultimative Auszeit.",
+    "poolsBadge": "Pools",
+    "pools": "Pools",
+    "poolFallback": "Tauchen Sie ein in unsere luxuriösen Pools, die für Entspannung und Genuss gestaltet sind. Ob Bahnen ziehen oder am Wasser entspannen – unsere Pools bieten den perfekten Rahmen.",
+    "indoorPool": "Hallenbad",
+    "kidsPool": "Kinderpool",
+    "galleryBadge": "Galerie",
+    "galleryTitle": "Momente festhalten",
+    "galleryIntro": "Entdecken Sie unsere schönen Strand- und Poolbereiche in diesen atemberaubenden Fotos.",
+    "galleryDesktop": "Klicken Sie auf ein Bild, um es in voller Größe zu sehen, oder halten Sie es gedrückt für eine schnelle Vorschau.",
+    "galleryMobile": "Zum Vergrößern tippen oder für eine schnelle Vorschau gedrückt halten."
   }
 }

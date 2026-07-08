@@ -44,5 +44,63 @@
     "personalizedStay": { "title": "Konaklamanı Kişiselleştir", "description": "Gün gün etkinlik programı oluşturun" },
     "feedback": { "title": "Geri Bildirim ve Destek", "description": "Görüş paylaşın veya sorun bildirin" },
     "nearbyGuide": { "title": "Yakın Çevre Rehberi", "description": "En yakın eczane, market ve otobüs durağı" }
+  },
+  "spa": {
+    "badge": "Rahatla & Yenilen",
+    "intro": "Dosinia Spa'da tatilinizin en değerli anlarından birini yaşayacaksınız. Profesyonel ekibi, mükemmel hijyen ortamı ve kaliteli spa ürünleriyle rahatlayabilir, kendinizi yenilenmiş ve harika hissederek yeni anlara başlayabilirsiniz.",
+    "services": "Hizmetler"
+  },
+  "wellness": {
+    "badge": "Fitness & Wellness",
+    "intro": "Vücudunuzdaki enerjiyi artıracağınız fitness, yoga veya su sporları gibi aktivitelerle kendinizi yenileyerek tatilinize değer katın.",
+    "services": "Hizmetler"
+  },
+  "serviceCard": {
+    "details": "Detaylar",
+    "detailsTitle": "{title} detayları",
+    "hours": "Saatler",
+    "pricing": "Ücretlendirme",
+    "paid": "Ücretli",
+    "free": "Ücretsiz",
+    "reservation": "Rezervasyon",
+    "reservationRequired": "Rezervasyon gerekli",
+    "noReservation": "Rezervasyon gerekmiyor",
+    "cancel": "İptal"
+  },
+  "hotelInfo": {
+    "title": "Otel Bilgileri",
+    "about": "Otelimiz Hakkında",
+    "contact": "İletişim",
+    "phone": "Telefon",
+    "mail": "E-posta",
+    "services": "Otel Hizmetleri",
+    "wifi": "Wi-Fi Ayarları",
+    "wifiNetwork": "Ağ Adı (SSID):",
+    "wifiPasswordLabel": "Şifre:",
+    "wifiLocked": "Wi-Fi bilgilerini görmek için oda bilgilerinizle <link>giriş yapın</link>.",
+    "checkInOut": "Giriş & Çıkış Saatleri",
+    "checkIn": "Giriş için <b>{start} – {end}</b>",
+    "checkOut": "Çıkış için <b>{time}'a kadar</b>",
+    "cancellation": "İptal Politikası"
+  },
+  "beachPools": {
+    "badge": "Rahatla & Serinle",
+    "title": "Plaj & Havuzlar",
+    "paradise": "Cennetiniz Sizi Bekliyor",
+    "intro": "Otelimizin plajı ve havuzları, güneşin tadını çıkarırken huzuru ve eğlenceyi bir arada sunar. Hem dinlenme hem de su aktiviteleriyle dolu bir tatil için ideal bir ortam sizi bekliyor.",
+    "hoursLabel": "Saatler:",
+    "beachBadge": "Plaj",
+    "privateBeach": "Özel Plaj",
+    "beachFallback": "Ayaklarınızı yumuşak kuma gömün ve Akdeniz'in berrak sularının tüm endişelerinizi alıp götürmesine izin verin. Özel plajımız kusursuz bir kaçış sunar.",
+    "poolsBadge": "Havuzlar",
+    "pools": "Havuzlar",
+    "poolFallback": "Rahatlama ve keyif için tasarlanmış lüks havuzlarımıza dalın. İster kulaç atmak ister su kenarında dinlenmek isteyin, havuzlarımız mükemmel ortamı sunar.",
+    "indoorPool": "Kapalı Havuz",
+    "kidsPool": "Çocuk Havuzu",
+    "galleryBadge": "Galeri",
+    "galleryTitle": "Anları Yakalayın",
+    "galleryIntro": "Muhteşem fotoğraflarla plaj ve havuz alanlarımızı keşfedin.",
+    "galleryDesktop": "Tam boyutta görmek için herhangi bir görsele tıklayın veya hızlı önizleme için basılı tutun.",
+    "galleryMobile": "Tam boyut için dokunun veya hızlı önizleme için basılı tutun."
   }
 }
