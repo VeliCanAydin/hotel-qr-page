@@ -1,0 +1,49 @@
+{
+  "_meta": { "note": "machine-translated (de), review pending" },
+  "common": {
+    "backToHome": "Zurück zur Startseite",
+    "loading": "Wird geladen…"
+  },
+  "header": {
+    "changeLanguage": "Sprache ändern",
+    "home": "Startseite",
+    "goBack": "Zurück",
+    "goToHome": "Zur Startseite",
+    "cart": "Warenkorb",
+    "menu": "Menü",
+    "login": "Anmelden",
+    "guestMenu": "Gastmenü",
+    "aiAssistant": "KI-Assistent",
+    "myStay": "Mein Aufenthalt",
+    "signOut": "Abmelden",
+    "room": "Zimmer {number}"
+  },
+  "login": {
+    "title": "Anmelden",
+    "guestTab": "Gast",
+    "staffTab": "Personal",
+    "roomNumber": "Zimmernummer",
+    "roomNumberPlaceholder": "z. B. 204",
+    "surname": "Nachname",
+    "surnamePlaceholder": "Geben Sie Ihren Nachnamen ein",
+    "signInAsGuest": "Als Gast anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "signInAsStaff": "Als Personal anmelden"
+  },
+  "home": {
+    "hotelInfo": { "title": "Hotelinfo", "description": "Über das Hotel" },
+    "restaurants": { "title": "Restaurants", "description": "Menüs und Speiseoptionen" },
+    "kidsCare": { "title": "Kinderbetreuung", "description": "Kinderbetreuungsdienste" },
+    "beach": { "title": "Strand", "description": "Privater Strandzugang und Infos" },
+    "spa": { "title": "Spa", "description": "Massagen und Behandlungen" },
+    "wellness": { "title": "Wellness", "description": "Fitness, Yoga und Aktivitäten" },
+    "roomService": { "title": "Zimmerservice", "description": "Speisen aufs Zimmer" },
+    "calorieTracker": { "title": "Kalorienzähler", "description": "Verfolgen Sie Ihre Mahlzeiten und tägliche Kalorienzufuhr" },
+    "aiAssistant": { "title": "KI-Assistent", "description": "Sofortige Hilfe und Unterstützung" },
+    "events": { "title": "Veranstaltungen", "description": "Kommende Veranstaltungen im Hotel" },
+    "personalizedStay": { "title": "Aufenthalt personalisieren", "description": "Erstellen Sie einen Tagesplan für Veranstaltungen" },
+    "feedback": { "title": "Feedback & Support", "description": "Feedback teilen oder ein Problem melden" },
+    "nearbyGuide": { "title": "Umgebungsführer", "description": "Nächste Apotheke, Supermarkt und Bushaltestelle" }
+  }
+}

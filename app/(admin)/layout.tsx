@@ -1,6 +1,11 @@
 import { Suspense } from "react"
+import type { Metadata, Viewport } from "next"
 import { cookies } from "next/headers"
+import { Manrope } from "next/font/google"
 import { verifyToken } from "@/lib/auth"
+import { ThemeProvider } from "@/components/theme-provider"
+import { HMRBodyUnlocker } from "@/components/hmr-body-unlocker"
+import "../globals.css"
 import { db } from '@/lib/db'
 import { adminUsers } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -14,6 +19,26 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+
+const manrope = Manrope({
+    weight: ["400", "500", "700"],
+    subsets: ["latin"],
+})
+
+export const viewport: Viewport = {
+    themeColor: "#1e3a5f",
+    width: "device-width",
+    initialScale: 1,
+}
+
+export const metadata: Metadata = {
+    title: "Dosinia Luxury Hotel",
+    description: "Experience the best luxury stay at Dosinia Hotel.",
+    icons: {
+        icon: "/icons/icon-128x128.png",
+        apple: "/icons/icon-128x128.png",
+    },
+}
 
 // Reads the admin session (cookies + DB), so it renders inside the layout's
 // <Suspense> boundary; dashboard pages are covered by the same boundary.
@@ -79,14 +104,27 @@ async function AdminShell({
     );
 }
 
+// Root layout for the admin panel — owns <html>/<body> (the guest surfaces
+// have their own root layout under app/[locale]). The dashboard is
+// intentionally single-language (plan §0), so `lang` stays "en".
 export default function AdminLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
-        <Suspense>
-            <AdminShell>{children}</AdminShell>
-        </Suspense>
+        <html lang="en" suppressHydrationWarning className={manrope.className}>
+            <body>
+                <ThemeProvider attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange>
+                    <Suspense>
+                        <AdminShell>{children}</AdminShell>
+                    </Suspense>
+                </ThemeProvider>
+                <HMRBodyUnlocker />
+            </body>
+        </html>
     );
 }

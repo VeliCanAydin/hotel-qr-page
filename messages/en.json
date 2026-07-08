@@ -1,0 +1,48 @@
+{
+  "common": {
+    "backToHome": "Back to Home",
+    "loading": "Loading…"
+  },
+  "header": {
+    "changeLanguage": "Change language",
+    "home": "Home",
+    "goBack": "Go back",
+    "goToHome": "Go to home",
+    "cart": "Cart",
+    "menu": "Menu",
+    "login": "Login",
+    "guestMenu": "Guest menu",
+    "aiAssistant": "AI Assistant",
+    "myStay": "My Stay",
+    "signOut": "Sign Out",
+    "room": "Room {number}"
+  },
+  "login": {
+    "title": "Sign In",
+    "guestTab": "Guest",
+    "staffTab": "Staff",
+    "roomNumber": "Room Number",
+    "roomNumberPlaceholder": "e.g., 204",
+    "surname": "Surname",
+    "surnamePlaceholder": "Enter your surname",
+    "signInAsGuest": "Sign In as Guest",
+    "email": "Email",
+    "password": "Password",
+    "signInAsStaff": "Sign In as Staff"
+  },
+  "home": {
+    "hotelInfo": { "title": "Hotel Info", "description": "About the hotel" },
+    "restaurants": { "title": "Restaurants", "description": "Menus and dining options" },
+    "kidsCare": { "title": "Kids Care", "description": "Childcare services" },
+    "beach": { "title": "Beach", "description": "Private beach access and info" },
+    "spa": { "title": "Spa", "description": "Massages and treatments" },
+    "wellness": { "title": "Wellness", "description": "Fitness, yoga and activities" },
+    "roomService": { "title": "Room Service", "description": "In-Room Dining" },
+    "calorieTracker": { "title": "Calorie Tracker", "description": "Track your meals and daily calorie intake" },
+    "aiAssistant": { "title": "AI Assistant", "description": "Instant help and support" },
+    "events": { "title": "Events", "description": "Upcoming events at the hotel" },
+    "personalizedStay": { "title": "Personalize Your Stay", "description": "Build a day-by-day event agenda" },
+    "feedback": { "title": "Feedback & Support", "description": "Share feedback or report an issue" },
+    "nearbyGuide": { "title": "Nearby Guide", "description": "Nearest pharmacy, market, and bus stop" }
+  }
+}

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { format, parseISO } from "date-fns"
 import { Clock3, Sparkles, Trash2 } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 
 import { EventDetailsDrawer } from "@/components/events"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"

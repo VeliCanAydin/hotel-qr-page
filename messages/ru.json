@@ -1,0 +1,49 @@
+{
+  "_meta": { "note": "machine-translated (ru), review pending" },
+  "common": {
+    "backToHome": "На главную",
+    "loading": "Загрузка…"
+  },
+  "header": {
+    "changeLanguage": "Изменить язык",
+    "home": "Главная",
+    "goBack": "Назад",
+    "goToHome": "На главную",
+    "cart": "Корзина",
+    "menu": "Меню",
+    "login": "Вход",
+    "guestMenu": "Меню гостя",
+    "aiAssistant": "AI-ассистент",
+    "myStay": "Моё проживание",
+    "signOut": "Выйти",
+    "room": "Номер {number}"
+  },
+  "login": {
+    "title": "Вход",
+    "guestTab": "Гость",
+    "staffTab": "Персонал",
+    "roomNumber": "Номер комнаты",
+    "roomNumberPlaceholder": "напр. 204",
+    "surname": "Фамилия",
+    "surnamePlaceholder": "Введите вашу фамилию",
+    "signInAsGuest": "Войти как гость",
+    "email": "Эл. почта",
+    "password": "Пароль",
+    "signInAsStaff": "Войти как персонал"
+  },
+  "home": {
+    "hotelInfo": { "title": "Об отеле", "description": "Информация об отеле" },
+    "restaurants": { "title": "Рестораны", "description": "Меню и варианты питания" },
+    "kidsCare": { "title": "Детский уход", "description": "Услуги по уходу за детьми" },
+    "beach": { "title": "Пляж", "description": "Доступ к частному пляжу и информация" },
+    "spa": { "title": "Спа", "description": "Массаж и процедуры" },
+    "wellness": { "title": "Велнес", "description": "Фитнес, йога и активности" },
+    "roomService": { "title": "Обслуживание номеров", "description": "Питание в номере" },
+    "calorieTracker": { "title": "Счётчик калорий", "description": "Отслеживайте питание и суточное потребление калорий" },
+    "aiAssistant": { "title": "AI-ассистент", "description": "Мгновенная помощь и поддержка" },
+    "events": { "title": "События", "description": "Предстоящие события в отеле" },
+    "personalizedStay": { "title": "Персонализируйте отдых", "description": "Составьте план мероприятий по дням" },
+    "feedback": { "title": "Отзывы и поддержка", "description": "Поделитесь отзывом или сообщите о проблеме" },
+    "nearbyGuide": { "title": "Путеводитель поблизости", "description": "Ближайшая аптека, магазин и остановка" }
+  }
+}

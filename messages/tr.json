@@ -1,0 +1,48 @@
+{
+  "common": {
+    "backToHome": "Ana Sayfaya Dön",
+    "loading": "Yükleniyor…"
+  },
+  "header": {
+    "changeLanguage": "Dili değiştir",
+    "home": "Ana Sayfa",
+    "goBack": "Geri",
+    "goToHome": "Ana sayfaya git",
+    "cart": "Sepet",
+    "menu": "Menü",
+    "login": "Giriş",
+    "guestMenu": "Misafir menüsü",
+    "aiAssistant": "AI Asistan",
+    "myStay": "Konaklamam",
+    "signOut": "Çıkış Yap",
+    "room": "Oda {number}"
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "guestTab": "Misafir",
+    "staffTab": "Personel",
+    "roomNumber": "Oda Numarası",
+    "roomNumberPlaceholder": "örn. 204",
+    "surname": "Soyad",
+    "surnamePlaceholder": "Soyadınızı girin",
+    "signInAsGuest": "Misafir Olarak Giriş Yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "signInAsStaff": "Personel Olarak Giriş Yap"
+  },
+  "home": {
+    "hotelInfo": { "title": "Otel Bilgisi", "description": "Otel hakkında" },
+    "restaurants": { "title": "Restoranlar", "description": "Menüler ve yemek seçenekleri" },
+    "kidsCare": { "title": "Çocuk Bakımı", "description": "Çocuk bakım hizmetleri" },
+    "beach": { "title": "Plaj", "description": "Özel plaj erişimi ve bilgileri" },
+    "spa": { "title": "Spa", "description": "Masaj ve bakımlar" },
+    "wellness": { "title": "Wellness", "description": "Fitness, yoga ve aktiviteler" },
+    "roomService": { "title": "Oda Servisi", "description": "Odaya servis" },
+    "calorieTracker": { "title": "Kalori Takibi", "description": "Öğünlerinizi ve günlük kalori alımınızı takip edin" },
+    "aiAssistant": { "title": "AI Asistan", "description": "Anında yardım ve destek" },
+    "events": { "title": "Etkinlikler", "description": "Oteldeki yaklaşan etkinlikler" },
+    "personalizedStay": { "title": "Konaklamanı Kişiselleştir", "description": "Gün gün etkinlik programı oluşturun" },
+    "feedback": { "title": "Geri Bildirim ve Destek", "description": "Görüş paylaşın veya sorun bildirin" },
+    "nearbyGuide": { "title": "Yakın Çevre Rehberi", "description": "En yakın eczane, market ve otobüs durağı" }
+  }
+}

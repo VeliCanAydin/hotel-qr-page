@@ -1,8 +1,10 @@
 'use client';
 
 import { Menu, ArrowLeft, Home, ShoppingCart, CircleUserRound, LayoutDashboard, LogOut } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { ModeToggle } from './mode-toggle';
+import { LanguageSwitcher } from './language-switcher';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/cart-context';
 import { Badge } from '@/components/ui/badge';
@@ -23,12 +25,15 @@ interface GuestInfo {
 }
 
 export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
+    // usePathname/useRouter from @/i18n/navigation return the locale-stripped
+    // path and re-add the active locale on push, so the routing logic below is
+    // unchanged from the pre-i18n version.
     const pathname = usePathname();
     const router = useRouter();
     const { getTotalItems } = useCart();
+    const t = useTranslations('header');
 
     const segments = pathname.split('/').filter(Boolean);
-    const isHomePage = segments.length === 0;
     const isFirstLevel = segments.length === 1;
     const isDeepLevel = segments.length >= 2;
     const isAIAssistantPage = pathname === '/ai-assistant';
@@ -59,7 +64,7 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                             variant="ghost"
                             size="icon"
                             onClick={handleHomeClick}
-                            aria-label="Home"
+                            aria-label={t('home')}
                         >
                             <Home className="h-5 w-5" />
                         </Button>
@@ -69,14 +74,14 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                             variant="ghost"
                             size="icon"
                             onClick={handleBackClick}
-                            aria-label="Go back"
+                            aria-label={t('goBack')}
                         >
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                     )}
 
                     <h1 className="text-lg font-semibold">
-                        {isAIAssistantPage ? 'AI Assistant' : 'Dosinia Luxury Hotel'}
+                        {isAIAssistantPage ? t('aiAssistant') : 'Dosinia Luxury Hotel'}
                     </h1>
                 </div>
 
@@ -87,7 +92,7 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                             variant="ghost"
                             size="icon"
                             onClick={() => router.push('/room-service/cart')}
-                            aria-label="Cart"
+                            aria-label={t('cart')}
                             className="relative"
                         >
                             <ShoppingCart className="h-5 w-5" />
@@ -106,7 +111,7 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            aria-label="Menu"
+                            aria-label={t('menu')}
                             onClick={() => {
                                 console.log('AI Assistant menu clicked');
                             }}
@@ -118,7 +123,7 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                     {guestInfo ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" aria-label="Guest menu">
+                                <Button variant="ghost" size="icon" aria-label={t('guestMenu')}>
                                     <Avatar className="h-7 w-7">
                                         <AvatarFallback className="text-xs">{guestInitials}</AvatarFallback>
                                     </Avatar>
@@ -128,20 +133,20 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                                 <DropdownMenuLabel className="font-normal">
                                     <div className="flex flex-col gap-0.5">
                                         <span className="font-medium text-sm">{guestInfo.guestName}</span>
-                                        <span className="text-xs text-muted-foreground">Room {guestInfo.roomNumber}</span>
+                                        <span className="text-xs text-muted-foreground">{t('room', { number: guestInfo.roomNumber })}</span>
                                     </div>
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => router.push('/portal')} className="cursor-pointer">
                                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                                    My Stay
+                                    {t('myStay')}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild className="text-destructive focus:text-destructive cursor-pointer p-0">
                                     <form action={guestLogout}>
                                         <button type="submit" className="flex w-full items-center gap-2 px-2 py-1.5 text-sm">
                                             <LogOut className="h-4 w-4" />
-                                            Sign Out
+                                            {t('signOut')}
                                         </button>
                                     </form>
                                 </DropdownMenuItem>
@@ -152,12 +157,13 @@ export default function Header({ guestInfo }: { guestInfo?: GuestInfo }) {
                             variant="ghost"
                             size="icon"
                             onClick={() => router.push('/login')}
-                            aria-label="Login"
+                            aria-label={t('login')}
                         >
                             <CircleUserRound />
                         </Button>
                     )}
 
+                    <LanguageSwitcher />
                     <ModeToggle />
                 </div>
             </div>

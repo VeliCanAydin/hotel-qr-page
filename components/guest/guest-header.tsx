@@ -1,7 +1,8 @@
 'use client'
 
 import { Home, LogOut } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -13,11 +14,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ModeToggle } from '@/components/mode-toggle'
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { guestLogout } from '@/lib/actions/guest-auth'
 import type { Reservation } from '@/lib/reservations'
 
 export function GuestHeader({ reservation }: { reservation: Reservation }) {
   const router = useRouter()
+  const t = useTranslations('header')
 
   const initials = reservation.guestName
     .split(' ')
@@ -33,7 +36,7 @@ export function GuestHeader({ reservation }: { reservation: Reservation }) {
           variant="ghost"
           size="icon"
           onClick={() => router.push('/')}
-          aria-label="Go to home"
+          aria-label={t('goToHome')}
         >
           <Home className="h-5 w-5" />
         </Button>
@@ -43,7 +46,7 @@ export function GuestHeader({ reservation }: { reservation: Reservation }) {
         <div className="flex items-center gap-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Guest menu">
+              <Button variant="ghost" size="icon" aria-label={t('guestMenu')}>
                 <Avatar className="h-7 w-7">
                   <AvatarFallback className="text-xs">{initials}</AvatarFallback>
                 </Avatar>
@@ -53,7 +56,7 @@ export function GuestHeader({ reservation }: { reservation: Reservation }) {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col gap-0.5">
                   <span className="font-medium text-sm">{reservation.guestName}</span>
-                  <span className="text-xs text-muted-foreground">Room {reservation.roomNumber}</span>
+                  <span className="text-xs text-muted-foreground">{t('room', { number: reservation.roomNumber })}</span>
                   <span className="text-xs text-muted-foreground font-mono">{reservation.reservationCode}</span>
                 </div>
               </DropdownMenuLabel>
@@ -62,12 +65,13 @@ export function GuestHeader({ reservation }: { reservation: Reservation }) {
                 <form action={guestLogout}>
                   <button type="submit" className="flex w-full items-center gap-2 px-2 py-1.5 text-sm">
                     <LogOut className="h-4 w-4" />
-                    Sign Out
+                    {t('signOut')}
                   </button>
                 </form>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <LanguageSwitcher />
           <ModeToggle />
         </div>
       </div>
