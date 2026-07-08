@@ -183,5 +183,29 @@
       "sports": "Sport",
       "music": "Musik"
     }
+  },
+  "kidsCare": {
+    "intro": "Wir sorgen für eine sichere, unterhaltsame und anregende Umgebung für unsere jüngsten Gäste. Entdecken Sie unsere maßgeschneiderten Angebote für einen unvergesslichen Aufenthalt der ganzen Familie.",
+    "certifiedStaff": "Zertifiziertes Personal",
+    "certifiedStaffDesc": "Geschult & geprüft",
+    "allAges": "Alle Altersgruppen",
+    "allAgesDesc": "Kleinkinder bis Teenager",
+    "creativePlay": "Kreatives Spielen",
+    "creativePlayDesc": "Aktivitäten voller Spaß",
+    "viewSchedule": "Aktivitätenplan ansehen",
+    "weeklySchedule": "Wöchentlicher Aktivitätenplan",
+    "swipeHint": "Wischen Sie, um die Aktivitäten jedes Tages zu sehen",
+    "time": "Zeit",
+    "activity": "Aktivität",
+    "goToDay": "Zu {day} gehen",
+    "days": {
+      "monday": "Montag",
+      "tuesday": "Dienstag",
+      "wednesday": "Mittwoch",
+      "thursday": "Donnerstag",
+      "friday": "Freitag",
+      "saturday": "Samstag",
+      "sunday": "Sonntag"
+    }
   }
 }

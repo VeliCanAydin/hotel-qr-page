@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ type WeeklyScheduleCarouselProps = {
 };
 
 export default function WeeklyScheduleCarousel({ schedule }: WeeklyScheduleCarouselProps) {
+    const t = useTranslations("kidsCare");
+    const dayLabel = (day: string) => t(`days.${day.toLowerCase()}`);
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
 
@@ -55,12 +58,12 @@ export default function WeeklyScheduleCarousel({ schedule }: WeeklyScheduleCarou
                     {schedule.map((daySchedule, index) => (
                         <CarouselItem key={index}>
                             <div className="p-4">
-                                <h3 className="text-xl font-bold mb-4 text-center">{daySchedule.day}</h3>
+                                <h3 className="text-xl font-bold mb-4 text-center">{dayLabel(daySchedule.day)}</h3>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead className="w-[120px]">Time</TableHead>
-                                            <TableHead>Activity</TableHead>
+                                            <TableHead className="w-[120px]">{t("time")}</TableHead>
+                                            <TableHead>{t("activity")}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -100,7 +103,7 @@ export default function WeeklyScheduleCarousel({ schedule }: WeeklyScheduleCarou
                                 ? "bg-primary w-6"
                                 : "bg-gray-300 hover:bg-gray-400"
                                 }`}
-                            aria-label={`Go to ${schedule[index].day}`}
+                            aria-label={t("goToDay", { day: dayLabel(schedule[index].day) })}
                         />
                     ))}
                 </div>

@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { ShieldCheck, PartyPopper, SmilePlus } from "lucide-react"
 import Benefits from "@/components/kids-care/benefits"
 import ServiceCard from "@/components/kids-care/service-card"
@@ -14,6 +14,7 @@ export default async function KidsCarePage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("kidsCare")
   const { services, serviceItems: items, activities: activityRows } = await getPublicKidsContent()
 
   const itemsByService: Record<string, { trigger: string; content: string }[]> = {}
@@ -40,11 +41,11 @@ export default async function KidsCarePage({
       <div className="relative w-full h-[200px] rounded-3xl overflow-hidden">
         <Image src="/kids-care.png" alt="Kids Care" fill className="object-cover" />
       </div>
-      <p>We are dedicated to providing a safe, fun, and engaging environment for our youngest guests. Explore our bespoke services designed to ensure a memorable stay for the entire family.</p>
+      <p>{t("intro")}</p>
       <div className="grid grid-cols-3 gap-3">
-        <Benefits icon={ShieldCheck} title="Certified Staff" content="Trained & Vetted" />
-        <Benefits icon={PartyPopper} title="All Ages" content="Toddlers to Teens" />
-        <Benefits icon={SmilePlus} title="Creative Play" content="Fun-filled Activities" />
+        <Benefits icon={ShieldCheck} title={t("certifiedStaff")} content={t("certifiedStaffDesc")} />
+        <Benefits icon={PartyPopper} title={t("allAges")} content={t("allAgesDesc")} />
+        <Benefits icon={SmilePlus} title={t("creativePlay")} content={t("creativePlayDesc")} />
       </div>
 
       {services.map((service) => (

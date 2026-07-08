@@ -182,5 +182,29 @@
       "sports": "Sports",
       "music": "Music"
     }
+  },
+  "kidsCare": {
+    "intro": "We are dedicated to providing a safe, fun, and engaging environment for our youngest guests. Explore our bespoke services designed to ensure a memorable stay for the entire family.",
+    "certifiedStaff": "Certified Staff",
+    "certifiedStaffDesc": "Trained & Vetted",
+    "allAges": "All Ages",
+    "allAgesDesc": "Toddlers to Teens",
+    "creativePlay": "Creative Play",
+    "creativePlayDesc": "Fun-filled Activities",
+    "viewSchedule": "View Activity Schedule",
+    "weeklySchedule": "Weekly Activity Schedule",
+    "swipeHint": "Swipe to view each day's activities",
+    "time": "Time",
+    "activity": "Activity",
+    "goToDay": "Go to {day}",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
   }
 }

@@ -182,5 +182,29 @@
       "sports": "Spor",
       "music": "Müzik"
     }
+  },
+  "kidsCare": {
+    "intro": "En küçük misafirlerimize güvenli, eğlenceli ve ilgi çekici bir ortam sunmaya kendimizi adadık. Tüm aile için unutulmaz bir konaklama sağlamak üzere tasarlanmış özel hizmetlerimizi keşfedin.",
+    "certifiedStaff": "Sertifikalı Ekip",
+    "certifiedStaffDesc": "Eğitimli & Kontrollü",
+    "allAges": "Tüm Yaşlar",
+    "allAgesDesc": "Bebeklerden Gençlere",
+    "creativePlay": "Yaratıcı Oyun",
+    "creativePlayDesc": "Eğlence Dolu Aktiviteler",
+    "viewSchedule": "Aktivite Programını Gör",
+    "weeklySchedule": "Haftalık Aktivite Programı",
+    "swipeHint": "Her günün aktivitelerini görmek için kaydırın",
+    "time": "Saat",
+    "activity": "Aktivite",
+    "goToDay": "{day} gününe git",
+    "days": {
+      "monday": "Pazartesi",
+      "tuesday": "Salı",
+      "wednesday": "Çarşamba",
+      "thursday": "Perşembe",
+      "friday": "Cuma",
+      "saturday": "Cumartesi",
+      "sunday": "Pazar"
+    }
   }
 }

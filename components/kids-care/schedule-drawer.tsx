@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
     Drawer,
@@ -26,6 +27,7 @@ type ScheduleDrawerProps = {
 };
 
 export default function ScheduleDrawer({ schedule }: ScheduleDrawerProps) {
+    const t = useTranslations("kidsCare");
     return (
         <Drawer>
             <DrawerTrigger asChild>
@@ -33,14 +35,14 @@ export default function ScheduleDrawer({ schedule }: ScheduleDrawerProps) {
                     variant="default"
                     className="rounded-3xl font-bold px-5 mt-2 self-center w-full"
                 >
-                    View Activity Schedule
+                    {t("viewSchedule")}
                 </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <div className="flex flex-col gap-4 p-4 max-h-[90vh] overflow-auto">
                     <DrawerHeader>
-                        <DrawerTitle>Weekly Activity Schedule</DrawerTitle>
-                        <DrawerDescription>Swipe to view each day&apos;s activities</DrawerDescription>
+                        <DrawerTitle>{t("weeklySchedule")}</DrawerTitle>
+                        <DrawerDescription>{t("swipeHint")}</DrawerDescription>
                     </DrawerHeader>
                     <WeeklyScheduleCarousel schedule={schedule} />
                 </div>
