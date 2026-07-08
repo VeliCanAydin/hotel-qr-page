@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
 import { format, parseISO } from "date-fns"
 import { Clock3, Sparkles, Trash2 } from "lucide-react"
 import { Link } from "@/i18n/navigation"
@@ -16,15 +17,6 @@ import type { HotelEvent } from "@/lib/types/events"
 type PlanState = Record<string, string[]>
 
 const categoryOrder: HotelEvent["category"][] = ["wellness", "sports", "entertainment", "dining", "kids", "music"]
-
-const categoryLabels: Record<HotelEvent["category"], string> = {
-  wellness: "Wellness Activities",
-  sports: "Activities",
-  entertainment: "Activities",
-  dining: "Dining",
-  kids: "Kids",
-  music: "Music",
-}
 
 function formatDayLabel(dateString: string) {
   return format(parseISO(dateString), "EEE")
@@ -80,6 +72,7 @@ export default function PersonalizedStayPlanner({
   storageKey: string
   guestName: string
 }) {
+  const t = useTranslations("plan")
   // Known after mount: prerendered HTML can't read the current clock. Until
   // then all stay dates show; past days drop out once the clock is known.
   const [todayKey, setTodayKey] = useState<string | null>(null)
@@ -167,11 +160,11 @@ export default function PersonalizedStayPlanner({
         <div className="flex flex-col gap-2">
           <Badge variant="secondary" className="w-fit rounded-full px-3 py-1">
             <Sparkles className="mr-1 size-3" />
-            Personalize Your Stay
+            {t("personalizedStay")}
           </Badge>
-          <h2 className="text-2xl font-semibold tracking-tight">Plan your stay</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">{t("planYourStay")}</h2>
           <p className="max-w-2xl text-sm text-muted-foreground">
-            Once hotel events are added, this section will turn into a simple activity picker.
+            {t("emptyPicker")}
           </p>
         </div>
       </section>
@@ -182,15 +175,15 @@ export default function PersonalizedStayPlanner({
     <section className="rounded-[2rem] border border-border/60 bg-gradient-to-br from-slate-50 via-background to-emerald-50/50 p-4 shadow-sm dark:from-slate-950 dark:via-background dark:to-emerald-950/20 sm:p-6">
       <div className="sticky top-4 z-50 flex justify-end">
         <Button asChild type="button" className="rounded-full px-5 shadow-md">
-          <Link href="/my-plan">My Plan</Link>
+          <Link href="/my-plan">{t("myPlan")}</Link>
         </Button>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_0.9fr]">
         <Card className="border-border/60 shadow-none">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Available activities</CardTitle>
-            <CardDescription>Activities are grouped by type. Tap a title to reveal the details underneath.</CardDescription>
+            <CardTitle className="text-lg">{t("availableActivities")}</CardTitle>
+            <CardDescription>{t("availableDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <Accordion type="multiple" className="w-full">
@@ -200,9 +193,9 @@ export default function PersonalizedStayPlanner({
                     <div className="flex w-full items-center justify-between gap-3 pr-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="rounded-full px-3 py-1">
-                          {categoryLabels[group.category]}
+                          {t(`categories.${group.category}`)}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">{group.items.length} items</span>
+                        <span className="text-xs text-muted-foreground">{t("itemsCount", { count: group.items.length })}</span>
                       </div>
                     </div>
                   </AccordionTrigger>
@@ -249,7 +242,7 @@ export default function PersonalizedStayPlanner({
         event={selectedEvent}
         open={drawerOpen}
         onOpenChange={handleDrawerOpenChange}
-        primaryActionLabel={isPickingDay ? "Choose day" : "Takvime ekle"}
+        primaryActionLabel={isPickingDay ? t("chooseDay") : undefined}
         primaryAction={startCalendarSelection}
         primaryActionDisabled={isPickingDay}
         showDetails={!isPickingDay}

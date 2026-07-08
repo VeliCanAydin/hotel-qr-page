@@ -2,6 +2,7 @@
 
 import { Link } from "@/i18n/navigation"
 import { useEffect, useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
 import { format, parseISO } from "date-fns"
 import { ArrowLeft, CheckCircle2 } from "lucide-react"
 
@@ -26,6 +27,7 @@ function sortDates(dates: string[]) {
 }
 
 export default function MyPlanView({ events, storageKey }: { events: HotelEvent[]; storageKey: string }) {
+  const t = useTranslations("plan")
   const [plan, setPlan] = useState<PlanState>({})
   const [hydrated, setHydrated] = useState(false)
 
@@ -49,26 +51,26 @@ export default function MyPlanView({ events, storageKey }: { events: HotelEvent[
     <div className="mx-auto min-h-screen w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-muted-foreground">Personalized stay</p>
-          <h1 className="text-3xl font-bold tracking-tight">My Plan</h1>
+          <p className="text-sm text-muted-foreground">{t("personalizedStay")}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("myPlan")}</h1>
         </div>
 
         <Button asChild variant="outline" className="rounded-full">
           <Link href="/personalized-stay">
             <ArrowLeft className="mr-2 size-4" />
-            Back
+            {t("back")}
           </Link>
         </Button>
       </div>
 
       <Card className="border-border/60 shadow-none">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg">Assigned days</CardTitle>
-          <CardDescription>Only days with assigned activities are listed. Tap a day to reveal its activities.</CardDescription>
+          <CardTitle className="text-lg">{t("assignedDays")}</CardTitle>
+          <CardDescription>{t("assignedDaysDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           {!hydrated ? (
-            <div className="py-10 text-center text-sm text-muted-foreground">Loading plan...</div>
+            <div className="py-10 text-center text-sm text-muted-foreground">{t("loadingPlan")}</div>
           ) : assignedDays.length > 0 ? (
             <Accordion type="single" collapsible className="w-full space-y-3">
               {assignedDays.map((date) => {
@@ -115,8 +117,8 @@ export default function MyPlanView({ events, storageKey }: { events: HotelEvent[
           ) : (
             <div className="rounded-2xl border border-dashed border-border/60 p-8 text-center">
               <CheckCircle2 className="mx-auto mb-3 size-6 text-muted-foreground" />
-              <p className="text-base font-medium">No activities assigned yet.</p>
-              <p className="mt-1 text-sm text-muted-foreground">Go back and add activities to a day first.</p>
+              <p className="text-base font-medium">{t("noActivities")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t("noActivitiesDesc")}</p>
             </div>
           )}
         </CardContent>

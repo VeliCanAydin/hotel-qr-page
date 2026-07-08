@@ -267,5 +267,31 @@
     "mealsLogged": "{count, plural, other {# öğün kaydedildi}}",
     "collapse": "Daralt",
     "details": "Detaylar"
+  },
+  "plan": {
+    "personalizedStay": "Konaklamanı Kişiselleştir",
+    "myPlan": "Planım",
+    "back": "Geri",
+    "assignedDays": "Atanmış günler",
+    "assignedDaysDesc": "Yalnızca aktivite atanmış günler listelenir. Aktiviteleri görmek için bir güne dokunun.",
+    "loadingPlan": "Plan yükleniyor...",
+    "noActivities": "Henüz aktivite atanmadı.",
+    "noActivitiesDesc": "Önce geri dönüp bir güne aktivite ekleyin.",
+    "planYourAgenda": "Günlük Programını Planla",
+    "heroDesc": "Otelin etkinlik listesinden gün gün bir program oluşturun. Bu sayfa girişe gerek olmadan doğrudan açılır.",
+    "planYourStay": "Konaklamanı planla",
+    "emptyPicker": "Otel etkinlikleri eklendiğinde bu bölüm basit bir aktivite seçiciye dönüşecek.",
+    "availableActivities": "Mevcut aktiviteler",
+    "availableDesc": "Aktiviteler türe göre gruplanmıştır. Detayları görmek için bir başlığa dokunun.",
+    "itemsCount": "{count} öğe",
+    "chooseDay": "Gün seç",
+    "categories": {
+      "wellness": "Wellness Aktiviteleri",
+      "sports": "Aktiviteler",
+      "entertainment": "Aktiviteler",
+      "dining": "Yemek",
+      "kids": "Çocuk",
+      "music": "Müzik"
+    }
   }
 }

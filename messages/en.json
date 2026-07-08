@@ -267,5 +267,31 @@
     "mealsLogged": "{count, plural, one {# meal logged} other {# meals logged}}",
     "collapse": "Collapse",
     "details": "Details"
+  },
+  "plan": {
+    "personalizedStay": "Personalize Your Stay",
+    "myPlan": "My Plan",
+    "back": "Back",
+    "assignedDays": "Assigned days",
+    "assignedDaysDesc": "Only days with assigned activities are listed. Tap a day to reveal its activities.",
+    "loadingPlan": "Loading plan...",
+    "noActivities": "No activities assigned yet.",
+    "noActivitiesDesc": "Go back and add activities to a day first.",
+    "planYourAgenda": "Plan Your Daily Agenda",
+    "heroDesc": "Build a day-by-day schedule from the hotel's event list. This page is open directly, without sign-in.",
+    "planYourStay": "Plan your stay",
+    "emptyPicker": "Once hotel events are added, this section will turn into a simple activity picker.",
+    "availableActivities": "Available activities",
+    "availableDesc": "Activities are grouped by type. Tap a title to reveal the details underneath.",
+    "itemsCount": "{count} items",
+    "chooseDay": "Choose day",
+    "categories": {
+      "wellness": "Wellness Activities",
+      "sports": "Activities",
+      "entertainment": "Activities",
+      "dining": "Dining",
+      "kids": "Kids",
+      "music": "Music"
+    }
   }
 }

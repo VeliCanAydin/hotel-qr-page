@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 
 import PersonalizedStayPlanner from "@/components/guest/personalized-stay-planner"
 import { getPublicEvents } from "@/lib/content"
@@ -13,6 +13,7 @@ export default async function PersonalizedStayPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations("plan")
   const rows = await getPublicEvents()
   const allEvents: HotelEvent[] = rows.map((event) => ({
     ...event,
@@ -36,11 +37,11 @@ export default async function PersonalizedStayPage({
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/35 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-white sm:px-6">
           <p className="mb-3 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs backdrop-blur-sm sm:text-sm">
-            Personalize Your Stay
+            {t("personalizedStay")}
           </p>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Plan Your Daily Agenda</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">{t("planYourAgenda")}</h1>
           <p className="mt-3 max-w-xl text-sm text-white/85 sm:max-w-2xl sm:text-base">
-            Build a day-by-day schedule from the hotel&apos;s event list. This page is open directly, without sign-in.
+            {t("heroDesc")}
           </p>
         </div>
       </section>
