@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,21 +17,6 @@ import {
 } from 'lucide-react'
 import { differenceInDays, format, parseISO } from 'date-fns'
 
-const BOARD_LABELS: Record<string, string> = {
-  'room-only': 'Room Only',
-  'bed-breakfast': 'Bed & Breakfast',
-  'half-board': 'Half Board',
-  'full-board': 'Full Board',
-  'all-inclusive': 'All Inclusive',
-}
-
-const ROOM_LABELS: Record<string, string> = {
-  standard: 'Standard',
-  deluxe: 'Deluxe',
-  suite: 'Suite',
-  villa: 'Villa',
-}
-
 export default async function PortalPage({
   params,
 }: {
@@ -39,6 +24,7 @@ export default async function PortalPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations('portal')
   const cookieStore = await cookies()
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
   if (!token) redirect(`/${locale}/login`)
@@ -62,7 +48,7 @@ export default async function PortalPage({
         <CardContent className="p-0">
           <div className="grid grid-cols-3 divide-x">
             <div className="flex flex-col items-center gap-0.5 p-3 text-center">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Check-In</p>
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{t('checkIn')}</p>
               <p className="font-semibold text-sm">{format(checkInDate, 'MMM d')}</p>
               <p className="text-xs text-muted-foreground">{format(checkInDate, 'EEE')} · 14:00</p>
             </div>
@@ -70,12 +56,12 @@ export default async function PortalPage({
               <p className="text-3xl font-bold leading-none">{totalNights}</p>
               <p className="text-[11px] text-muted-foreground">
                 {nightsRemaining > 0
-                  ? `${nightsRemaining} night${nightsRemaining !== 1 ? 's' : ''} left`
-                  : 'Stay complete'}
+                  ? t('nightsLeft', { n: nightsRemaining })
+                  : t('stayComplete')}
               </p>
             </div>
             <div className="flex flex-col items-center gap-0.5 p-3 text-center">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Check-Out</p>
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{t('checkOut')}</p>
               <p className="font-semibold text-sm">{format(checkOutDate, 'MMM d')}</p>
               <p className="text-xs text-muted-foreground">{format(checkOutDate, 'EEE')} · 12:00</p>
             </div>
@@ -87,31 +73,31 @@ export default async function PortalPage({
       <div className="grid gap-3 sm:grid-cols-2">
         <Card className='gap-3'>
           <CardHeader className="px-4 pb-2">
-            <CardTitle className="text-l font-bold">Room Details</CardTitle>
+            <CardTitle className="text-l font-bold">{t('roomDetails')}</CardTitle>
           </CardHeader>
           <CardContent className="px-4 pb-4 space-y-2">
-            <DetailRow icon={Hash} label="Room" value={reservation.roomNumber} />
-            <DetailRow icon={Building2} label="Type" value={ROOM_LABELS[reservation.roomType]} />
-            <DetailRow icon={Layers} label="Floor" value={String(reservation.floor)} />
-            <DetailRow icon={Eye} label="View" value={reservation.view} />
-            <DetailRow icon={BedDouble} label="Bed" value={reservation.bedType} />
+            <DetailRow icon={Hash} label={t('room')} value={reservation.roomNumber} />
+            <DetailRow icon={Building2} label={t('type')} value={t(`roomTypes.${reservation.roomType}`)} />
+            <DetailRow icon={Layers} label={t('floor')} value={String(reservation.floor)} />
+            <DetailRow icon={Eye} label={t('view')} value={reservation.view} />
+            <DetailRow icon={BedDouble} label={t('bed')} value={reservation.bedType} />
           </CardContent>
         </Card>
 
         <Card className='gap-3'>
           <CardHeader className="px-4 pb-2">
-            <CardTitle className="text-l font-bold">Reservation</CardTitle>
+            <CardTitle className="text-l font-bold">{t('reservation')}</CardTitle>
           </CardHeader>
           <CardContent className="px-4 pb-4 space-y-2">
-            <DetailRow icon={Hash} label="Code" value={reservation.reservationCode} mono />
-            <DetailRow icon={UtensilsCrossed} label="Board" value={BOARD_LABELS[reservation.boardType]} />
+            <DetailRow icon={Hash} label={t('code')} value={reservation.reservationCode} mono />
+            <DetailRow icon={UtensilsCrossed} label={t('board')} value={t(`boardTypes.${reservation.boardType}`)} />
             <DetailRow
               icon={Users}
-              label="Guests"
+              label={t('guests')}
               value={
-                reservation.adults +
+                String(reservation.adults) +
                 (reservation.children > 0
-                  ? ` + ${reservation.children} child${reservation.children !== 1 ? 'ren' : ''}`
+                  ? t('childrenSuffix', { count: reservation.children })
                   : '')
               }
             />

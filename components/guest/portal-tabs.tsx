@@ -1,16 +1,18 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 
 const TABS = [
-  { label: 'My Stay', href: '/portal' },
-  { label: 'Room Service', href: '/portal/room-service' },
-  { label: 'Feedback', href: '/portal/feedback' },
-]
+  { key: 'myStay', href: '/portal' },
+  { key: 'roomService', href: '/portal/room-service' },
+  { key: 'feedback', href: '/portal/feedback' },
+] as const
 
 export function PortalTabs() {
   const pathname = usePathname()
+  const t = useTranslations('portal.tabs')
 
   return (
     <div className="flex border-b">
@@ -25,7 +27,7 @@ export function PortalTabs() {
               : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
           )}
         >
-          {tab.label}
+          {t(tab.key)}
         </Link>
       ))}
     </div>

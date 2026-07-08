@@ -1,18 +1,12 @@
 import { Suspense } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 import { GuestHeader } from '@/components/guest/guest-header'
 import { PortalTabs } from '@/components/guest/portal-tabs'
 import { Badge } from '@/components/ui/badge'
-
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: 'Confirmed',
-  'checked-in': 'Checked In',
-  'checked-out': 'Checked Out',
-}
 
 const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'outline'> = {
   confirmed: 'outline',
@@ -39,17 +33,19 @@ async function PortalShell({
   const reservation = await findActiveReservation(guestPayload.reservationCode)
   if (!reservation) redirect(`/${locale}/login`)
 
+  const t = await getTranslations('portal')
+
   return (
     <div className="min-h-screen">
       <GuestHeader reservation={reservation} />
       <main className="container max-w-lg mx-auto px-4 pt-6 pb-8 space-y-4">
         <div className="flex items-center justify-between gap-2 pt-1">
           <div>
-            <p className="text-xs text-muted-foreground pb-1">Welcome back</p>
+            <p className="text-xs text-muted-foreground pb-1">{t('welcomeBack')}</p>
             <h1 className="text-xl font-semibold leading-tight">{reservation.guestName}</h1>
           </div>
           <Badge variant={STATUS_VARIANTS[reservation.status]} className="shrink-0 mt-0.5">
-            {STATUS_LABELS[reservation.status]}
+            {t(`status.${reservation.status}`)}
           </Badge>
         </div>
 

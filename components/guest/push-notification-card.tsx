@@ -1,12 +1,14 @@
 'use client'
 
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Bell, BellOff, Share, SquarePlus } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { usePushSubscription } from '@/hooks/use-push-subscription'
 
 export function PushNotificationCard() {
+  const t = useTranslations('portal')
   const { status, isBusy, subscribe, unsubscribe } = usePushSubscription()
 
   // Browsers with no Push API at all get nothing — a card they can't act on
@@ -19,36 +21,31 @@ export function PushNotificationCard() {
     if ('error' in result) {
       toast.info(result.error)
     } else {
-      toast.success(
-        enable
-          ? 'Notifications on — we’ll keep you posted on your orders and requests.'
-          : 'Notifications turned off.'
-      )
+      toast.success(enable ? t('notifOn') : t('notifOff'))
     }
   }
 
   return (
     <Card className="gap-3">
       <CardHeader className="px-4 pb-2">
-        <CardTitle className="text-l font-bold">Notifications</CardTitle>
+        <CardTitle className="text-l font-bold">{t('notifications')}</CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-4">
         {status === 'ios-needs-install' ? (
           <div className="flex items-start gap-3 text-sm text-muted-foreground">
             <Bell className="h-5 w-5 shrink-0 mt-0.5" />
             <p>
-              To receive order updates on iPhone or iPad, add this site to your Home Screen
-              first: tap <Share className="inline h-3.5 w-3.5 align-text-bottom" /> Share, then{' '}
-              <SquarePlus className="inline h-3.5 w-3.5 align-text-bottom" /> Add to Home Screen,
-              and open the app from there.
+              {t.rich('iosInstall', {
+                share: () => <Share className="inline h-3.5 w-3.5 align-text-bottom" />,
+                add: () => <SquarePlus className="inline h-3.5 w-3.5 align-text-bottom" />,
+              })}
             </p>
           </div>
         ) : status === 'denied' ? (
           <div className="flex items-start gap-3 text-sm text-muted-foreground">
             <BellOff className="h-5 w-5 shrink-0 mt-0.5" />
             <p>
-              Notifications are blocked for this site. To enable them, allow notifications in
-              your browser settings and reload the page.
+              {t('denied')}
             </p>
           </div>
         ) : (
@@ -56,10 +53,9 @@ export function PushNotificationCard() {
             <div className="flex items-start gap-3">
               <Bell className="h-5 w-5 shrink-0 mt-0.5 text-muted-foreground" />
               <div className="space-y-0.5">
-                <p className="text-sm font-medium leading-tight">Order &amp; request updates</p>
+                <p className="text-sm font-medium leading-tight">{t('orderUpdates')}</p>
                 <p className="text-xs text-muted-foreground">
-                  Get notified when your room service order or request is handled — even when
-                  this page is closed.
+                  {t('orderUpdatesDesc')}
                 </p>
               </div>
             </div>
@@ -67,7 +63,7 @@ export function PushNotificationCard() {
               checked={status === 'subscribed'}
               disabled={isBusy}
               onCheckedChange={handleToggle}
-              aria-label="Toggle push notifications"
+              aria-label={t('togglePush')}
             />
           </div>
         )}

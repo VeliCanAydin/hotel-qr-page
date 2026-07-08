@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { getGuestRoomServiceOrders } from '@/lib/actions/room-service-orders'
 import { Card, CardContent } from '@/components/ui/card'
@@ -14,6 +14,7 @@ export default async function GuestRoomServicePage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations('portal')
   const cookieStore = await cookies()
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
   if (!token) redirect(`/${locale}/login`)
@@ -31,9 +32,9 @@ export default async function GuestRoomServicePage({
             <UtensilsCrossed className="h-6 w-6 text-muted-foreground" />
           </div>
           <div className="space-y-1">
-            <p className="font-medium">No orders yet</p>
+            <p className="font-medium">{t('noOrders')}</p>
             <p className="text-sm text-muted-foreground max-w-55">
-              Your room service orders will appear here once you place them.
+              {t('noOrdersDesc')}
             </p>
           </div>
         </CardContent>

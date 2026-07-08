@@ -1,6 +1,7 @@
 "use client"
 
 import { Fragment, useState, useOptimistic, useTransition } from "react"
+import { useTranslations } from "next-intl"
 import { format } from "date-fns"
 import { XCircle, Loader2, X } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -14,11 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 import { cancelGuestOrder, type OrderItem, type RoomServiceOrder } from "@/lib/actions/room-service-orders"
 
-const STEPS = [
-  { key: "pending", label: "Pending" },
-  { key: "confirmed", label: "Confirmed" },
-  { key: "delivered", label: "Delivered" },
-] as const
+const STEPS = ["pending", "confirmed", "delivered"] as const
 
 const STATUS_INDEX: Record<string, number> = {
   pending: 0,
@@ -27,6 +24,7 @@ const STATUS_INDEX: Record<string, number> = {
 }
 
 export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
+  const t = useTranslations("portal")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [reason, setReason] = useState("")
   const [isPending, startTransition] = useTransition()
@@ -66,7 +64,7 @@ export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
         <CardHeader className="px-4 pt-4 pb-3 gap-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-sm font-semibold">Order #{optimisticOrder.id}</p>
+              <p className="text-sm font-semibold">{t("orderNumber", { id: optimisticOrder.id })}</p>
               <p className="text-xs text-muted-foreground">
                 {format(new Date(optimisticOrder.createdAt), "MMM d, yyyy · HH:mm")}
               </p>
@@ -78,7 +76,7 @@ export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
                 className="h-7 w-7 -mt-1 -mr-1 shrink-0 text-muted-foreground hover:text-destructive"
                 onClick={openDialog}
                 disabled={isPending}
-                aria-label="Cancel order"
+                aria-label={t("cancelOrderAria")}
               >
                 {isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -122,7 +120,7 @@ export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
 
           <div className="flex items-center justify-between border-t pt-2">
             <span className="text-sm font-semibold">
-              Total: €{optimisticOrder.totalAmount.toFixed(2)}
+              {t("orderTotal", { amount: optimisticOrder.totalAmount.toFixed(2) })}
             </span>
           </div>
         </CardContent>
@@ -131,20 +129,20 @@ export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
       <Dialog open={dialogOpen} onOpenChange={(open) => !open && closeDialog()}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Cancel Order #{order.id}</DialogTitle>
+            <DialogTitle>{t("cancelOrder", { id: order.id })}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this order? This action cannot be undone.
+              {t("cancelConfirm")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-2">
             <Label htmlFor={`reason-${order.id}`}>
-              Reason{" "}
-              <span className="text-muted-foreground font-normal">(optional)</span>
+              {t("reason")}{" "}
+              <span className="text-muted-foreground font-normal">{t("optional")}</span>
             </Label>
             <Textarea
               id={`reason-${order.id}`}
-              placeholder="e.g. Changed my mind, ordered by mistake…"
+              placeholder={t("reasonPlaceholder")}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
@@ -154,10 +152,10 @@ export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
 
           <DialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={isPending}>
-              No, go back
+              {t("noGoBack")}
             </Button>
             <Button variant="destructive" onClick={handleCancel} disabled={isPending}>
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Yes, cancel"}
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : t("yesCancel")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -167,13 +165,14 @@ export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
 }
 
 function Timeline({ activeStep }: { activeStep: number }) {
+  const t = useTranslations("portal.steps")
   return (
     <div className="flex items-start px-1">
       {STEPS.map((step, i) => {
         const isCompleted = i < activeStep
         const isActive = i === activeStep
         return (
-          <Fragment key={step.key}>
+          <Fragment key={step}>
             <div className="flex flex-col items-center gap-1.5 shrink-0">
               <div
                 className={cn(
@@ -191,7 +190,7 @@ function Timeline({ activeStep }: { activeStep: number }) {
                     : "text-muted-foreground"
                 )}
               >
-                {step.label}
+                {t(step)}
               </span>
             </div>
             {i < STEPS.length - 1 && (
@@ -216,11 +215,12 @@ function CancelledBanner({
   reason: string | null
   cancelledBy: string | null
 }) {
+  const t = useTranslations("portal")
   const byLabel =
     cancelledBy === "guest"
-      ? "you"
+      ? t("cancelledByYou")
       : cancelledBy === "staff"
-      ? "the hotel"
+      ? t("cancelledByHotel")
       : cancelledBy
 
   return (
@@ -231,7 +231,7 @@ function CancelledBanner({
       />
       <div className="flex-1 min-w-0">
         <p className="text-xs font-medium text-destructive">
-          Cancelled{byLabel ? ` by ${byLabel}` : ""}
+          {byLabel ? t("cancelledBy", { who: byLabel }) : t("cancelled")}
         </p>
         {reason && (
           <p className="text-xs text-muted-foreground italic mt-0.5 break-words">

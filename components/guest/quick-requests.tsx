@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { BedSingle, Clock4, ShowerHead, Sparkles, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,14 +13,15 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { createGuestQuickRequest, type QuickRequestKey } from '@/lib/actions/support-requests'
 
-const REQUESTS: { key: QuickRequestKey; label: string; icon: LucideIcon }[] = [
-  { key: 'towels', label: 'Extra towels', icon: ShowerHead },
-  { key: 'cleaning', label: 'Room cleaning', icon: Sparkles },
-  { key: 'toiletries', label: 'Toiletries refill', icon: BedSingle },
-  { key: 'late-checkout', label: 'Late checkout', icon: Clock4 },
+const REQUESTS: { key: QuickRequestKey; labelKey: string; icon: LucideIcon }[] = [
+  { key: 'towels', labelKey: 'quickTowels', icon: ShowerHead },
+  { key: 'cleaning', labelKey: 'quickCleaning', icon: Sparkles },
+  { key: 'toiletries', labelKey: 'quickToiletries', icon: BedSingle },
+  { key: 'late-checkout', labelKey: 'quickCheckout', icon: Clock4 },
 ]
 
 export function QuickRequests() {
+  const t = useTranslations('portal')
   const [pending, setPending] = useState<(typeof REQUESTS)[number] | null>(null)
   const [note, setNote] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -37,11 +39,11 @@ export function QuickRequests() {
       if ('error' in result) {
         toast.info(result.error)
       } else {
-        toast.success(`Request sent — our team has been notified.`)
+        toast.success(t('requestSent'))
       }
       setPending(null)
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('requestError'))
     } finally {
       setIsSending(false)
     }
@@ -50,7 +52,7 @@ export function QuickRequests() {
   return (
     <Card className="gap-3">
       <CardHeader className="px-4 pb-2">
-        <CardTitle className="text-l font-bold">Quick Requests</CardTitle>
+        <CardTitle className="text-l font-bold">{t('quickRequests')}</CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-4">
         <div className="grid grid-cols-2 gap-2">
@@ -62,7 +64,7 @@ export function QuickRequests() {
               onClick={() => openConfirm(request)}
             >
               <request.icon className="h-5 w-5" />
-              <span className="text-xs font-medium">{request.label}</span>
+              <span className="text-xs font-medium">{t(request.labelKey)}</span>
             </Button>
           ))}
         </div>
@@ -72,16 +74,16 @@ export function QuickRequests() {
         {pending && (
           <DialogContent className="sm:max-w-sm">
             <DialogHeader>
-              <DialogTitle>{pending.label}</DialogTitle>
+              <DialogTitle>{t(pending.labelKey)}</DialogTitle>
               <DialogDescription>
-                We&apos;ll notify our team for your room right away.
+                {t('quickConfirmDesc')}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-2">
-              <Label htmlFor="quick-request-note">Note (optional)</Label>
+              <Label htmlFor="quick-request-note">{t('noteOptional')}</Label>
               <Textarea
                 id="quick-request-note"
-                placeholder="Anything we should know?"
+                placeholder={t('notePlaceholder')}
                 rows={2}
                 maxLength={500}
                 value={note}
@@ -90,10 +92,10 @@ export function QuickRequests() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setPending(null)} disabled={isSending}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button onClick={handleSend} disabled={isSending}>
-                {isSending ? 'Sending…' : 'Send request'}
+                {isSending ? t('sending') : t('sendRequest')}
               </Button>
             </DialogFooter>
           </DialogContent>

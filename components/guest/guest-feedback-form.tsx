@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Star,
   BrushCleaning,
@@ -18,11 +19,11 @@ import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 
 const CATEGORIES = [
-  { key: 'cleanliness', label: 'Cleanliness', icon: BrushCleaning },
-  { key: 'staff', label: 'Staff & Service', icon: UsersRound },
-  { key: 'comfort', label: 'Comfort', icon: Bed },
-  { key: 'food', label: 'Food & Beverage', icon: UtensilsCrossed },
-]
+  { key: 'cleanliness', icon: BrushCleaning },
+  { key: 'staff', icon: UsersRound },
+  { key: 'comfort', icon: Bed },
+  { key: 'food', icon: UtensilsCrossed },
+] as const
 
 function StarRating({
   value,
@@ -65,6 +66,7 @@ export function GuestFeedbackForm({
   guestName: string
   roomNumber: string
 }) {
+  const t = useTranslations('portal')
   const [overall, setOverall] = useState(0)
   const [categories, setCategories] = useState({
     cleanliness: 3,
@@ -92,13 +94,13 @@ export function GuestFeedbackForm({
             <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
           </div>
           <div className="space-y-1">
-            <p className="font-medium">Thank you for your feedback!</p>
+            <p className="font-medium">{t('thankYou')}</p>
             <p className="text-sm text-muted-foreground max-w-[240px]">
-              We truly appreciate you sharing your experience with us.
+              {t('thankYouDesc')}
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
-            Submit another response
+            {t('submitAnother')}
           </Button>
         </CardContent>
       </Card>
@@ -109,14 +111,14 @@ export function GuestFeedbackForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Guest context */}
       <p className="text-xs text-muted-foreground">
-        Submitting as <span className="font-medium text-foreground">{guestName}</span> · Room {roomNumber}
+        {t('submittingAs', { name: guestName, room: roomNumber })}
       </p>
 
       {/* Overall rating */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Overall Experience</CardTitle>
-          <CardDescription>How would you rate your stay?</CardDescription>
+          <CardTitle className="text-base">{t('overallExperience')}</CardTitle>
+          <CardDescription>{t('overallDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center pb-6">
           <StarRating value={overall} onChange={setOverall} />
@@ -128,14 +130,14 @@ export function GuestFeedbackForm({
           {/* Category ratings */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Rate by Category</CardTitle>
+              <CardTitle className="text-base">{t('rateByCategory')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {CATEGORIES.map(({ key, label, icon: Icon }) => (
+              {CATEGORIES.map(({ key, icon: Icon }) => (
                 <div key={key} className="flex items-center gap-4">
                   <div className="flex items-center gap-2 w-36 shrink-0">
                     <Icon className="size-4 text-muted-foreground" />
-                    <span className="text-sm">{label}</span>
+                    <span className="text-sm">{t(`fbCategories.${key}`)}</span>
                   </div>
                   <Slider
                     value={[categories[key as keyof typeof categories]]}
@@ -158,14 +160,14 @@ export function GuestFeedbackForm({
           {/* Comment */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Any Comments?</CardTitle>
+              <CardTitle className="text-base">{t('anyComments')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="comment" className="sr-only">Comment</Label>
+                <Label htmlFor="comment" className="sr-only">{t('anyComments')}</Label>
                 <Textarea
                   id="comment"
-                  placeholder="Tell us what you loved or what we could improve…"
+                  placeholder={t('commentPlaceholder')}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   rows={4}
@@ -182,12 +184,12 @@ export function GuestFeedbackForm({
             {submitting ? (
               <span className="flex items-center gap-2">
                 <span className="animate-spin">⏳</span>
-                Submitting…
+                {t('submitting')}
               </span>
             ) : (
               <span className="flex items-center gap-2">
                 <Send className="size-4" />
-                Submit Feedback
+                {t('submitFeedback')}
               </span>
             )}
           </Button>
