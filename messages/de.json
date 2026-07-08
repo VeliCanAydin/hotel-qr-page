@@ -2,7 +2,8 @@
   "_meta": { "note": "machine-translated (de), review pending" },
   "common": {
     "backToHome": "Zurück zur Startseite",
-    "loading": "Wird geladen…"
+    "loading": "Wird geladen…",
+    "toggleTheme": "Design umschalten"
   },
   "header": {
     "changeLanguage": "Sprache ändern",
@@ -102,7 +103,8 @@
     "galleryTitle": "Momente festhalten",
     "galleryIntro": "Entdecken Sie unsere schönen Strand- und Poolbereiche in diesen atemberaubenden Fotos.",
     "galleryDesktop": "Klicken Sie auf ein Bild, um es in voller Größe zu sehen, oder halten Sie es gedrückt für eine schnelle Vorschau.",
-    "galleryMobile": "Zum Vergrößern tippen oder für eine schnelle Vorschau gedrückt halten."
+    "galleryMobile": "Zum Vergrößern tippen oder für eine schnelle Vorschau gedrückt halten.",
+    "galleryReleaseHint": "Zum Schließen loslassen • Zum Öffnen der Galerie tippen"
   },
   "roomService": {
     "title": "Zimmerservice",

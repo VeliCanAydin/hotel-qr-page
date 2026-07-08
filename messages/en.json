@@ -1,7 +1,8 @@
 {
   "common": {
     "backToHome": "Back to Home",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "toggleTheme": "Toggle theme"
   },
   "header": {
     "changeLanguage": "Change language",
@@ -101,7 +102,8 @@
     "galleryTitle": "Capture the Moments",
     "galleryIntro": "Explore our beautiful beach and pool areas through these stunning photos.",
     "galleryDesktop": "Click on any image to view it in full size, or press and hold for a quick preview.",
-    "galleryMobile": "Tap to view full size, or press and hold for a quick preview."
+    "galleryMobile": "Tap to view full size, or press and hold for a quick preview.",
+    "galleryReleaseHint": "Release to close • Tap to open gallery"
   },
   "roomService": {
     "title": "Room Service",

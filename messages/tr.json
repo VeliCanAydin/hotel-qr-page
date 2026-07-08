@@ -1,7 +1,8 @@
 {
   "common": {
     "backToHome": "Ana Sayfaya Dön",
-    "loading": "Yükleniyor…"
+    "loading": "Yükleniyor…",
+    "toggleTheme": "Temayı değiştir"
   },
   "header": {
     "changeLanguage": "Dili değiştir",
@@ -101,7 +102,8 @@
     "galleryTitle": "Anları Yakalayın",
     "galleryIntro": "Muhteşem fotoğraflarla plaj ve havuz alanlarımızı keşfedin.",
     "galleryDesktop": "Tam boyutta görmek için herhangi bir görsele tıklayın veya hızlı önizleme için basılı tutun.",
-    "galleryMobile": "Tam boyut için dokunun veya hızlı önizleme için basılı tutun."
+    "galleryMobile": "Tam boyut için dokunun veya hızlı önizleme için basılı tutun.",
+    "galleryReleaseHint": "Kapatmak için bırakın • Galeriyi açmak için dokunun"
   },
   "roomService": {
     "title": "Oda Servisi",

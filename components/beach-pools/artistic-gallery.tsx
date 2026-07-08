@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface GalleryImage {
@@ -29,6 +30,7 @@ const layoutPatterns = [
 ];
 
 export default function ArtisticGallery({ images }: ArtisticGalleryProps) {
+    const t = useTranslations("beachPools");
     const [previewImage, setPreviewImage] = useState<number | null>(null);
     const [modalImage, setModalImage] = useState<number | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -296,7 +298,7 @@ export default function ArtisticGallery({ images }: ArtisticGalleryProps) {
                             priority
                         />
                         <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm">
-                            Release to close • Tap to open gallery
+                            {t("galleryReleaseHint")}
                         </p>
                     </div>
                 </div>
