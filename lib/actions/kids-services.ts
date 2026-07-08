@@ -1,11 +1,12 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { kidsServices, kidsServiceItems } from '@/lib/db/schema'
+import { kidsServices, kidsServiceItems, kidsActivities } from '@/lib/db/schema'
 import { eq, asc } from 'drizzle-orm'
 import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { deleteTranslationsFor, deleteTranslationsForMany } from '@/lib/translations'
 
 export type KidsServiceInput = {
   id: string
@@ -34,6 +35,15 @@ export async function updateKidsService(id: string, data: Omit<KidsServiceInput,
 
 export async function deleteKidsService(id: string) {
   await requireAdmin('/dashboard/content/kids-care')
+  // kids_service_items + kids_activities cascade-delete via FK; their translations
+  // are polymorphic (no FK), so clear them here before the rows disappear.
+  const [itemRows, activityRows] = await Promise.all([
+    db.select({ id: kidsServiceItems.id }).from(kidsServiceItems).where(eq(kidsServiceItems.serviceId, id)),
+    db.select({ id: kidsActivities.id }).from(kidsActivities).where(eq(kidsActivities.serviceId, id)),
+  ])
+  await deleteTranslationsForMany('kids_service_item', itemRows.map((r) => r.id))
+  await deleteTranslationsForMany('kids_activity', activityRows.map((r) => String(r.id)))
+  await deleteTranslationsFor('kids_service', id)
   await db.delete(kidsServices).where(eq(kidsServices.id, id))
   revalidate()
 }
@@ -55,6 +65,7 @@ export async function updateKidsServiceItem(id: string, trigger: string, content
 export async function deleteKidsServiceItem(id: string) {
   await requireAdmin('/dashboard/content/kids-care')
   await db.delete(kidsServiceItems).where(eq(kidsServiceItems.id, id))
+  await deleteTranslationsFor('kids_service_item', id)
   revalidate()
 }
 

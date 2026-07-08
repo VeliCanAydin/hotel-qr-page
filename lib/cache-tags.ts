@@ -12,4 +12,7 @@ export const CONTENT_TAGS = {
   beachPools: 'content:beach-pools',
   kidsCare: 'content:kids-care',
   nearbyGuide: 'content:nearby-guide',
+  // Shared by every cached reader; the admin Translations page invalidates it so
+  // all languages refresh at once when a translation is saved.
+  translations: 'content:translations',
 } as const

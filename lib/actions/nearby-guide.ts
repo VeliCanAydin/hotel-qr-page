@@ -4,6 +4,7 @@ import { asc, eq } from 'drizzle-orm'
 import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { deleteTranslationsFor } from '@/lib/translations'
 
 import { db } from '@/lib/db'
 import { nearbyGuideItems as nearbyGuideItemsTable } from '@/lib/db/schema'
@@ -74,5 +75,6 @@ export async function updateNearbyGuideItem(id: string, data: Omit<NearbyGuideIt
 export async function deleteNearbyGuideItem(id: string) {
   await requireAdmin('/dashboard/content/nearby-guide')
   await db.delete(nearbyGuideItemsTable).where(eq(nearbyGuideItemsTable.id, id))
+  await deleteTranslationsFor('nearby_guide_item', id)
   updateTag(CONTENT_TAGS.nearbyGuide)
 }

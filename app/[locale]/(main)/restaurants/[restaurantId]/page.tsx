@@ -8,7 +8,8 @@ import type { MenuItem } from "@/lib/types/menu"
 
 // Prerender the menus of known restaurants; ones added later render on demand.
 export async function generateStaticParams() {
-  const rows = await getPublicRestaurants()
+  // Only restaurant ids are needed here (locale-independent), so read the base language.
+  const rows = await getPublicRestaurants('en')
   return rows.map((restaurant) => ({ restaurantId: restaurant.id }))
 }
 
@@ -22,7 +23,7 @@ export default async function RestaurantMenuPage({
   const t = await getTranslations("restaurantMenu")
 
   const { restaurant, items, images, categories: allCategories } =
-    await getPublicRestaurantMenu(restaurantId)
+    await getPublicRestaurantMenu(restaurantId, locale)
 
   if (!restaurant) notFound()
 

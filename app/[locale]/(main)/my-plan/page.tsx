@@ -11,7 +11,7 @@ export default async function MyPlanPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const rows = await getPublicEvents()
+  const rows = await getPublicEvents(locale)
   const allEvents: HotelEvent[] = rows.map((event) => ({
     ...event,
     category: event.category as HotelEvent["category"],

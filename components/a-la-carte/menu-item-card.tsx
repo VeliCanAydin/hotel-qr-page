@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { MenuItem } from "@/lib/types/menu";
 import { ALLERGENS as STATIC_ALLERGENS } from "@/lib/data/allergens";
 
@@ -14,12 +14,13 @@ interface MenuItemCardProps {
 
 export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) {
     const t = useTranslations("menuItemCard")
+    const locale = useLocale()
     const [activeAllergen, setActiveAllergen] = useState<string | null>(null)
     const [allergenMeta, setAllergenMeta] = useState<{ id: string; label: string; icon: string }[]>(STATIC_ALLERGENS)
 
     useEffect(() => {
         let mounted = true
-        fetch('/api/allergens')
+        fetch(`/api/allergens?locale=${locale}`)
             .then((r) => r.json())
             .then((data) => {
                 if (mounted && Array.isArray(data)) setAllergenMeta(data)
@@ -28,7 +29,7 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
                 /* keep fallback */
             })
         return () => { mounted = false }
-    }, [])
+    }, [locale])
 
     const allergens: string[] = (() => {
         if (!item.allergens) return []

@@ -5,6 +5,7 @@ import { roomServiceItems } from '@/lib/db/schema'
 import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { deleteTranslationsFor } from '@/lib/translations'
 import { eq } from 'drizzle-orm'
 
 type RoomServiceItemInput = {
@@ -31,6 +32,7 @@ export async function updateRoomServiceItem(id: string, data: Omit<RoomServiceIt
 export async function deleteRoomServiceItem(id: string) {
   await requireAdmin('/dashboard/services/room-service')
   await db.delete(roomServiceItems).where(eq(roomServiceItems.id, id))
+  await deleteTranslationsFor('room_service_item', id)
   updateTag(CONTENT_TAGS.roomServiceItems)
 }
 

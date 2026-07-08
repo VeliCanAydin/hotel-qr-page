@@ -6,6 +6,8 @@ import { eq, asc, sql } from 'drizzle-orm'
 import { revalidatePath, updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { MENU_TEMPLATE_ITEM_ENTITY } from '@/lib/i18n-entities'
+import { copyTranslationsBatch, deleteTranslationsFor, deleteTranslationsForMany } from '@/lib/translations'
 
 export type TemplateItemInput = {
   name: string
@@ -61,19 +63,25 @@ export async function saveCurrentMenuAsTemplate(restaurantId: string, name: stri
   const imageMap = Object.fromEntries(imageRows.map((r) => [r.itemId, r.proxyUrl]))
 
   if (currentItems.length > 0) {
-    await db.insert(menuTemplateItems).values(
-      currentItems.map((item, index) => ({
-        id: crypto.randomUUID(),
-        templateId,
-        name: item.name,
-        description: item.description,
-        category: item.category,
-        price: item.price,
-        isVegetarian: item.isVegetarian,
-        imageUrl: imageMap[item.id] ?? null,
-        allergens: JSON.stringify(Array.isArray(item.allergens) ? item.allergens : []),
-        orderIndex: index,
-      }))
+    const templateItemValues = currentItems.map((item, index) => ({
+      id: crypto.randomUUID(),
+      templateId,
+      name: item.name,
+      description: item.description,
+      category: item.category,
+      price: item.price,
+      isVegetarian: item.isVegetarian,
+      imageUrl: imageMap[item.id] ?? null,
+      allergens: JSON.stringify(Array.isArray(item.allergens) ? item.allergens : []),
+      orderIndex: index,
+    }))
+    await db.insert(menuTemplateItems).values(templateItemValues)
+    // Carry each menu item's translations onto its template item so they survive
+    // a later loadMenuTemplate (which recreates menu_items with fresh ids).
+    await copyTranslationsBatch(
+      'menu_item',
+      MENU_TEMPLATE_ITEM_ENTITY,
+      currentItems.map((item, index) => ({ fromId: item.id, toId: templateItemValues[index].id })),
     )
   }
 
@@ -98,6 +106,8 @@ export async function loadMenuTemplate(templateId: string, restaurantId: string)
     for (const { id } of existing) {
       await db.delete(menuItemImages).where(eq(menuItemImages.itemId, id))
     }
+    // The old menu_items are about to vanish; drop their translations too.
+    await deleteTranslationsForMany('menu_item', existing.map((e) => e.id))
     await db.delete(menuItems).where(eq(menuItems.restaurantId, restaurantId))
   }
 
@@ -114,6 +124,13 @@ export async function loadMenuTemplate(templateId: string, restaurantId: string)
     }))
     await db.insert(menuItems).values(newItems)
 
+    // Re-hydrate the fresh menu_items with the template's stored translations.
+    await copyTranslationsBatch(
+      MENU_TEMPLATE_ITEM_ENTITY,
+      'menu_item',
+      templateItemRows.map((ti, i) => ({ fromId: ti.id, toId: newItems[i].id })),
+    )
+
     const imageInserts = templateItemRows
       .map((ti, i) => ({ itemId: newItems[i].id, proxyUrl: ti.imageUrl! }))
       .filter((r) => r.proxyUrl)
@@ -128,6 +145,12 @@ export async function loadMenuTemplate(templateId: string, restaurantId: string)
 
 export async function deleteMenuTemplate(id: string) {
   await requireAdmin('/dashboard/services/restaurant')
+  // menu_template_items cascade-delete via FK; clear their translations first.
+  const itemRows = await db
+    .select({ id: menuTemplateItems.id })
+    .from(menuTemplateItems)
+    .where(eq(menuTemplateItems.templateId, id))
+  await deleteTranslationsForMany(MENU_TEMPLATE_ITEM_ENTITY, itemRows.map((r) => r.id))
   await db.delete(menuTemplates).where(eq(menuTemplates.id, id))
   revalidatePath('/dashboard/services/restaurant')
 }
@@ -178,5 +201,6 @@ export async function updateTemplateItem(id: string, data: Partial<TemplateItemI
 export async function removeTemplateItem(id: string) {
   await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuTemplateItems).where(eq(menuTemplateItems.id, id))
+  await deleteTranslationsFor(MENU_TEMPLATE_ITEM_ENTITY, id)
   revalidatePath('/dashboard/services/restaurant')
 }

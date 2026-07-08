@@ -14,7 +14,7 @@ export default async function PersonalizedStayPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("plan")
-  const rows = await getPublicEvents()
+  const rows = await getPublicEvents(locale)
   const allEvents: HotelEvent[] = rows.map((event) => ({
     ...event,
     category: event.category as HotelEvent['category'],

@@ -6,6 +6,7 @@ import { updateTag } from 'next/cache'
 import { eq } from 'drizzle-orm'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { deleteTranslationsFor } from '@/lib/translations'
 
 function revalidate() {
   updateTag(CONTENT_TAGS.kidsCare)
@@ -32,5 +33,6 @@ export async function updateKidsActivity(id: number, time: string, event: string
 export async function deleteKidsActivity(id: number) {
   await requireAdmin('/dashboard/content/kids-care')
   await db.delete(kidsActivities).where(eq(kidsActivities.id, id))
+  await deleteTranslationsFor('kids_activity', String(id))
   revalidate()
 }

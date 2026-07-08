@@ -22,8 +22,8 @@ export default async function RestaurantsPage({
   setRequestLocale(locale)
   const t = await getTranslations("restaurants")
   const [restaurantRows, hotelInfo] = await Promise.all([
-    getPublicRestaurants(),
-    getPublicHotelInfo(),
+    getPublicRestaurants(locale),
+    getPublicHotelInfo(locale),
   ])
 
   return (

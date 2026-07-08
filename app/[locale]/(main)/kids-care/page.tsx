@@ -15,7 +15,7 @@ export default async function KidsCarePage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("kidsCare")
-  const { services, serviceItems: items, activities: activityRows } = await getPublicKidsContent()
+  const { services, serviceItems: items, activities: activityRows } = await getPublicKidsContent(locale)
 
   const itemsByService: Record<string, { trigger: string; content: string }[]> = {}
   for (const item of items) {

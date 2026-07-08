@@ -23,7 +23,7 @@ export default async function HotelInfoPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("hotelInfo")
-  const info = await getPublicHotelInfo()
+  const info = await getPublicHotelInfo(locale)
 
   const cookieStore = await cookies()
   const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value

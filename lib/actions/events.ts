@@ -6,6 +6,7 @@ import { updateTag } from 'next/cache'
 import { eq } from 'drizzle-orm'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { deleteTranslationsFor } from '@/lib/translations'
 
 type EventInput = {
   id: string
@@ -34,5 +35,6 @@ export async function updateEvent(id: string, data: Omit<EventInput, 'id'>) {
 export async function deleteEvent(id: string) {
   await requireAdmin('/dashboard/events/list')
   await db.delete(events).where(eq(events.id, id))
+  await deleteTranslationsFor('event', id)
   updateTag(CONTENT_TAGS.events)
 }

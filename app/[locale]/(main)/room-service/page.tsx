@@ -14,7 +14,7 @@ export default async function RoomService({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations('roomService')
-  const items = await getPublicRoomServiceItems()
+  const items = await getPublicRoomServiceItems(locale)
 
   const getByCategory = (category: string) =>
     items.filter((item) => item.category === category)

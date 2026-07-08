@@ -38,7 +38,7 @@ export default async function HotelPoliciesPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("hotelPolicies")
-  const info = await getPublicHotelInfo()
+  const info = await getPublicHotelInfo(locale)
 
   const strong = (chunks: React.ReactNode) => <strong className="text-foreground">{chunks}</strong>
   const emailLink = () => (

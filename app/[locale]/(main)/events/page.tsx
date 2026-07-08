@@ -10,7 +10,7 @@ export default async function PageEvent({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const rows = await getPublicEvents()
+  const rows = await getPublicEvents(locale)
   const allEvents: HotelEvent[] = rows.map((e) => ({
     ...e,
     category: e.category as HotelEvent["category"],

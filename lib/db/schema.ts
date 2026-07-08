@@ -289,6 +289,24 @@ export const reservations = pgTable('reservations', {
   createdAt:       timestamp('created_at').defaultNow().notNull(),
 })
 
+// Polymorphic translation store for guest-facing content. One row per
+// (entityType, entityId, locale, field). English is the base language and has
+// NO rows here — the base table columns are already English, so a missing
+// translation naturally falls back to English. Written from the admin
+// Translations page, read by lib/translations.ts + lib/content.ts.
+export const contentTranslations = pgTable('content_translations', {
+  id: serial('id').primaryKey(),
+  entityType: text('entity_type').notNull(), // TRANSLATABLE_ENTITIES key (lib/i18n-entities.ts)
+  entityId: text('entity_id').notNull(),     // target row's pk (serial pks stored as String())
+  locale: text('locale').notNull(),          // 'tr' | 'de' | 'ru' (never 'en')
+  field: text('field').notNull(),            // 'name' | 'description' | 'title' ...
+  value: text('value').notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, (t) => [
+  uniqueIndex('content_translations_unique').on(t.entityType, t.entityId, t.locale, t.field),
+  index('content_translations_lookup_idx').on(t.entityType, t.locale),
+])
+
 export const pushSubscriptions = pgTable('push_subscriptions', {
   id: serial('id').primaryKey(),
   reservationCode: text('reservation_code').notNull(), // one guest stay, many devices

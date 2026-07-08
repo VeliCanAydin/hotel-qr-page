@@ -6,6 +6,7 @@ import { updateTag } from 'next/cache'
 import { eq } from 'drizzle-orm'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { deleteTranslationsFor } from '@/lib/translations'
 
 type MenuItemInput = {
   id: string
@@ -42,6 +43,7 @@ export async function deleteMenuItem(id: string) {
   await requireAdmin('/dashboard/services/restaurant')
   await db.delete(menuItems).where(eq(menuItems.id, id))
   await db.delete(menuItemImages).where(eq(menuItemImages.itemId, id))
+  await deleteTranslationsFor('menu_item', id)
   updateTag(CONTENT_TAGS.menuItems)
 }
 

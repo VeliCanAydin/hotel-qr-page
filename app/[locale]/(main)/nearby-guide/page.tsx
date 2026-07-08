@@ -98,7 +98,7 @@ export default async function NearbyGuidePage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("nearbyGuidePage")
-  const nearbyGuideItems = await getPublicNearbyGuideItems()
+  const nearbyGuideItems = await getPublicNearbyGuideItems(locale)
   const nearbyEssentials = nearbyGuideItems.filter((item) => item.section === "Nearby Essentials")
   const touristAttractions = nearbyGuideItems.filter((item) => item.section === "Tourist Attractions")
 

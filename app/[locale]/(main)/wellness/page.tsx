@@ -12,7 +12,7 @@ export default async function WellnessPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("wellness")
-  const services = await getPublicWellnessServices()
+  const services = await getPublicWellnessServices(locale)
 
   return (
     <div className="min-h-screen">

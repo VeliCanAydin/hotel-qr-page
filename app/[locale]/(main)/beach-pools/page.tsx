@@ -9,6 +9,6 @@ export default async function BeachPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const info = await getPublicBeachPoolsInfo()
+  const info = await getPublicBeachPoolsInfo(locale)
   return <BeachPoolsContent info={info} />
 }

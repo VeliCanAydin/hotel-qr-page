@@ -12,7 +12,7 @@ export default async function SpaPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("spa")
-  const services = await getPublicSpaServices()
+  const services = await getPublicSpaServices(locale)
 
   return (
     <div className="min-h-screen">

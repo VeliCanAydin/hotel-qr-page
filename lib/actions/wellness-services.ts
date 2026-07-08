@@ -6,6 +6,7 @@ import { eq, asc } from 'drizzle-orm'
 import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
+import { deleteTranslationsFor } from '@/lib/translations'
 
 export type WellnessServiceInput = {
   id: string
@@ -39,5 +40,6 @@ export async function updateWellnessService(id: string, data: Omit<WellnessServi
 export async function deleteWellnessService(id: string) {
   await requireAdmin('/dashboard/content/wellness')
   await db.delete(wellnessServices).where(eq(wellnessServices.id, id))
+  await deleteTranslationsFor('wellness_service', id)
   updateTag(CONTENT_TAGS.wellnessServices)
 }
