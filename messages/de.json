@@ -493,5 +493,59 @@
     "managing": "Cookies verwalten",
     "managingP": "Sie können Cookies jederzeit über Ihre Browsereinstellungen löschen oder blockieren. Beachten Sie, dass das Blockieren notwendiger Cookies verhindert, dass Sie sich im Gäste-Portal anmelden oder Zimmerservice-Bestellungen aufgeben können.",
     "questions": "Fragen? Kontaktieren Sie uns unter <email></email>."
+  },
+  "kvkk": {
+    "title": "Hinweis zum Schutz personenbezogener Daten (KVKK)",
+    "intro": "Dieser Hinweis wird gemäß Artikel 10 des türkischen Gesetzes zum Schutz personenbezogener Daten Nr. 6698 (\"KVKK\") bereitgestellt. Als für die Verarbeitung Verantwortlicher verarbeitet <strong>Dosinia Luxury Hotel</strong> (Kemer, Antalya, Türkei) die personenbezogenen Daten, die Sie über diese Website teilen, sorgfältig und nur für die unten beschriebenen Zwecke.",
+    "dataWeProcess": "Welche Daten wir verarbeiten und warum",
+    "data": {
+      "identity": { "title": "Identitäts- & Aufenthaltsinformationen", "detail": "Name, Nachname und Zimmernummer — zur Überprüfung Ihrer Reservierung bei der Anmeldung im Gäste-Portal und zur Lieferung von Zimmerservice-Bestellungen." },
+      "contact": { "title": "Kontaktinformationen", "detail": "E-Mail-Adresse, falls Sie sie mit Ihrem Feedback angeben — nur zur Nachverfolgung Ihrer Kommentare." },
+      "requests": { "title": "Anfragen & Feedback", "detail": "Bewertungen, Kommentare, Support- und Beschwerdeanfragen sowie angehängte Fotos — von unserem Gästebetreuungsteam zur Lösung von Problemen und zur Verbesserung unserer Dienstleistungen genutzt." },
+      "order": { "title": "Bestellinformationen", "detail": "Inhalt der Zimmerservice-Bestellung und Lieferhinweise — zur Vorbereitung und Lieferung Ihrer Bestellung sowie für interne Serviceunterlagen." }
+    },
+    "legalBasis": "Ihre Daten werden auf Grundlage der Rechtsgründe in Artikel 5 des KVKK verarbeitet — vorrangig zur Erfüllung des Beherbergungsvertrags zwischen Ihnen und dem Hotel sowie aufgrund unseres berechtigten Interesses an der Verbesserung der Gästeservices. Ihre Daten werden ohne Ihre ausdrückliche Einwilligung nicht für Marketingzwecke verwendet und werden nicht verkauft oder an Dritte weitergegeben, außer wo dies gesetzlich vorgeschrieben ist oder für den technischen Betrieb dieser Website erforderlich ist (sichere Cloud-Hosting- und Speicheranbieter).",
+    "retention": "Aufbewahrung",
+    "retentionP": "Personenbezogene Daten werden nur so lange aufbewahrt, wie es die oben genannten Zwecke und die geltenden Rechtsvorschriften (einschließlich Tourismus- und Steuervorschriften) erfordern; danach werden sie gemäß Artikel 7 des KVKK gelöscht, vernichtet oder anonymisiert.",
+    "yourRights": "Ihre Rechte (Artikel 11)",
+    "rightsIntro": "Gemäß Artikel 11 des KVKK haben Sie das Recht:",
+    "rights": {
+      "r1": "zu erfahren, ob Ihre personenbezogenen Daten verarbeitet werden",
+      "r2": "Informationen über die Verarbeitung anzufordern, falls dies der Fall ist",
+      "r3": "den Zweck der Verarbeitung zu erfahren und ob die Daten entsprechend verwendet werden",
+      "r4": "die in- oder ausländischen Dritten zu kennen, an die Daten übermittelt werden",
+      "r5": "die Berichtigung unvollständiger oder unrichtiger Daten zu verlangen",
+      "r6": "unter den Bedingungen von Artikel 7 die Löschung oder Vernichtung Ihrer Daten zu verlangen",
+      "r7": "die Benachrichtigung Dritter, die die Daten erhalten haben, über die Berichtigung/Löschung zu verlangen",
+      "r8": "Ergebnissen zu widersprechen, die sich ausschließlich aus einer automatisierten Analyse zu Ihren Ungunsten ergeben",
+      "r9": "Schadenersatz für Schäden aus rechtswidriger Verarbeitung zu verlangen"
+    },
+    "howToApply": "So stellen Sie einen Antrag",
+    "applyP": "Sie können Ihre Anträge zu den oben genannten Rechten schriftlich an unsere Rezeption oder per E-Mail an <email></email> richten. Anträge werden gemäß Artikel 13 des KVKK kostenlos und so schnell wie möglich, spätestens innerhalb von dreißig Tagen, beantwortet."
+  },
+  "hotelPolicies": {
+    "title": "Hotelrichtlinien",
+    "intro": "Die folgenden Regeln helfen uns, Ihren Aufenthalt komfortabel, sicher und angenehm zu gestalten. Bei Fragen zu einer Richtlinie steht Ihnen unser Empfangsteam rund um die Uhr zur Verfügung.",
+    "checkInOut": "Check-in & Check-out",
+    "checkInLabel": "Check-in:",
+    "checkInFallback": "Ab 14:00",
+    "checkOutLabel": "Check-out:",
+    "checkOutUntil": "Bis {time}",
+    "earlyLate": "Früher Check-in und später Check-out sind je nach Verfügbarkeit möglich — bitte fragen Sie an der Rezeption.",
+    "cancellation": "Stornierung",
+    "cancellationFallback": "Die Stornierungsbedingungen hängen vom Tarif und Buchungskanal ab, den Sie verwendet haben. Bitte beachten Sie Ihre Buchungsbestätigung oder wenden Sie sich für Details an die Rezeption.",
+    "payment": "Zahlung",
+    "paymentP": "Wir akzeptieren gängige Kreditkarten und Bargeld (TRY, EUR, USD). Extras wie Spa-Behandlungen, à la carte-Essen und Zimmerservice können auf Ihr Zimmer gebucht und beim Check-out beglichen werden.",
+    "houseRules": "Hausordnung",
+    "policies": {
+      "smoking": { "title": "Rauchen", "content": "Alle Zimmer und Innenbereiche sind Nichtraucherbereiche. Rauchen ist nur in ausgewiesenen Außenbereichen gestattet. Bei Rauchen in den Zimmern kann eine Reinigungsgebühr erhoben werden." },
+      "pets": { "title": "Haustiere", "content": "Haustiere sind auf dem Hotelgelände nicht erlaubt, mit Ausnahme zertifizierter Assistenztiere. Bitte informieren Sie uns im Voraus, wenn Sie von einem Assistenztier begleitet werden." },
+      "children": { "title": "Kinder & Zustellbetten", "content": "Kinder jeden Alters sind willkommen. Babybetten und Zustellbetten sind je nach Verfügbarkeit — bitte fragen Sie an der Rezeption oder bei der Buchung. Für registrierte Gäste stehen Kids-Club-Angebote zur Verfügung." },
+      "quiet": { "title": "Ruhezeiten", "content": "Damit alle Gäste einen erholsamen Aufenthalt genießen, bitten wir Sie, zwischen 24:00 und 08:00 Uhr in den Fluren und Gartenbereichen den Lärm auf ein Minimum zu reduzieren." },
+      "pool": { "title": "Pool & Strand", "content": "Pools und der Privatstrand sind nur während der ausgewiesenen Zeiten geöffnet; Schwimmen außerhalb dieser Zeiten ist nicht gestattet. Kinder müssen jederzeit von einem Erwachsenen beaufsichtigt werden. Glaswaren sind im Pool- und Strandbereich nicht erlaubt." },
+      "liability": { "title": "Haftung & Wertsachen", "content": "Bitte bewahren Sie Wertsachen in Ihrem Zimmersafe auf. Das Hotel haftet nicht für unbeaufsichtigt gelassene Gegenstände in öffentlichen Bereichen. Anfragen zu Fundsachen können an der Rezeption gestellt werden." }
+    },
+    "contactBase": "Bei Fragen zu Richtlinien kontaktieren Sie uns unter <email></email>.",
+    "contactWithPhone": "Bei Fragen zu Richtlinien kontaktieren Sie uns unter <email></email> oder rufen Sie <phone></phone> an."
   }
 }

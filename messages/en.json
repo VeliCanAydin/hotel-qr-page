@@ -492,5 +492,59 @@
     "managing": "Managing Cookies",
     "managingP": "You can delete or block cookies at any time through your browser settings. Note that blocking essential cookies will prevent you from signing in to the guest portal or placing room service orders.",
     "questions": "Questions? Contact us at <email></email>."
+  },
+  "kvkk": {
+    "title": "Personal Data Protection Notice (KVKK)",
+    "intro": "This notice is provided pursuant to Article 10 of the Turkish Personal Data Protection Law No. 6698 (\"KVKK\"). As the data controller, <strong>Dosinia Luxury Hotel</strong> (Kemer, Antalya, Türkiye) processes the personal data you share through this website with care and only for the purposes described below.",
+    "dataWeProcess": "Data We Process and Why",
+    "data": {
+      "identity": { "title": "Identity & Stay Information", "detail": "Name, surname, and room number — used to verify your reservation when you sign in to the guest portal and to deliver room service orders." },
+      "contact": { "title": "Contact Information", "detail": "Email address, if you choose to provide it with your feedback — used only to follow up on your comments." },
+      "requests": { "title": "Requests & Feedback", "detail": "Ratings, comments, support and complaint requests, and any photos you attach to them — used by our Guest Relations team to resolve issues and improve our services." },
+      "order": { "title": "Order Information", "detail": "Room service order contents and delivery notes — used to prepare and deliver your order and for internal service records." }
+    },
+    "legalBasis": "Your data is processed based on the legal grounds in Article 5 of KVKK — primarily the performance of the accommodation contract between you and the hotel, and our legitimate interest in improving guest services. Your data is not used for marketing purposes without your explicit consent, and it is not sold or shared with third parties except where required by law or for the technical operation of this website (secure cloud hosting and storage providers).",
+    "retention": "Retention",
+    "retentionP": "Personal data is retained only for as long as required by the purposes above and by applicable legislation (including tourism and tax regulations), after which it is deleted, destroyed, or anonymized in accordance with Article 7 of KVKK.",
+    "yourRights": "Your Rights (Article 11)",
+    "rightsIntro": "Under Article 11 of KVKK, you have the right to:",
+    "rights": {
+      "r1": "Learn whether your personal data is being processed",
+      "r2": "Request information about the processing if it is",
+      "r3": "Learn the purpose of processing and whether data is used accordingly",
+      "r4": "Know the third parties, domestic or abroad, to whom data is transferred",
+      "r5": "Request correction of incomplete or inaccurate data",
+      "r6": "Request deletion or destruction of your data under the conditions of Article 7",
+      "r7": "Request notification of correction/deletion to third parties who received the data",
+      "r8": "Object to results that arise against you from analysis exclusively by automated systems",
+      "r9": "Claim compensation for damages arising from unlawful processing"
+    },
+    "howToApply": "How to Apply",
+    "applyP": "You may submit your requests regarding your rights above in writing to our reception desk, or by email to <email></email>. Applications are answered free of charge and as soon as possible, at the latest within thirty days, in accordance with Article 13 of KVKK."
+  },
+  "hotelPolicies": {
+    "title": "Hotel Policies",
+    "intro": "The rules below help us keep your stay comfortable, safe, and enjoyable. If you have any questions about a policy, our reception team is available around the clock.",
+    "checkInOut": "Check-In & Check-Out",
+    "checkInLabel": "Check-in:",
+    "checkInFallback": "From 14:00",
+    "checkOutLabel": "Check-out:",
+    "checkOutUntil": "Until {time}",
+    "earlyLate": "Early check-in and late check-out are subject to availability — please ask at reception.",
+    "cancellation": "Cancellation",
+    "cancellationFallback": "Cancellation terms depend on the rate and booking channel you used. Please refer to your booking confirmation or contact reception for details.",
+    "payment": "Payment",
+    "paymentP": "We accept major credit cards and cash (TRY, EUR, USD). Extras such as spa treatments, à la carte dining, and room service charges can be billed to your room and settled at check-out.",
+    "houseRules": "House Rules",
+    "policies": {
+      "smoking": { "title": "Smoking", "content": "All rooms and indoor areas are non-smoking. Smoking is permitted only in designated outdoor areas. A deep-cleaning fee may be charged for smoking in rooms." },
+      "pets": { "title": "Pets", "content": "Pets are not allowed on the hotel premises, with the exception of certified service animals. Please inform us in advance if you will be accompanied by a service animal." },
+      "children": { "title": "Children & Extra Beds", "content": "Children of all ages are welcome. Baby cots and extra beds are subject to availability — please request them at reception or during booking. Kids Club services are available for registered guests." },
+      "quiet": { "title": "Quiet Hours", "content": "To ensure a restful stay for all guests, we kindly ask you to keep noise to a minimum between 24:00 and 08:00 in room corridors and garden areas." },
+      "pool": { "title": "Pool & Beach", "content": "Pools and the private beach are open during posted hours only; swimming outside these hours is not permitted. Children must be supervised by an adult at all times. Glassware is not allowed in pool and beach areas." },
+      "liability": { "title": "Liability & Valuables", "content": "Please store valuables in your in-room safe. The hotel cannot be held responsible for items left unattended in public areas. Lost & found inquiries can be made at reception." }
+    },
+    "contactBase": "For any policy questions, contact us at <email></email>.",
+    "contactWithPhone": "For any policy questions, contact us at <email></email> or call <phone></phone>."
   }
 }

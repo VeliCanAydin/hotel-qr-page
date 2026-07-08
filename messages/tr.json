@@ -492,5 +492,59 @@
     "managing": "Çerezleri Yönetme",
     "managingP": "Tarayıcı ayarlarınızdan çerezleri istediğiniz zaman silebilir veya engelleyebilirsiniz. Zorunlu çerezleri engellemenin, misafir portalına giriş yapmanızı veya oda servisi siparişi vermenizi engelleyeceğini unutmayın.",
     "questions": "Sorularınız mı var? Bize <email></email> adresinden ulaşın."
+  },
+  "kvkk": {
+    "title": "Kişisel Verilerin Korunması Bildirimi (KVKK)",
+    "intro": "Bu bildirim, 6698 sayılı Kişisel Verilerin Korunması Kanunu'nun (\"KVKK\") 10. maddesi uyarınca sunulmaktadır. Veri sorumlusu olarak <strong>Dosinia Luxury Hotel</strong> (Kemer, Antalya, Türkiye), bu web sitesi aracılığıyla paylaştığınız kişisel verileri özenle ve yalnızca aşağıda açıklanan amaçlarla işler.",
+    "dataWeProcess": "İşlediğimiz Veriler ve Nedenleri",
+    "data": {
+      "identity": { "title": "Kimlik & Konaklama Bilgileri", "detail": "Ad, soyad ve oda numarası — misafir portalına giriş yaptığınızda rezervasyonunuzu doğrulamak ve oda servisi siparişlerini teslim etmek için kullanılır." },
+      "contact": { "title": "İletişim Bilgileri", "detail": "Geri bildiriminizle birlikte vermeyi seçerseniz e-posta adresi — yalnızca yorumlarınızı takip etmek için kullanılır." },
+      "requests": { "title": "Talepler & Geri Bildirim", "detail": "Değerlendirmeler, yorumlar, destek ve şikayet talepleri ve bunlara eklediğiniz fotoğraflar — Misafir İlişkileri ekibimiz tarafından sorunları çözmek ve hizmetlerimizi geliştirmek için kullanılır." },
+      "order": { "title": "Sipariş Bilgileri", "detail": "Oda servisi sipariş içeriği ve teslimat notları — siparişinizi hazırlamak, teslim etmek ve dahili hizmet kayıtları için kullanılır." }
+    },
+    "legalBasis": "Verileriniz, KVKK'nın 5. maddesindeki hukuki sebeplere dayanılarak — öncelikle sizinle otel arasındaki konaklama sözleşmesinin ifası ve misafir hizmetlerini geliştirmedeki meşru menfaatimiz gereği — işlenir. Verileriniz açık rızanız olmadan pazarlama amacıyla kullanılmaz; kanunen zorunlu olan veya bu web sitesinin teknik işleyişi (güvenli bulut barındırma ve depolama sağlayıcıları) için gerekli olan haller dışında üçüncü taraflara satılmaz veya paylaşılmaz.",
+    "retention": "Saklama Süresi",
+    "retentionP": "Kişisel veriler yalnızca yukarıdaki amaçlar ve ilgili mevzuatın (turizm ve vergi düzenlemeleri dahil) gerektirdiği süre boyunca saklanır; ardından KVKK'nın 7. maddesi uyarınca silinir, yok edilir veya anonim hale getirilir.",
+    "yourRights": "Haklarınız (Madde 11)",
+    "rightsIntro": "KVKK'nın 11. maddesi uyarınca şu haklara sahipsiniz:",
+    "rights": {
+      "r1": "Kişisel verilerinizin işlenip işlenmediğini öğrenme",
+      "r2": "İşlenmişse buna ilişkin bilgi talep etme",
+      "r3": "İşlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme",
+      "r4": "Verilerin aktarıldığı yurt içi/yurt dışı üçüncü tarafları bilme",
+      "r5": "Eksik veya yanlış verilerin düzeltilmesini isteme",
+      "r6": "7. maddedeki şartlar çerçevesinde verilerinizin silinmesini veya yok edilmesini isteme",
+      "r7": "Düzeltme/silme işleminin verileri alan üçüncü taraflara bildirilmesini isteme",
+      "r8": "Verilerin yalnızca otomatik sistemlerle analizi sonucu aleyhinize çıkan sonuçlara itiraz etme",
+      "r9": "Hukuka aykırı işleme nedeniyle uğradığınız zararların giderilmesini talep etme"
+    },
+    "howToApply": "Nasıl Başvurulur",
+    "applyP": "Yukarıdaki haklarınıza ilişkin taleplerinizi resepsiyonumuza yazılı olarak veya <email></email> adresine e-posta ile iletebilirsiniz. Başvurular, KVKK'nın 13. maddesi uyarınca ücretsiz olarak ve en kısa sürede, en geç otuz gün içinde yanıtlanır."
+  },
+  "hotelPolicies": {
+    "title": "Otel Politikaları",
+    "intro": "Aşağıdaki kurallar, konaklamanızı konforlu, güvenli ve keyifli tutmamıza yardımcı olur. Bir politika hakkında sorunuz olursa, resepsiyon ekibimiz 7/24 hizmetinizdedir.",
+    "checkInOut": "Giriş & Çıkış",
+    "checkInLabel": "Giriş:",
+    "checkInFallback": "14:00'ten itibaren",
+    "checkOutLabel": "Çıkış:",
+    "checkOutUntil": "{time}'a kadar",
+    "earlyLate": "Erken giriş ve geç çıkış müsaitliğe bağlıdır — lütfen resepsiyona danışın.",
+    "cancellation": "İptal",
+    "cancellationFallback": "İptal koşulları kullandığınız fiyat ve rezervasyon kanalına bağlıdır. Ayrıntılar için lütfen rezervasyon onayınıza bakın veya resepsiyonla iletişime geçin.",
+    "payment": "Ödeme",
+    "paymentP": "Başlıca kredi kartlarını ve nakit (TRY, EUR, USD) kabul ediyoruz. Spa bakımları, à la carte yemekler ve oda servisi gibi ekstralar odanıza yansıtılabilir ve çıkışta ödenebilir.",
+    "houseRules": "Ev Kuralları",
+    "policies": {
+      "smoking": { "title": "Sigara", "content": "Tüm odalar ve kapalı alanlar sigara içilmeyen alanlardır. Sigara içmek yalnızca belirlenen açık alanlarda serbesttir. Odalarda sigara içilmesi durumunda derin temizlik ücreti alınabilir." },
+      "pets": { "title": "Evcil Hayvanlar", "content": "Sertifikalı rehber/destek hayvanları hariç, otel alanına evcil hayvan alınmaz. Bir destek hayvanıyla geleceksiniz lütfen önceden bize bildirin." },
+      "children": { "title": "Çocuklar & İlave Yataklar", "content": "Her yaştan çocuk misafirimizdir. Bebek beşikleri ve ilave yataklar müsaitliğe bağlıdır — lütfen resepsiyonda veya rezervasyon sırasında talep edin. Kayıtlı misafirler için Çocuk Kulübü hizmetleri mevcuttur." },
+      "quiet": { "title": "Sessiz Saatler", "content": "Tüm misafirlerimizin huzurlu bir konaklama geçirmesi için 24:00 ile 08:00 arasında oda koridorlarında ve bahçe alanlarında gürültüyü en aza indirmenizi rica ederiz." },
+      "pool": { "title": "Havuz & Plaj", "content": "Havuzlar ve özel plaj yalnızca belirtilen saatlerde açıktır; bu saatler dışında yüzmek yasaktır. Çocuklar her zaman bir yetişkin gözetiminde olmalıdır. Havuz ve plaj alanlarında cam eşya kullanımı yasaktır." },
+      "liability": { "title": "Sorumluluk & Değerli Eşyalar", "content": "Lütfen değerli eşyalarınızı oda kasanızda saklayın. Otel, ortak alanlarda gözetimsiz bırakılan eşyalardan sorumlu tutulamaz. Kayıp eşya sorularınız için resepsiyona başvurabilirsiniz." }
+    },
+    "contactBase": "Politikalarla ilgili sorularınız için bize <email></email> adresinden ulaşın.",
+    "contactWithPhone": "Politikalarla ilgili sorularınız için bize <email></email> adresinden ulaşın veya <phone></phone> numarasını arayın."
   }
 }
