@@ -366,5 +366,30 @@
     "submitFeedback": "Отправить отзыв",
     "submitting": "Отправка…",
     "fbCategories": { "cleanliness": "Чистота", "staff": "Персонал и сервис", "comfort": "Комфорт", "food": "Еда и напитки" }
+  },
+  "footer": {
+    "makeReservation": "Забронировать",
+    "ourHotels": "Наши отели",
+    "cityHotel": "Городской отель",
+    "sustainability": "Устойчивое развитие",
+    "hotelPolicies": "Политика отеля",
+    "cookiePolicy": "Политика cookie",
+    "rights": "Все права защищены."
+  },
+  "ai": {
+    "title": "AI-ассистент",
+    "greeting": "Здравствуйте! Чем могу помочь?",
+    "suggestHotelLabel": "Об отеле",
+    "suggestHotelPrompt": "Можно получить информацию о вашем отеле?",
+    "suggestAvailLabel": "Наличие мест",
+    "suggestAvailPrompt": "У вас есть свободные номера?",
+    "suggestRestaurantLabel": "О ресторане",
+    "suggestRestaurantPrompt": "Расскажите о вашем ресторане?",
+    "noResponse": "Извините, не удалось сгенерировать ответ.",
+    "errorMessage": "Извините, произошла ошибка. Пожалуйста, попробуйте ещё раз.",
+    "placeholder": "Введите сообщение... (Enter — отправить, Shift+Enter — новая строка)",
+    "disclaimer": "Ответы AI-ассистента могут быть неверными. Пожалуйста, проверяйте важную информацию.",
+    "you": "ВЫ",
+    "imageAlt": "Изображение, созданное ИИ"
   }
 }

@@ -366,5 +366,30 @@
     "submitFeedback": "Feedback senden",
     "submitting": "Wird gesendet…",
     "fbCategories": { "cleanliness": "Sauberkeit", "staff": "Personal & Service", "comfort": "Komfort", "food": "Speisen & Getränke" }
+  },
+  "footer": {
+    "makeReservation": "Reservieren",
+    "ourHotels": "Unsere Hotels",
+    "cityHotel": "Stadthotel",
+    "sustainability": "Nachhaltigkeit",
+    "hotelPolicies": "Hotelrichtlinien",
+    "cookiePolicy": "Cookie-Richtlinie",
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "ai": {
+    "title": "KI-Assistent",
+    "greeting": "Hallo! Wie kann ich Ihnen helfen?",
+    "suggestHotelLabel": "Hotel-Infos",
+    "suggestHotelPrompt": "Kann ich Informationen über Ihr Hotel bekommen?",
+    "suggestAvailLabel": "Verfügbarkeit",
+    "suggestAvailPrompt": "Haben Sie freie Zimmer?",
+    "suggestRestaurantLabel": "Restaurant-Infos",
+    "suggestRestaurantPrompt": "Können Sie mir etwas über Ihr Restaurant erzählen?",
+    "noResponse": "Entschuldigung, ich konnte keine Antwort erzeugen.",
+    "errorMessage": "Entschuldigung, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "placeholder": "Geben Sie Ihre Nachricht ein... (Enter zum Senden, Shift+Enter für neue Zeile)",
+    "disclaimer": "Antworten des KI-Assistenten können falsch sein. Bitte überprüfen Sie wichtige Informationen.",
+    "you": "SIE",
+    "imageAlt": "Von KI erstelltes Bild"
   }
 }

@@ -365,5 +365,30 @@
     "submitFeedback": "Geri Bildirim Gönder",
     "submitting": "Gönderiliyor…",
     "fbCategories": { "cleanliness": "Temizlik", "staff": "Personel & Hizmet", "comfort": "Konfor", "food": "Yiyecek & İçecek" }
+  },
+  "footer": {
+    "makeReservation": "Rezervasyon Yap",
+    "ourHotels": "Otellerimiz",
+    "cityHotel": "Şehir Oteli",
+    "sustainability": "Sürdürülebilirlik",
+    "hotelPolicies": "Otel Politikaları",
+    "cookiePolicy": "Çerez Politikası",
+    "rights": "Tüm hakları saklıdır."
+  },
+  "ai": {
+    "title": "AI Asistan",
+    "greeting": "Merhaba! Size nasıl yardımcı olabilirim?",
+    "suggestHotelLabel": "Otel hakkında bilgi",
+    "suggestHotelPrompt": "Oteliniz hakkında bilgi alabilir miyim?",
+    "suggestAvailLabel": "Müsaitlik sorgusu",
+    "suggestAvailPrompt": "Müsait odalarınız var mı?",
+    "suggestRestaurantLabel": "Restoran bilgisi",
+    "suggestRestaurantPrompt": "Restoranınız hakkında bilgi verir misiniz?",
+    "noResponse": "Üzgünüm, bir yanıt oluşturamadım.",
+    "errorMessage": "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.",
+    "placeholder": "Mesajınızı yazın... (Enter ile gönder, Shift+Enter ile yeni satır)",
+    "disclaimer": "AI asistan yanıtları yanlış olabilir. Önemli bilgiler için doğrulama yapın.",
+    "you": "SİZ",
+    "imageAlt": "AI tarafından oluşturulan görsel"
   }
 }

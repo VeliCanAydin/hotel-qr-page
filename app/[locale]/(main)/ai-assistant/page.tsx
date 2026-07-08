@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,6 +17,8 @@ interface Message {
 }
 
 export default function AIAssistantPage() {
+    const t = useTranslations('ai');
+    const locale = useLocale();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -56,6 +59,7 @@ export default function AIAssistantPage() {
                 body: JSON.stringify({
                     message: userMessage.content,
                     sessionId: sessionId,
+                    locale: locale,
                 }),
             });
 
@@ -72,7 +76,7 @@ export default function AIAssistantPage() {
             const assistantMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: data.response || 'Üzgünüm, bir yanıt oluşturamadım.',
+                content: data.response || t('noResponse'),
                 imagePath: data.imagePath,
                 timestamp: new Date(),
             };
@@ -84,7 +88,7 @@ export default function AIAssistantPage() {
             const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.',
+                content: t('errorMessage'),
                 timestamp: new Date(),
             };
 
@@ -126,32 +130,32 @@ export default function AIAssistantPage() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-semibold mb-2">AI Asistan</h2>
+                                    <h2 className="text-2xl font-semibold mb-2">{t('title')}</h2>
                                     <p className="text-muted-foreground">
-                                        Merhaba! Size nasıl yardımcı olabilirim?
+                                        {t('greeting')}
                                     </p>
                                 </div>
                                 <div className="flex flex-wrap gap-2 justify-center pt-4">
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => setInput('Oteliniz hakkında bilgi alabilir miyim?')}
+                                        onClick={() => setInput(t('suggestHotelPrompt'))}
                                     >
-                                        Otel hakkında bilgi
+                                        {t('suggestHotelLabel')}
                                     </Button>
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => setInput('Müsait odalarınız var mı?')}
+                                        onClick={() => setInput(t('suggestAvailPrompt'))}
                                     >
-                                        Müsaitlik sorgusu
+                                        {t('suggestAvailLabel')}
                                     </Button>
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => setInput('Restoranınız hakkında bilgi verir misiniz?')}
+                                        onClick={() => setInput(t('suggestRestaurantPrompt'))}
                                     >
-                                        Restoran bilgisi
+                                        {t('suggestRestaurantLabel')}
                                     </Button>
                                 </div>
                             </div>
@@ -181,7 +185,7 @@ export default function AIAssistantPage() {
                                                 <div className="mb-3">
                                                     <img
                                                         src={message.imagePath}
-                                                        alt="AI tarafından oluşturulan görsel"
+                                                        alt={t('imageAlt')}
                                                         className="rounded-lg max-w-full h-auto"
                                                         loading="lazy"
                                                     />
@@ -190,7 +194,7 @@ export default function AIAssistantPage() {
 
                                             <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                                             <span className="text-xs opacity-70 mt-2 block">
-                                                {message.timestamp.toLocaleTimeString('tr-TR', {
+                                                {message.timestamp.toLocaleTimeString(locale, {
                                                     hour: '2-digit',
                                                     minute: '2-digit',
                                                 })}
@@ -200,7 +204,7 @@ export default function AIAssistantPage() {
                                         {message.role === 'user' && (
                                             <Avatar className="w-8 h-8 mt-1 shrink-0">
                                                 <AvatarFallback className="bg-secondary text-secondary-foreground text-xs">
-                                                    SİZ
+                                                    {t('you')}
                                                 </AvatarFallback>
                                             </Avatar>
                                         )}
@@ -234,7 +238,7 @@ export default function AIAssistantPage() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder="Mesajınızı yazın... (Enter ile gönder, Shift+Enter ile yeni satır)"
+                            placeholder={t('placeholder')}
                             className="min-h-[60px] max-h-[200px] resize-none"
                             disabled={isLoading}
                         />
@@ -252,7 +256,7 @@ export default function AIAssistantPage() {
                         </Button>
                     </form>
                     <p className="text-xs text-muted-foreground mt-2 text-center">
-                        AI asistan yanıtları yanlış olabilir. Önemli bilgiler için doğrulama yapın.
+                        {t('disclaimer')}
                     </p>
                 </div>
             </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -5,6 +8,7 @@ import { MapPin, Mail, Phone, ExternalLink } from "lucide-react";
 import { FooterYear } from "@/components/footer-year";
 
 export default function Footer() {
+    const t = useTranslations("footer");
     return (
         <footer className="w-full border-t mt-8 bg-muted dark:bg-muted/40">
             {/* Contact Section */}
@@ -45,7 +49,7 @@ export default function Footer() {
                     {/* Reservation Button */}
                     <Button asChild size="sm">
                         <a href="https://dosiniahotels.com/reservation" target="_blank" rel="noopener noreferrer">
-                            Make a Reservation
+                            {t("makeReservation")}
                         </a>
                     </Button>
                 </div>
@@ -55,7 +59,7 @@ export default function Footer() {
 
             {/* Our Hotels Section */}
             <div className="max-w-4xl mx-auto px-4 py-8">
-                <h3 className="text-lg font-semibold text-center mb-6">Our Hotels</h3>
+                <h3 className="text-lg font-semibold text-center mb-6">{t("ourHotels")}</h3>
                 <div className="grid gap-4 sm:grid-cols-2 max-w-lg mx-auto">
                     {/* Grand Ring Hotel */}
                     <a
@@ -80,7 +84,7 @@ export default function Footer() {
                     >
                         <div>
                             <h4 className="font-medium group-hover:text-primary transition-colors">Justinn City</h4>
-                            <p className="text-xs text-muted-foreground">City Hotel</p>
+                            <p className="text-xs text-muted-foreground">{t("cityHotel")}</p>
                         </div>
                         <ExternalLink className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
                     </a>
@@ -96,21 +100,21 @@ export default function Footer() {
                         href="/sustainability"
                         className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
-                        Sustainability
+                        {t("sustainability")}
                     </Link>
                     <span className="hidden sm:inline text-muted-foreground/50">•</span>
                     <Link
                         href="/hotel-policies"
                         className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
-                        Hotel Policies
+                        {t("hotelPolicies")}
                     </Link>
                     <span className="hidden sm:inline text-muted-foreground/50">•</span>
                     <Link
                         href="/cookie-policy"
                         className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
-                        Cookie Policy
+                        {t("cookiePolicy")}
                     </Link>
                     <span className="hidden sm:inline text-muted-foreground/50">•</span>
                     <Link
@@ -121,7 +125,7 @@ export default function Footer() {
                     </Link>
                 </div>
                 <p className="text-center text-sm text-muted-foreground">
-                    &copy; <FooterYear /> Dosinia Luxury Hotel. All rights reserved.
+                    &copy; <FooterYear /> Dosinia Luxury Hotel. {t("rights")}
                 </p>
             </div>
         </footer>
