@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, Award, BarChart2, Coffee } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -20,6 +21,8 @@ interface LoggedMeal {
 }
 
 export default function CalorieHistoryPage() {
+    const t = useTranslations('calorie');
+    const locale = useLocale();
     const [mounted, setMounted] = useState(false);
     const [dailyLogs, setDailyLogs] = useState<LoggedMeal[]>([]);
     const [dailyGoal, setDailyGoal] = useState<number>(2000);
@@ -148,7 +151,7 @@ export default function CalorieHistoryPage() {
             const day = parseInt(dateParts[2]);
             const dateObj = new Date(year, month, day);
             
-            return dateObj.toLocaleDateString('en-US', {
+            return dateObj.toLocaleDateString(locale, {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',
@@ -182,8 +185,8 @@ export default function CalorieHistoryPage() {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-extrabold tracking-tight">Calorie Logs History</h1>
-                        <p className="text-muted-foreground text-sm">Review your daily meal logs and calorie totals for your stay.</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight">{t('historyTitle')}</h1>
+                        <p className="text-muted-foreground text-sm">{t('historySubtitle')}</p>
                     </div>
                 </div>
             </div>
@@ -196,15 +199,15 @@ export default function CalorieHistoryPage() {
                         <div className="p-4 rounded-full bg-muted text-muted-foreground/60">
                             <Calendar className="w-10 h-10" />
                         </div>
-                        <CardTitle className="text-xl font-bold">No History Logs Found</CardTitle>
+                        <CardTitle className="text-xl font-bold">{t('noHistory')}</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4 items-center">
                         <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-                            You haven't logged any meals during your stay yet. Go back to the tracker to scan your plate.
+                            {t('noHistoryDesc')}
                         </p>
                         <Link href="/calorie-tracker" passHref>
                             <Button className="bg-[#45a7d7] text-white hover:bg-[#45a7d7]/95 rounded-2xl font-bold px-6 py-2 text-sm mt-2">
-                                Go to Tracker
+                                {t('goToTracker')}
                             </Button>
                         </Link>
                     </CardContent>
@@ -231,7 +234,7 @@ export default function CalorieHistoryPage() {
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="font-extrabold text-lg">{formatDateLabel(dateStr)}</span>
-                                            <span className="text-xs text-muted-foreground font-semibold">{logsForDay.length} meal{logsForDay.length > 1 ? 's' : ''} logged</span>
+                                            <span className="text-xs text-muted-foreground font-semibold">{t('mealsLogged', { count: logsForDay.length })}</span>
                                         </div>
                                     </div>
 
@@ -254,7 +257,7 @@ export default function CalorieHistoryPage() {
                                         
                                         {/* Expand Toggle label */}
                                         <Button variant="ghost" size="sm" className="rounded-xl border border-muted text-xs font-bold shrink-0">
-                                            {isExpanded ? 'Collapse' : 'Details'}
+                                            {isExpanded ? t('collapse') : t('details')}
                                         </Button>
                                     </div>
                                 </div>
@@ -271,7 +274,7 @@ export default function CalorieHistoryPage() {
                                                     <div className="flex flex-col">
                                                         <span className="text-sm font-bold text-foreground">{log.name}</span>
                                                         <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-semibold">
-                                                            <span className="px-1.5 py-0.5 rounded bg-muted text-primary">{log.mealType}</span>
+                                                            <span className="px-1.5 py-0.5 rounded bg-muted text-primary">{t(`mealTypes.${log.mealType}`)}</span>
                                                             <span>{log.timestamp}</span>
                                                             {log.protein > 0 && (
                                                                 <>

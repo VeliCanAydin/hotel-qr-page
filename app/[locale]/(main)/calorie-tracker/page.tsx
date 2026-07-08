@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Flame, Upload, Camera, Trash2, Check, Sparkles, AlertCircle, RefreshCw, BarChart2, Info, ArrowLeft, History, Edit3, X } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -66,6 +67,8 @@ interface MealAnalysis {
 }
 
 export default function CalorieTrackerPage() {
+    const t = useTranslations('calorie');
+    const locale = useLocale();
     const [mounted, setMounted] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -238,7 +241,7 @@ export default function CalorieTrackerPage() {
         const file = e.target.files?.[0];
         if (file) {
             if (!file.type.startsWith('image/')) {
-                toast.error('Please upload an image file.');
+                toast.error(t('toastImageFile'));
                 return;
             }
             setImageFile(file);
@@ -251,7 +254,7 @@ export default function CalorieTrackerPage() {
     // Trigger AI Vision Request to proxy endpoint
     const handleAnalyze = async () => {
         if (!imageFile) {
-            toast.error('Please choose or capture an image first.');
+            toast.error(t('toastChooseFirst'));
             return;
         }
 
@@ -265,20 +268,20 @@ export default function CalorieTrackerPage() {
                 body: JSON.stringify({
                     image_base64: base64Data,
                     image_mime_type: imageFile.type || 'image/jpeg',
-                    language: 'tr',
+                    language: locale,
                 }),
             });
 
             if (!response.ok) {
                 const errBody = await response.json().catch(() => ({}));
-                throw new Error(errBody?.error || `Sunucu hatası: ${response.status}`);
+                throw new Error(errBody?.error || t('serverError', { status: response.status }));
             }
 
             // FastAPI /api/v1/analyze'den gelen yapılandırılmış JSON
             const data = await response.json();
 
             if (!data.total_nutrition) {
-                throw new Error('AI geçersiz bir yanıt döndürdü.');
+                throw new Error(t('toastInvalidResponse'));
             }
 
             const total = data.total_nutrition;
@@ -287,10 +290,10 @@ export default function CalorieTrackerPage() {
             // Yemek adını birleştir (birden fazla yiyecek varsa)
             const mealName = foods.length > 0
                 ? foods.map((f: DetectedFoodItem) => f.food_name).join(', ')
-                : 'Bilinmeyen Yemek';
+                : t('unknownMeal');
 
             // İlk yemeğin porsiyon açıklaması
-            const portion = foods[0]?.portion_description ?? '1 Porsiyon';
+            const portion = foods[0]?.portion_description ?? t('onePortion');
 
             setAnalysisResult({
                 detected_foods: foods,
@@ -309,11 +312,11 @@ export default function CalorieTrackerPage() {
                 model_used: data.model_used ?? null,
             });
 
-            toast.success('Yemek tabağı başarıyla analiz edildi!');
+            toast.success(t('toastAnalyzed'));
 
         } catch (error) {
             console.error('Analysis failed:', error);
-            toast.error(error instanceof Error ? error.message : 'Analiz başarısız. Backend bağlantısını kontrol edin.');
+            toast.error(error instanceof Error ? error.message : t('toastAnalyzeFailed'));
         } finally {
             setIsAnalyzing(false);
         }
@@ -331,12 +334,12 @@ export default function CalorieTrackerPage() {
             carbs: analysisResult.carbs || 0,
             fat: analysisResult.fat || 0,
             mealType: selectedMealType,
-            timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+            timestamp: new Date().toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }),
             date: todayStr
         };
 
         setDailyLogs(prev => [newLog, ...prev]);
-        toast.success(`Logged ${newLog.calories} kcal to ${selectedMealType}!`);
+        toast.success(t('toastLogged', { calories: newLog.calories, type: t(`mealTypes.${selectedMealType}`) }));
         
         // Reset analysis states to allow new scan
         setSelectedImage(null);
@@ -354,19 +357,19 @@ export default function CalorieTrackerPage() {
     const handleSaveGoal = () => {
         const parsed = parseInt(goalInputValue);
         if (isNaN(parsed) || parsed <= 0) {
-            toast.error('Please enter a valid calorie target number.');
+            toast.error(t('toastValidTarget'));
             return;
         }
         setDailyGoal(parsed);
         setIsEditingGoal(false);
-        toast.success(`Daily calorie target set to ${parsed} kcal!`);
+        toast.success(t('toastTargetSet', { n: parsed }));
     };
 
     const handleRemoveGoal = () => {
         setDailyGoal(null);
         setGoalInputValue('');
         setIsEditingGoal(false);
-        toast.info('Daily calorie target removed.');
+        toast.info(t('toastTargetRemoved'));
     };
 
     // Log calculation metrics based ONLY on today's logs
@@ -385,25 +388,25 @@ export default function CalorieTrackerPage() {
                         <div className="p-2 bg-orange-100 dark:bg-orange-950/40 rounded-2xl">
                             <Flame className="w-7 h-7 text-orange-500 fill-orange-500" />
                         </div>
-                        <h1 className="text-3xl font-extrabold tracking-tight">AI Calorie Tracker</h1>
+                        <h1 className="text-3xl font-extrabold tracking-tight">{t('title')}</h1>
                     </div>
-                    
+
                     {/* Action buttons */}
                     <div className="flex items-center gap-2">
                         {analysisResult && (
                             <Button variant="ghost" size="sm" onClick={handleReset} className="rounded-xl border flex items-center gap-1">
-                                <ArrowLeft className="w-4 h-4" /> Reset
+                                <ArrowLeft className="w-4 h-4" /> {t('reset')}
                             </Button>
                         )}
                         <Link href="/calorie-tracker/history" passHref>
                             <Button variant="outline" size="sm" className="rounded-xl border flex items-center gap-1.5 hover:bg-muted font-bold">
-                                <History className="w-4 h-4 text-primary" /> View History
+                                <History className="w-4 h-4 text-primary" /> {t('viewHistory')}
                             </Button>
                         </Link>
                     </div>
                 </div>
                 <p className="text-muted-foreground text-sm max-w-2xl">
-                    Snap a photo of your dining plate to estimate calories and nutrition metrics automatically using advanced AI vision processing.
+                    {t('subtitle')}
                 </p>
             </div>
 
@@ -413,8 +416,8 @@ export default function CalorieTrackerPage() {
                 <div className="max-w-xl mx-auto w-full transition-all duration-300">
                     <Card className="border-border rounded-3xl shadow-sm overflow-hidden bg-card">
                         <CardHeader className="text-center">
-                            <CardTitle className="text-xl font-bold">Upload Food Photo</CardTitle>
-                            <CardDescription>Select an image of your meal plate to analyze calories.</CardDescription>
+                            <CardTitle className="text-xl font-bold">{t('uploadTitle')}</CardTitle>
+                            <CardDescription>{t('uploadDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-5">
                             {/* Upload Area */}
@@ -452,7 +455,7 @@ export default function CalorieTrackerPage() {
                                                 />
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm font-semibold gap-2">
                                                     <RefreshCw className="w-5 h-5 animate-spin text-[#45a7d7]" />
-                                                    Scanning meal plate...
+                                                    {t('scanning')}
                                                 </div>
                                             </div>
                                         )}
@@ -463,11 +466,11 @@ export default function CalorieTrackerPage() {
                                             <Camera className="w-8 h-8" />
                                         </div>
                                         <div className="flex flex-col gap-1">
-                                            <span className="font-bold text-sm">Upload Food Photo</span>
-                                            <span className="text-xs text-muted-foreground">Take a picture or drop a file here</span>
+                                            <span className="font-bold text-sm">{t('uploadTitle')}</span>
+                                            <span className="text-xs text-muted-foreground">{t('takePicture')}</span>
                                         </div>
                                         <Button variant="outline" size="sm" className="mt-2 rounded-xl border-muted">
-                                            Choose File
+                                            {t('chooseFile')}
                                         </Button>
                                     </div>
                                 )}
@@ -481,14 +484,14 @@ export default function CalorieTrackerPage() {
                                         variant="outline" 
                                         className="flex-1 rounded-2xl font-bold border-muted"
                                     >
-                                        Change Photo
+                                        {t('changePhoto')}
                                     </Button>
-                                    <Button 
+                                    <Button
                                         onClick={handleAnalyze}
                                         className="flex-1 bg-[#45a7d7] text-white hover:bg-[#45a7d7]/95 rounded-2xl font-bold gap-2"
                                     >
                                         <Sparkles className="w-4 h-4 fill-white" />
-                                        Analyze Meal
+                                        {t('analyzeMeal')}
                                     </Button>
                                 </div>
                             )}
@@ -511,7 +514,7 @@ export default function CalorieTrackerPage() {
                             </div>
                             <CardContent className="p-4 flex gap-3">
                                 <Button variant="outline" onClick={handleReset} className="w-full rounded-2xl border-muted font-bold">
-                                    Scan Another Plate
+                                    {t('scanAnother')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -521,17 +524,17 @@ export default function CalorieTrackerPage() {
                     <Card className="border-border rounded-3xl shadow-sm bg-card flex flex-col">
                         <CardHeader>
                             <CardTitle className="text-xl font-bold flex items-center gap-2">
-                                <BarChart2 className="w-5 h-5 text-[#45a7d7]" /> Nutritional Breakdown
+                                <BarChart2 className="w-5 h-5 text-[#45a7d7]" /> {t('breakdown')}
                             </CardTitle>
-                            <CardDescription>AI vision estimates of your plate contents.</CardDescription>
+                            <CardDescription>{t('breakdownDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-6">
                             {/* Meal Name + Calorie Badge */}
                             <div className="flex justify-between items-start">
                                 <div className="flex flex-col">
-                                    <span className="text-xs font-bold text-[#45a7d7] uppercase tracking-wider">Tespit Edilen Yemek</span>
+                                    <span className="text-xs font-bold text-[#45a7d7] uppercase tracking-wider">{t('detectedMeal')}</span>
                                     <h3 className="text-2xl font-black text-foreground mt-0.5">{analysisResult.mealName}</h3>
-                                    <span className="text-xs text-muted-foreground mt-0.5">Porsiyon: {analysisResult.portion}</span>
+                                    <span className="text-xs text-muted-foreground mt-0.5">{t('portion', { portion: analysisResult.portion })}</span>
                                 </div>
                                 <div className="p-4 bg-orange-100/80 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 rounded-3xl flex flex-col items-center justify-center min-w-[100px] border border-orange-200/50">
                                     <span className="text-2xl font-extrabold">{analysisResult.calories}</span>
@@ -541,12 +544,12 @@ export default function CalorieTrackerPage() {
 
                             {/* Makro Besin Progress Barlar */}
                             <div className="flex flex-col gap-3 border-t pt-4">
-                                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Makro Besinler</h4>
+                                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">{t('macros')}</h4>
 
                                 {/* Protein */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Protein 🥩</span>
+                                        <span>{t('protein')} 🥩</span>
                                         <span>{analysisResult.protein}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -557,7 +560,7 @@ export default function CalorieTrackerPage() {
                                 {/* Karbonhidrat */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Karbonhidrat 🥖</span>
+                                        <span>{t('carbs')} 🥖</span>
                                         <span>{analysisResult.carbs}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -568,7 +571,7 @@ export default function CalorieTrackerPage() {
                                 {/* Yağ */}
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between text-xs font-semibold">
-                                        <span>Yağ 🥑</span>
+                                        <span>{t('fat')} 🥑</span>
                                         <span>{analysisResult.fat}g</span>
                                     </div>
                                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -580,7 +583,7 @@ export default function CalorieTrackerPage() {
                                 {analysisResult.fiber != null && (
                                     <div className="flex flex-col gap-1.5">
                                         <div className="flex justify-between text-xs font-semibold">
-                                            <span>Lif 🌿</span>
+                                            <span>{t('fiber')} 🌿</span>
                                             <span>{analysisResult.fiber}g</span>
                                         </div>
                                         <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
@@ -596,13 +599,13 @@ export default function CalorieTrackerPage() {
                                     {analysisResult.sugar != null && (
                                         <div className="flex-1 p-2.5 bg-muted/30 rounded-2xl border text-center">
                                             <span className="block font-bold text-foreground">{analysisResult.sugar}g</span>
-                                            <span className="text-muted-foreground">Şeker</span>
+                                            <span className="text-muted-foreground">{t('sugar')}</span>
                                         </div>
                                     )}
                                     {analysisResult.sodium != null && (
                                         <div className="flex-1 p-2.5 bg-muted/30 rounded-2xl border text-center">
                                             <span className="block font-bold text-foreground">{analysisResult.sodium}mg</span>
-                                            <span className="text-muted-foreground">Sodyum</span>
+                                            <span className="text-muted-foreground">{t('sodium')}</span>
                                         </div>
                                     )}
                                 </div>
@@ -611,7 +614,7 @@ export default function CalorieTrackerPage() {
                             {/* Güven aralığı */}
                             {analysisResult.confidence_interval && (
                                 <div className="p-3 bg-muted/30 border rounded-2xl text-xs flex items-center justify-between">
-                                    <span className="text-muted-foreground font-semibold">Kalori Aralığı</span>
+                                    <span className="text-muted-foreground font-semibold">{t('calorieRange')}</span>
                                     <span className="font-bold text-foreground">
                                         {analysisResult.confidence_interval.min_calories}–{analysisResult.confidence_interval.max_calories} kcal
                                         <span className={`ml-2 px-1.5 py-0.5 rounded-lg text-[10px] font-bold ${
@@ -631,14 +634,14 @@ export default function CalorieTrackerPage() {
                             {analysisResult.note && (
                                 <div className="p-3 bg-muted/40 border rounded-2xl flex items-start gap-2.5 text-xs text-muted-foreground">
                                     <AlertCircle className="w-4.5 h-4.5 text-[#45a7d7] shrink-0 mt-0.5" />
-                                    <p className="leading-relaxed"><strong className="text-foreground font-semibold">Not:</strong> {analysisResult.note}</p>
+                                    <p className="leading-relaxed"><strong className="text-foreground font-semibold">{t('noteLabel')}</strong> {analysisResult.note}</p>
                                 </div>
                             )}
 
                             {/* Action logger to daily history */}
                             <div className="border-t pt-4 flex flex-col gap-3">
                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="text-muted-foreground font-semibold">Log into meal slot:</span>
+                                    <span className="text-muted-foreground font-semibold">{t('logIntoSlot')}</span>
                                     <div className="flex gap-1">
                                         {(['Breakfast', 'Lunch', 'Dinner', 'Snack'] as const).map((type) => (
                                             <button
@@ -650,7 +653,7 @@ export default function CalorieTrackerPage() {
                                                         : 'bg-muted hover:bg-muted-hover text-muted-foreground'
                                                 }`}
                                             >
-                                                {type}
+                                                {t(`mealTypes.${type}`)}
                                             </button>
                                         ))}
                                     </div>
@@ -660,7 +663,7 @@ export default function CalorieTrackerPage() {
                                     className="w-full bg-[#45a7d7] text-white hover:bg-[#45a7d7]/95 rounded-2xl font-bold py-2 flex items-center justify-center gap-1.5 text-sm"
                                 >
                                     <Check className="w-4 h-4" />
-                                    Add to Daily Log
+                                    {t('addToLog')}
                                 </Button>
                             </div>
                         </CardContent>
@@ -675,7 +678,7 @@ export default function CalorieTrackerPage() {
                     <Card className="border-border rounded-3xl shadow-sm bg-card w-full">
                         <CardHeader className="pb-3 flex flex-row items-center justify-between">
                             <CardTitle className="text-sm font-extrabold uppercase tracking-wider text-muted-foreground">
-                                Today's Calories
+                                {t('todaysCalories')}
                             </CardTitle>
                             
                             {/* Toggle/Edit Target Action link (Shows "Set Target" if no target exists) */}
@@ -684,7 +687,7 @@ export default function CalorieTrackerPage() {
                                     onClick={() => setIsEditingGoal(true)}
                                     className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
                                 >
-                                    <Edit3 className="w-3.5 h-3.5" /> {dailyGoal === null ? 'Set Target' : 'Edit Target'}
+                                    <Edit3 className="w-3.5 h-3.5" /> {dailyGoal === null ? t('setTarget') : t('editTarget')}
                                 </button>
                             )}
                         </CardHeader>
@@ -694,7 +697,7 @@ export default function CalorieTrackerPage() {
                             {dailyGoal === null ? (
                                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
                                     <div className="flex flex-col gap-0.5 text-center sm:text-left">
-                                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Total Consumed</span>
+                                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{t('totalConsumed')}</span>
                                         <span className="text-3xl font-black">{totalConsumed} <span className="text-sm font-bold text-muted-foreground">kcal</span></span>
                                     </div>
                                     
@@ -703,7 +706,7 @@ export default function CalorieTrackerPage() {
                                         <div className="flex items-center gap-2 w-full sm:w-auto">
                                             <input 
                                                 type="number"
-                                                placeholder="e.g. 2000"
+                                                placeholder={t('goalPlaceholder')}
                                                 value={goalInputValue}
                                                 onChange={(e) => setGoalInputValue(e.target.value)}
                                                 className="border rounded-xl px-3 py-1.5 text-sm w-28 bg-background focus:outline-none focus:ring-1 focus:ring-primary"
@@ -733,7 +736,7 @@ export default function CalorieTrackerPage() {
                                                     onKeyDown={(e) => e.key === 'Enter' && handleSaveGoal()}
                                                 />
                                                 <Button size="sm" onClick={handleSaveGoal} className="h-8 rounded-xl font-bold bg-[#45a7d7] text-white">
-                                                    Save
+                                                    {t('save')}
                                                 </Button>
                                                 <Button size="icon" variant="ghost" onClick={() => setIsEditingGoal(false)} className="h-8 w-8 rounded-xl">
                                                     <X className="w-4 h-4" />
@@ -743,14 +746,14 @@ export default function CalorieTrackerPage() {
                                                 onClick={handleRemoveGoal}
                                                 className="text-xs text-destructive font-bold hover:underline"
                                             >
-                                                Remove Target
+                                                {t('removeTarget')}
                                             </button>
                                         </div>
                                     ) : null}
 
                                     <div className="flex justify-between items-end">
                                         <span className="text-3xl font-black">{totalConsumed} <span className="text-xs font-bold text-muted-foreground">kcal</span></span>
-                                        <span className="text-xs text-muted-foreground font-semibold">Target: {dailyGoal} kcal</span>
+                                        <span className="text-xs text-muted-foreground font-semibold">{t('targetLabel', { goal: dailyGoal })}</span>
                                     </div>
                                     
                                     {/* Linear Progress bar */}
@@ -760,7 +763,7 @@ export default function CalorieTrackerPage() {
 
                                     <div className="flex justify-between items-center text-xs font-semibold">
                                         <span className={totalConsumed <= dailyGoal ? 'text-green-600 dark:text-green-400' : 'text-red-500'}>
-                                            {totalConsumed <= dailyGoal ? `${dailyGoal - totalConsumed} kcal remaining` : `${totalConsumed - dailyGoal} kcal over target`}
+                                            {totalConsumed <= dailyGoal ? t('remaining', { n: dailyGoal - totalConsumed }) : t('overTarget', { n: totalConsumed - dailyGoal })}
                                         </span>
                                         <span className="text-primary">{progressPercent}%</span>
                                     </div>
