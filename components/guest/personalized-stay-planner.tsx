@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useTranslations } from "next-intl"
-import { format, parseISO } from "date-fns"
+import { useLocale, useTranslations } from "next-intl"
+import { parseISO } from "date-fns"
+import { formatMonthDay, formatWeekdayShort } from "@/lib/dates"
 import { Clock3, Sparkles, Trash2 } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 
@@ -18,12 +19,12 @@ type PlanState = Record<string, string[]>
 
 const categoryOrder: HotelEvent["category"][] = ["wellness", "sports", "entertainment", "dining", "kids", "music"]
 
-function formatDayLabel(dateString: string) {
-  return format(parseISO(dateString), "EEE")
+function formatDayLabel(dateString: string, locale: string) {
+  return formatWeekdayShort(parseISO(dateString), locale)
 }
 
-function formatDateLabel(dateString: string) {
-  return format(parseISO(dateString), "MMM d")
+function formatDateLabel(dateString: string, locale: string) {
+  return formatMonthDay(parseISO(dateString), locale)
 }
 
 function formatPlanItem(event: HotelEvent) {
@@ -73,6 +74,7 @@ export default function PersonalizedStayPlanner({
   guestName: string
 }) {
   const t = useTranslations("plan")
+  const locale = useLocale()
   // Known after mount: prerendered HTML can't read the current clock. Until
   // then all stay dates show; past days drop out once the clock is known.
   const [todayKey, setTodayKey] = useState<string | null>(null)
@@ -259,7 +261,7 @@ export default function PersonalizedStayPlanner({
                     className="rounded-2xl border border-border/60 bg-background px-4 py-4 text-left transition-all hover:border-foreground/15 hover:bg-muted/40"
                   >
                     <p className="text-sm font-medium">
-                      {formatDayLabel(date)} · {formatDateLabel(date)}
+                      {formatDayLabel(date, locale)} · {formatDateLabel(date, locale)}
                     </p>
                   </button>
                 )

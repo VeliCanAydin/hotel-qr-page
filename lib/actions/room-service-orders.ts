@@ -9,6 +9,7 @@ import { after } from 'next/server'
 import { desc, eq, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { sendPushToReservation } from '@/lib/push'
+import { orderStatusPush } from '@/lib/push-messages'
 
 export type OrderItem = {
   id: string
@@ -142,26 +143,15 @@ export async function updateOrderStatus(
     .returning()
 
   // Push after the response is sent — staff shouldn't wait on push-service HTTP.
+  // The text is composed in the guest's language (reservations.locale).
   if (order) {
-    const push = {
-      confirmed: {
-        title: 'Order confirmed',
-        body: `Your room service order #${order.id} is being prepared.`,
-      },
-      delivered: {
-        title: 'Order delivered',
-        body: `Your room service order #${order.id} has been delivered. Enjoy!`,
-      },
-      cancelled: {
-        title: 'Order cancelled',
-        body: cancellationReason
-          ? `Your room service order #${order.id} was cancelled: ${cancellationReason}`
-          : `Your room service order #${order.id} was cancelled.`,
-      },
-    }[status]
-    after(() =>
-      sendPushToReservation(order.reservationCode, { ...push, url: '/portal/room-service' })
-    )
+    after(async () => {
+      const reservation = await findActiveReservation(order.reservationCode)
+      await sendPushToReservation(
+        order.reservationCode,
+        orderStatusPush(reservation?.locale ?? 'en', status, order.id, cancellationReason)
+      )
+    })
   }
 
   revalidatePath('/dashboard/orders/room-service-orders')

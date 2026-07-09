@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
-import { format } from "date-fns";
+import { useLocale, useTranslations } from "next-intl";
+import { formatMonthDay, formatMonthDayYear } from "@/lib/dates";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -228,6 +228,7 @@ function SubmitBar({
 export default function FeedbackPage() {
   const t = useTranslations("fb");
   const tErrors = useTranslations("errors");
+  const locale = useLocale();
   const [mode, setMode] = useState<FeedbackMode | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitTitle, setSubmitTitle] = useState(t("thankYou"));
@@ -592,8 +593,8 @@ export default function FeedbackPage() {
                       <CalendarIcon className="mr-2 size-4" />
                       {dateRange?.from
                         ? dateRange.to
-                          ? <>{format(dateRange.from, "LLL dd")} – {format(dateRange.to, "LLL dd, y")}</>
-                          : format(dateRange.from, "LLL dd, y")
+                          ? <>{formatMonthDay(dateRange.from, locale)} – {formatMonthDayYear(dateRange.to, locale)}</>
+                          : formatMonthDayYear(dateRange.from, locale)
                         : <span>{t("datesOfStay")}</span>}
                     </Button>
                   </PopoverTrigger>

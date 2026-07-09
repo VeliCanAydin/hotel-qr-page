@@ -8,6 +8,7 @@ import { guestSupportRequests } from '@/lib/db/schema'
 import { requireAdmin, verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation, findActiveReservationByRoom } from '@/lib/reservations'
 import { sendPushToReservation } from '@/lib/push'
+import { supportRequestPush } from '@/lib/push-messages'
 
 export type GuestSupportRequest = typeof guestSupportRequests.$inferSelect
 
@@ -169,14 +170,15 @@ export async function updateGuestSupportRequest(
     after(async () => {
       const reservation = await findActiveReservationByRoom(updated.roomNumber)
       if (!reservation) return
-      const response = updated.staffResponse.trim()
-      await sendPushToReservation(reservation.reservationCode, {
-        title: updated.status === 'resolved' ? 'Request resolved' : 'Request update',
-        body: response
-          ? `"${updated.subject}" — ${response.slice(0, 140)}`
-          : `Your request "${updated.subject}" is being handled by our team.`,
-        url: '/portal',
-      })
+      await sendPushToReservation(
+        reservation.reservationCode,
+        supportRequestPush(
+          reservation.locale,
+          updated.status === 'resolved',
+          updated.subject,
+          updated.staffResponse.trim()
+        )
+      )
     })
   }
 

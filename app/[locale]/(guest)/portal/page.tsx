@@ -15,7 +15,8 @@ import {
   Hash,
   UtensilsCrossed,
 } from 'lucide-react'
-import { differenceInDays, format, parseISO } from 'date-fns'
+import { differenceInDays, parseISO } from 'date-fns'
+import { formatMonthDay, formatWeekdayShort } from '@/lib/dates'
 
 export default async function PortalPage({
   params,
@@ -49,8 +50,8 @@ export default async function PortalPage({
           <div className="grid grid-cols-3 divide-x">
             <div className="flex flex-col items-center gap-0.5 p-3 text-center">
               <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{t('checkIn')}</p>
-              <p className="font-semibold text-sm">{format(checkInDate, 'MMM d')}</p>
-              <p className="text-xs text-muted-foreground">{format(checkInDate, 'EEE')} · 14:00</p>
+              <p className="font-semibold text-sm">{formatMonthDay(checkInDate, locale)}</p>
+              <p className="text-xs text-muted-foreground">{formatWeekdayShort(checkInDate, locale)} · 14:00</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-0.5 p-3 text-center">
               <p className="text-3xl font-bold leading-none">{totalNights}</p>
@@ -62,8 +63,8 @@ export default async function PortalPage({
             </div>
             <div className="flex flex-col items-center gap-0.5 p-3 text-center">
               <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{t('checkOut')}</p>
-              <p className="font-semibold text-sm">{format(checkOutDate, 'MMM d')}</p>
-              <p className="text-xs text-muted-foreground">{format(checkOutDate, 'EEE')} · 12:00</p>
+              <p className="font-semibold text-sm">{formatMonthDay(checkOutDate, locale)}</p>
+              <p className="text-xs text-muted-foreground">{formatWeekdayShort(checkOutDate, locale)} · 12:00</p>
             </div>
           </div>
         </CardContent>

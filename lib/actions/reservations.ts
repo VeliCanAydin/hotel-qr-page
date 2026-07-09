@@ -8,6 +8,7 @@ import { after } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
 import { todayISO } from '@/lib/dates'
 import { deletePushSubscriptionsForReservation, sendPushToReservation } from '@/lib/push'
+import { checkInPush } from '@/lib/push-messages'
 
 export type Reservation = {
   id: number
@@ -153,11 +154,10 @@ export async function updateReservationStatus(
 
   if (status === 'checked-in') {
     after(() =>
-      sendPushToReservation(updated.reservationCode, {
-        title: 'Check-in confirmed',
-        body: `Welcome! Your check-in for room ${updated.roomNumber} is confirmed.`,
-        url: '/portal',
-      })
+      sendPushToReservation(
+        updated.reservationCode,
+        checkInPush(updated.locale, updated.roomNumber)
+      )
     )
   } else if (status === 'checked-out') {
     // The stay is over — its devices should stop receiving notifications.

@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { Languages } from 'lucide-react'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import { LOCALES, type Locale } from '@/i18n/routing'
+import { syncGuestLocale } from '@/lib/actions/guest-auth'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -37,7 +38,12 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={l}
             disabled={l === locale}
-            onClick={() => router.replace(pathname, { locale: l })}
+            onClick={() => {
+              router.replace(pathname, { locale: l })
+              // Fire-and-forget: keeps the reservation's push-notification
+              // language in sync; no-op when no guest is logged in.
+              void syncGuestLocale(l).catch(() => {})
+            }}
             className="cursor-pointer"
           >
             {LOCALE_LABELS[l]}

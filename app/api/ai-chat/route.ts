@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { LOCALES, type Locale } from '@/i18n/routing';
 
 interface AIApiResponse {
     session_id: string;
@@ -13,9 +14,17 @@ interface AIApiResponse {
 const MAX_MESSAGE_LENGTH = 2000;
 const UPSTREAM_TIMEOUT_MS = 20_000;
 
+// The upstream payload has no system-prompt field, so the reply-language
+// instruction rides along with the message (skipped for the English default).
+const REPLY_LANGUAGE_INSTRUCTION: Record<Exclude<Locale, 'en'>, string> = {
+    tr: '(Lütfen Türkçe yanıt ver.)',
+    de: '(Bitte antworte auf Deutsch.)',
+    ru: '(Пожалуйста, отвечай по-русски.)',
+};
+
 export async function POST(request: NextRequest) {
     try {
-        const { message, sessionId } = await request.json();
+        const { message, sessionId, locale: rawLocale } = await request.json();
 
         if (!message || typeof message !== 'string') {
             return NextResponse.json(
@@ -23,6 +32,15 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
+
+        // Guest UI always sends the URL locale; anything else is rejected.
+        if (rawLocale !== undefined && !LOCALES.includes(rawLocale)) {
+            return NextResponse.json(
+                { error: 'Geçersiz dil' },
+                { status: 400 }
+            );
+        }
+        const locale: Locale = rawLocale ?? 'en';
 
         if (message.length > MAX_MESSAGE_LENGTH) {
             return NextResponse.json(
@@ -40,8 +58,12 @@ export async function POST(request: NextRequest) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                message: message,
+                message:
+                    locale === 'en'
+                        ? message
+                        : `${message}\n\n${REPLY_LANGUAGE_INSTRUCTION[locale]}`,
                 session_id: sessionId || null,
+                locale,
             }),
             signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
         });

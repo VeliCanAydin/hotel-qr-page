@@ -2,8 +2,9 @@
 
 import { Link } from "@/i18n/navigation"
 import { useEffect, useMemo, useState } from "react"
-import { useTranslations } from "next-intl"
-import { format, parseISO } from "date-fns"
+import { useLocale, useTranslations } from "next-intl"
+import { parseISO } from "date-fns"
+import { formatMonthDay, formatWeekdayShort } from "@/lib/dates"
 import { ArrowLeft, CheckCircle2 } from "lucide-react"
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -14,12 +15,12 @@ import type { HotelEvent } from "@/lib/types/events"
 
 type PlanState = Record<string, string[]>
 
-function formatDayLabel(dateString: string) {
-  return format(parseISO(dateString), "EEE")
+function formatDayLabel(dateString: string, locale: string) {
+  return formatWeekdayShort(parseISO(dateString), locale)
 }
 
-function formatDateLabel(dateString: string) {
-  return format(parseISO(dateString), "MMM d")
+function formatDateLabel(dateString: string, locale: string) {
+  return formatMonthDay(parseISO(dateString), locale)
 }
 
 function sortDates(dates: string[]) {
@@ -28,6 +29,7 @@ function sortDates(dates: string[]) {
 
 export default function MyPlanView({ events, storageKey }: { events: HotelEvent[]; storageKey: string }) {
   const t = useTranslations("plan")
+  const locale = useLocale()
   const [plan, setPlan] = useState<PlanState>({})
   const [hydrated, setHydrated] = useState(false)
 
@@ -81,7 +83,7 @@ export default function MyPlanView({ events, storageKey }: { events: HotelEvent[
                     <AccordionTrigger className="px-4 py-4 hover:no-underline">
                       <div className="flex w-full items-center justify-between gap-3 pr-2">
                         <p className="text-sm font-medium">
-                          {formatDayLabel(date)} · {formatDateLabel(date)}
+                          {formatDayLabel(date, locale)} · {formatDateLabel(date, locale)}
                         </p>
                         <Badge variant="secondary" className="rounded-full">
                           {assignedIds.length}

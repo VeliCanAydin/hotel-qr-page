@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { login } from "@/lib/actions/auth"
 import { guestLogin } from "@/lib/actions/guest-auth"
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,7 @@ function GuestLoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectPath = searchParams.get('redirect') ?? ''
+  const locale = useLocale()
   const [state, formAction, isPending] = useActionState(guestLogin, { error: "" })
   const t = useTranslations('login')
   const tErrors = useTranslations('errors')
@@ -31,6 +32,8 @@ function GuestLoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="redirect" value={redirectPath} />
+      {/* Written to the reservation so push notifications use the guest's language. */}
+      <input type="hidden" name="locale" value={locale} />
       <div className="space-y-2">
         <Label htmlFor="guest-room-number">{t('roomNumber')}</Label>
         <Input

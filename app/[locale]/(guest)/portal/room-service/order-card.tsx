@@ -1,8 +1,8 @@
 "use client"
 
 import { Fragment, useState, useOptimistic, useTransition } from "react"
-import { useTranslations } from "next-intl"
-import { format } from "date-fns"
+import { useLocale, useTranslations } from "next-intl"
+import { formatDateTime } from "@/lib/dates"
 import { XCircle, Loader2, X } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,7 @@ const STATUS_INDEX: Record<string, number> = {
 
 export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
   const t = useTranslations("portal")
+  const locale = useLocale()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [reason, setReason] = useState("")
   const [isPending, startTransition] = useTransition()
@@ -66,7 +67,7 @@ export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {
             <div className="min-w-0">
               <p className="text-sm font-semibold">{t("orderNumber", { id: optimisticOrder.id })}</p>
               <p className="text-xs text-muted-foreground">
-                {format(new Date(optimisticOrder.createdAt), "MMM d, yyyy · HH:mm")}
+                {formatDateTime(new Date(optimisticOrder.createdAt), locale)}
               </p>
             </div>
             {optimisticOrder.status === "pending" && (

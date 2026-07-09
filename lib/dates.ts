@@ -18,3 +18,32 @@ export function toHotelDateISO(date: Date): string {
 export function todayISO(): string {
   return toHotelDateISO(new Date())
 }
+
+// --- Guest-facing display formatters ---
+// Locale-aware replacements for hardcoded date-fns English tokens. `locale`
+// always comes from the URL segment (params / useLocale), never from cookies.
+
+/** Short weekday name, e.g. "Mon" / "Pzt" / "Пн". */
+export function formatWeekdayShort(date: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date)
+}
+
+/** Short month + day, e.g. "Sep 5" / "5 Eyl". */
+export function formatMonthDay(date: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(date)
+}
+
+/** Short month + day + year, e.g. "Sep 5, 2026" / "5 Eyl 2026". */
+export function formatMonthDayYear(date: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', year: 'numeric' }).format(date)
+}
+
+/** Date with 24h time, e.g. "Sep 5, 2026 · 14:30". */
+export function formatDateTime(date: Date, locale: string): string {
+  const time = new Intl.DateTimeFormat(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(date)
+  return `${formatMonthDayYear(date, locale)} · ${time}`
+}

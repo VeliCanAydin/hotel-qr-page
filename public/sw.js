@@ -35,7 +35,8 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
       for (const client of clients) {
-        if (new URL(client.url).pathname.startsWith('/portal') && 'focus' in client) {
+        // Portal URLs carry a locale prefix (/en/portal, /tr/portal, ...).
+        if (/^(\/[a-z]{2})?\/portal(\/|$)/.test(new URL(client.url).pathname) && 'focus' in client) {
           client.navigate(url)
           return client.focus()
         }

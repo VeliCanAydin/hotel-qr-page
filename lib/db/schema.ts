@@ -286,6 +286,9 @@ export const reservations = pgTable('reservations', {
   email:           text('email').notNull().default(''),
   phone:           text('phone').notNull().default(''),
   notes:           text('notes').notNull().default(''),
+  // Guest's UI language — written at guest login and on portal language switch,
+  // read when composing push notification texts (lib/push-messages.ts).
+  locale:          text('locale').notNull().default('en'),
   createdAt:       timestamp('created_at').defaultNow().notNull(),
 })
 
