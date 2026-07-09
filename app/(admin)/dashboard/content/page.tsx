@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Hotel, Baby, TreePalm, Flower, MapPinned, Sparkles } from "lucide-react"
+import { ArrowRight, Hotel, Baby, TreePalm, Flower, Languages, MapPinned, Sparkles } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -54,6 +54,14 @@ const contentSections = [
     accent: "text-rose-500",
     status: "New",
   },
+  {
+    title: "Translations",
+    description: "Guest-facing content translations for TR, DE and RU.",
+    href: "/dashboard/content/translations",
+    icon: Languages,
+    accent: "text-indigo-500",
+    status: "New",
+  },
 ]
 
 export default function ContentManagementOverviewPage() {
@@ -67,7 +75,7 @@ export default function ContentManagementOverviewPage() {
           </p>
         </div>
         <Badge variant="outline" className="w-fit rounded-full px-3 py-1">
-          6 sections
+          7 sections
         </Badge>
       </div>
 

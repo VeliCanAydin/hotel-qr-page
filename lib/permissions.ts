@@ -64,6 +64,13 @@ export const ADMIN_PAGE_PERMISSIONS: AdminPagePermission[] = [
     description: 'Fitness and activity content for the guest portal.',
   },
   {
+    href: '/dashboard/content/translations',
+    key: 'translations',
+    label: 'Translations',
+    section: 'Content',
+    description: 'Guest-facing content translations for every supported language.',
+  },
+  {
     href: '/dashboard/services/restaurant',
     key: 'restaurant',
     label: 'Restaurant Menu',
@@ -147,6 +154,7 @@ export const DEFAULT_ADMIN_ROLE_PRESETS: AdminRolePreset[] = [
       '/dashboard/content/beach-pools',
       '/dashboard/content/spa',
       '/dashboard/content/wellness',
+      '/dashboard/content/translations',
     ],
     isSystem: true,
   },
