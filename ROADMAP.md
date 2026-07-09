@@ -50,8 +50,14 @@ Yeni bir desen ya da küçük bir altyapı parçası isteyen, tasarım riski dü
 
 Her biri kendi başına mini proje; başlamadan önce ayrıca tasarım konuşması gerektirir.
 
-- [ ] **Çoklu dil (i18n)** — içerik tablolarına çeviri modeli, admin'e çeviri girişi UI'ı,
-  runtime i18n katmanı, AI chat dil farkındalığı. En stratejik ama en yayılgan iş.
+- [x] **Çoklu dil (i18n)** — 4 dil (en temel, tr/de/ru) URL segmentiyle (`/[locale]/...`,
+  next-intl + `messages/*.json`); kök `/` Accept-Language'a göre yönlendiriyor, dashboard
+  locale'siz kaldı. DB içeriği polimorfik `content_translations` tablosuyla çevriliyor
+  (eksik çeviri İngilizce'ye düşer), okuma `lib/content.ts`'te locale parametreli `use cache`
+  ile dil başına cache'leniyor. Admin `/dashboard/content/translations` generic ekranından
+  çeviri giriliyor (`updateTag` ile anında yayında). AI chat seçili dilde yanıtlıyor; push
+  bildirimleri rezervasyona yazılan `locale` ile misafirin dilinde gidiyor
+  (`lib/push-messages.ts`). Uygulama planı: `docs/i18n-plan.md`.
 - [ ] **Restoran/spa slot rezervasyonu** — kapasiteli zaman dilimi modeli (slot tablosu,
   çakışma kontrolü, iptal akışı), admin doluluk ekranı, misafir takvim UI. Eşzamanlılık
   (aynı slota iki kişi) doğru kurgulanmalı.

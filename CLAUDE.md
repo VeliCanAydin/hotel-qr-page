@@ -57,11 +57,17 @@ Roller: Super Admin (her şey), Content Manager, Service Manager, Guest Relation
 
 ```
 app/
-├── (main)/            # Public misafir sitesi
-├── (guest)/portal/    # Girişli misafir portalı (layout'lar findActiveReservation ile korur)
-├── (admin)/dashboard/ # Admin panel: content/, services/, orders/, events/, guests/, settings/
-├── (auth)/login/      # Misafir + personel giriş
-└── api/               # TÜM API route'ları: admin/*, ai-chat, feedback, guest-context, upload, blob-image, allergens vb.
+├── [locale]/          # Misafir yüzeyleri — locale URL segmenti (en/tr/de/ru)
+│   ├── (main)/        # Public misafir sitesi
+│   ├── (guest)/portal/# Girişli misafir portalı (layout'lar findActiveReservation ile korur)
+│   └── (auth)/login/  # Misafir + personel giriş
+├── (admin)/dashboard/ # Admin panel (LOCALE'SİZ): content/, services/, orders/, events/, guests/, settings/
+└── api/               # TÜM API route'ları (locale'siz): admin/*, ai-chat, feedback, guest-context, upload, blob-image, allergens vb.
+i18n/
+├── routing.ts         # LOCALES sabiti (TEK KAYNAK) + defineRouting
+├── request.ts         # next-intl messages yükleme
+└── navigation.ts      # Locale-farkındalıklı Link/redirect/usePathname/useRouter — misafir yüzeylerinde next/link YERİNE bunlar
+messages/              # en/tr/de/ru.json — statik UI string'leri (namespace = sayfa/feature)
 components/
 ├── ui/                # SADECE shadcn primitive'leri
 ├── admin/             # Sidebar (ADMIN_PAGE_PERMISSIONS'tan üretilir), nav, breadcrumb
@@ -73,6 +79,9 @@ lib/
 ├── permissions.ts     # ADMIN_PAGE_PERMISSIONS + rol preset'leri (TEK KAYNAK)
 ├── reservations.ts    # Misafir login/oturum lookup'ları (server-only, action DEĞİL)
 ├── push.ts            # Web push gönderici — VAPID + subscription temizliği (server-only, action DEĞİL)
+├── push-messages.ts   # 4 dilli push metinleri — rezervasyonun locale kolonuyla seçilir (server-only, action DEĞİL)
+├── i18n-entities.ts   # TRANSLATABLE_ENTITIES — çevrilebilir tablo/alan kaydı (TEK KAYNAK, client-safe sabit)
+├── translations.ts    # content_translations okuma/silme/kopyalama helper'ları (server-only, action DEĞİL)
 ├── access-store.ts    # Access Control UI action'ları
 ├── actions/           # Server action'lar (admin mutasyonları requireAdmin'li)
 ├── types/             # Paylaşılan domain tipleri + UI sabitleri (HotelEvent+categoryColors, RoomServiceItem+categoryLabels, MenuItem, NearbyGuide*+iconMap)
@@ -107,6 +116,32 @@ proxy.ts               # Route koruması (Next 16 middleware)
 
 ---
 
+## Çoklu Dil (i18n)
+
+Diller: `en` (temel/fallback), `tr`, `de`, `ru` — tek kaynak `LOCALES` (`i18n/routing.ts`). Dil eklemek = `LOCALES`'e ekle + `messages/<locale>.json` + admin Translations'tan çeviri gir.
+
+### Locale mimarisi (URL segmenti, cookie DEĞİL)
+
+- Tüm misafir yüzeyleri `app/[locale]/...` altında; **dashboard ve api locale'siz**. Kök `/` isteğini proxy'deki next-intl middleware'i Accept-Language'a göre yönlendirir (QR davranışı).
+- Locale **HER ZAMAN `params`'tan gelir** — misafir sayfalarında `cookies()`/`headers()` çağırma, PPR'ı bozar. Her misafir layout + page'inde `setRequestLocale(locale)` çağrılır, yoksa sayfa dinamiğe düşer (build çıktısından `◐`/`○` kontrol et).
+- Misafir yüzeylerinde `next/link`/`next/navigation` yerine `@/i18n/navigation` kullanılır. Guest-session redirect hedefleri locale'li: `/${locale}/login`.
+- Statik UI string'leri `messages/*.json` (server: `getTranslations`, client: `useTranslations`). Tarih formatları `lib/dates.ts`'teki locale parametreli yardımcılarla.
+
+### DB içerik çevirisi
+
+- Tek polimorfik tablo: `content_translations` (entityType, entityId, locale, field, value; `en` satırı OLMAZ — temel kolonlar İngilizce, eksik çeviri otomatik İngilizce'ye düşer).
+- Çevrilebilir tablo/alan kaydı: `TRANSLATABLE_ENTITIES` (`lib/i18n-entities.ts`, TEK KAYNAK). Okuma helper'ları `lib/translations.ts` (server-only, `'use server'` EKLEME).
+- `lib/content.ts` okuyucuları `locale` parametresi alır — `'use cache'` locale'i cache anahtarına dahil eder; locale'i fonksiyon içinde global/context'ten OKUMA. Tüm okuyucular `CONTENT_TAGS.translations` tag'ini taşır; admin çeviri kaydedince `updateTag` ile tüm diller tazelenir.
+- **İçerik silme action'ı yazarken `deleteTranslationsFor(entityType, id)` çağır** (polimorfik tabloya FK yok). Menü şablonu kaydet/uygula akışı çevirileri `copyTranslationsBatch` ile `menu_template_item` üzerinden taşır — bu akışı bozma.
+- Admin çeviri girişi: `/dashboard/content/translations` (generic ekran; boş bırakılan çeviri satırı silinir → İngilizce fallback).
+
+### Dil-farkındalıklı yan kanallar
+
+- **AI chat:** client URL locale'ini `POST /api/ai-chat` gövdesinde yollar; route doğrular ve upstream'e iletir.
+- **Push:** misafirin dili `reservations.locale` kolonunda (login'de + dil değişiminde `syncGuestLocale` ile yazılır). Push metinleri `lib/push-messages.ts` 4 dilli sözlükten — next-intl'e BAĞLAMA (action'da request locale'i yok).
+
+---
+
 ## Admin Panel Konvansiyonları
 
 **Sayfa deseni:** `page.tsx` (server, data fetch + `force-dynamic` gerekiyorsa) → `*-client.tsx` (`'use client'`, local state + optimistic update + `toast.promise` + shadcn Dialog formlar).
@@ -119,13 +154,14 @@ proxy.ts               # Route koruması (Next 16 middleware)
 2. `ADMIN_PAGE_PERMISSIONS`'a kayıt ekle (sidebar + izin sistemi buradan)
 3. İlgili rol preset'lerine href'i ekle
 4. Action'larına `await requireAdmin('<sayfa-href>')` koy
-5. Sayfa cookie okuyorsa `export const dynamic = 'force-dynamic'`
+5. `export const dynamic = 'force-dynamic'` EKLEME — `cacheComponents` bu route config'ini reddediyor (build hatası); cookie okuyan sayfa zaten dinamik render edilir
 
 ### Yeni misafir sayfası checklist'i
 
-1. `app/(main)/[feature]/page.tsx` (public) veya `app/(guest)/portal/` (girişli)
-2. Ana sayfa kartı gerekiyorsa `lib/pages.ts`'e ekle
-3. Veri DB'den geliyorsa action'da public read / admin mutasyon ayrımına dikkat et
+1. `app/[locale]/(main)/[feature]/page.tsx` (public) veya `app/[locale]/(guest)/portal/` (girişli)
+2. `setRequestLocale(locale)` çağır (params'tan); string'ler `messages/*.json`'a (4 dil), linkler `@/i18n/navigation`'dan
+3. Ana sayfa kartı gerekiyorsa `lib/pages.ts`'e ekle
+4. Veri DB'den geliyorsa action'da public read / admin mutasyon ayrımına dikkat et; içerik okuması `lib/content.ts`'ten locale parametresiyle
 
 ---
 
