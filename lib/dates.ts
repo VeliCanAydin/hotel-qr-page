@@ -19,6 +19,20 @@ export function todayISO(): string {
   return toHotelDateISO(new Date())
 }
 
+const hotelTimeFormatter = new Intl.DateTimeFormat('en-GB', {
+  timeZone: HOTEL_TIME_ZONE,
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+})
+
+/** Current hotel wall-clock time as minutes since midnight (0–1439). Used to
+ *  compare against HH:mm text time columns (e.g. events.startTime). */
+export function nowHotelMinutes(): number {
+  const [hours, minutes] = hotelTimeFormatter.format(new Date()).split(':').map(Number)
+  return hours * 60 + minutes
+}
+
 // --- Guest-facing display formatters ---
 // Locale-aware replacements for hardcoded date-fns English tokens. `locale`
 // always comes from the URL segment (params / useLocale), never from cookies.

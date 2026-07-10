@@ -1,9 +1,10 @@
 // Web push sender. Server-only module, deliberately NOT a server action —
 // exposing send helpers as actions would let anyone push to any reservation.
 import webpush from 'web-push'
-import { eq, inArray } from 'drizzle-orm'
+import { and, eq, gte, inArray, lte, ne } from 'drizzle-orm'
 import { db } from '@/lib/db'
-import { pushSubscriptions } from '@/lib/db/schema'
+import { pushSubscriptions, reservations } from '@/lib/db/schema'
+import { todayISO } from '@/lib/dates'
 
 export type PushPayload = {
   title: string
@@ -70,6 +71,69 @@ export async function sendPushToReservation(
     }
   } catch (err) {
     console.error('[push] sendPushToReservation failed:', err)
+  }
+}
+
+/** Broadcasts a hotel-wide announcement (new event, event reminder) to every
+ *  device of every in-house guest. `payloads` is keyed by locale — each device
+ *  gets the text matching its reservation's language, falling back to `en`.
+ *  Never throws; expired subscriptions are pruned like in the targeted send. */
+export async function sendPushToActiveGuests(
+  payloads: Partial<Record<string, PushPayload>>
+): Promise<void> {
+  try {
+    if (!ensureVapid()) return
+
+    const today = todayISO()
+    const rows = await db
+      .select({
+        id: pushSubscriptions.id,
+        endpoint: pushSubscriptions.endpoint,
+        p256dh: pushSubscriptions.p256dh,
+        auth: pushSubscriptions.auth,
+        locale: reservations.locale,
+      })
+      .from(pushSubscriptions)
+      .innerJoin(
+        reservations,
+        eq(pushSubscriptions.reservationCode, reservations.reservationCode)
+      )
+      .where(
+        and(
+          ne(reservations.status, 'checked-out'),
+          lte(reservations.checkIn, today),
+          gte(reservations.checkOut, today)
+        )
+      )
+    if (!rows.length) return
+
+    const gone: number[] = []
+
+    await Promise.allSettled(
+      rows.map(async (sub) => {
+        const payload = payloads[sub.locale] ?? payloads.en
+        if (!payload) return
+        try {
+          await webpush.sendNotification(
+            { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+            JSON.stringify(payload)
+          )
+        } catch (err) {
+          const statusCode = (err as { statusCode?: number }).statusCode
+          if (statusCode === 404 || statusCode === 410) {
+            gone.push(sub.id)
+          } else {
+            console.error('[push] broadcast send failed:', err)
+          }
+        }
+      })
+    )
+
+    if (gone.length) {
+      await db.delete(pushSubscriptions).where(inArray(pushSubscriptions.id, gone))
+    }
+  } catch (err) {
+    console.error('[push] sendPushToActiveGuests failed:', err)
   }
 }
 

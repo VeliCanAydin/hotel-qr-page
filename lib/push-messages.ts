@@ -111,6 +111,74 @@ export function supportRequestPush(
   }
 }
 
+/** Guest events page in the guest's language. */
+const eventsUrl = (locale: Locale) => `/${locale}/events`
+
+/** "Jul 15 · 18:00" in the guest's language — plain Intl, no next-intl. */
+function formatEventWhen(locale: Locale, date: string, startTime: string): string {
+  const day = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(
+    new Date(`${date}T00:00:00`)
+  )
+  return `${day} · ${startTime}`
+}
+
+const EVENT_NEW_TITLES: PerLocale = {
+  en: 'New event at the hotel',
+  tr: 'Otelde yeni etkinlik',
+  de: 'Neues Event im Hotel',
+  ru: 'Новое событие в отеле',
+}
+
+const EVENT_NEW_BODIES: Record<Locale, (title: string, when: string, location: string) => string> = {
+  en: (title, when, location) => `${title} — ${when}, ${location}. Tap for details.`,
+  tr: (title, when, location) => `${title} — ${when}, ${location}. Detaylar için dokunun.`,
+  de: (title, when, location) => `${title} — ${when}, ${location}. Für Details tippen.`,
+  ru: (title, when, location) => `${title} — ${when}, ${location}. Нажмите, чтобы узнать больше.`,
+}
+
+export function eventAnnouncementPush(
+  rawLocale: string,
+  title: string,
+  date: string,
+  startTime: string,
+  location: string,
+): PushPayload {
+  const locale = toLocale(rawLocale)
+  return {
+    title: EVENT_NEW_TITLES[locale],
+    body: EVENT_NEW_BODIES[locale](title, formatEventWhen(locale, date, startTime), location),
+    url: eventsUrl(locale),
+  }
+}
+
+const EVENT_REMINDER_TITLES: PerLocale = {
+  en: 'Starting soon',
+  tr: 'Birazdan başlıyor',
+  de: 'Beginnt gleich',
+  ru: 'Скоро начнётся',
+}
+
+const EVENT_REMINDER_BODIES: Record<Locale, (title: string, time: string, location: string) => string> = {
+  en: (title, time, location) => `${title} starts at ${time} — ${location}.`,
+  tr: (title, time, location) => `${title} birazdan başlıyor: ${time} — ${location}.`,
+  de: (title, time, location) => `${title} beginnt um ${time} — ${location}.`,
+  ru: (title, time, location) => `${title} начинается в ${time} — ${location}.`,
+}
+
+export function eventReminderPush(
+  rawLocale: string,
+  title: string,
+  startTime: string,
+  location: string,
+): PushPayload {
+  const locale = toLocale(rawLocale)
+  return {
+    title: EVENT_REMINDER_TITLES[locale],
+    body: EVENT_REMINDER_BODIES[locale](title, startTime, location),
+    url: eventsUrl(locale),
+  }
+}
+
 const CHECK_IN_TITLES: PerLocale = {
   en: 'Check-in confirmed',
   tr: 'Check-in onaylandı',

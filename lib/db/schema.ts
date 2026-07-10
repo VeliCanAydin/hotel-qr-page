@@ -107,6 +107,9 @@ export const events = pgTable('events', {
   endTime: text('end_time').notNull(),
   category: text('category').notNull(),
   color: text('color'),
+  // Set by the event-reminders cron once the "starting soon" push has gone out
+  // (dedup guard). Reset to null when staff reschedules the event.
+  reminderSentAt: timestamp('reminder_sent_at'),
 })
 
 export const nearbyGuideItems = pgTable('nearby_guide_items', {
