@@ -222,17 +222,46 @@ export default function CalorieTrackerPage() {
         );
     }
 
-    // Helper to read file to base64
-    const getBase64 = (file: File): Promise<string> => {
+    // Yükleme öncesi görseli boyutlandırıp JPEG'e sıkıştırır.
+    // Telefon kamera fotoğrafları (3-12MB) base64'e çevrilince Vercel'in
+    // Function payload limitini (~4.5MB) aşıyordu (413 FUNCTION_PAYLOAD_TOO_LARGE).
+    const resizeImageForUpload = (file: File, maxDimension = 1280, quality = 0.82): Promise<{ base64: string; mimeType: string }> => {
         return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const result = reader.result as string;
-                const base64Str = result.split(',')[1];
-                resolve(base64Str);
+            const img = new Image();
+            const objectUrl = URL.createObjectURL(file);
+
+            img.onload = () => {
+                let { width, height } = img;
+                if (width > maxDimension || height > maxDimension) {
+                    if (width > height) {
+                        height = Math.round((height * maxDimension) / width);
+                        width = maxDimension;
+                    } else {
+                        width = Math.round((width * maxDimension) / height);
+                        height = maxDimension;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                URL.revokeObjectURL(objectUrl);
+
+                if (!ctx) {
+                    reject(new Error('Canvas context oluşturulamadı'));
+                    return;
+                }
+
+                ctx.drawImage(img, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
             };
-            reader.onerror = error => reject(error);
+            img.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                reject(new Error('Görsel yüklenemedi'));
+            };
+            img.src = objectUrl;
         });
     };
 
@@ -260,14 +289,14 @@ export default function CalorieTrackerPage() {
 
         setIsAnalyzing(true);
         try {
-            const base64Data = await getBase64(imageFile);
+            const { base64: base64Data, mimeType } = await resizeImageForUpload(imageFile);
 
             const response = await fetch('/api/calorie-vision', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     image_base64: base64Data,
-                    image_mime_type: imageFile.type || 'image/jpeg',
+                    image_mime_type: mimeType,
                     language: locale,
                 }),
             });
