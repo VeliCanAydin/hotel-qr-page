@@ -1,9 +1,9 @@
-// Vercel Cron target (vercel.json, every 15 min): pushes a "starting soon"
+// Scheduler target (external cron, e.g. cron-job.org every 15 min — the Vercel
+// Hobby plan caps native crons at once per day): pushes a "starting soon"
 // reminder to every in-house guest for events beginning within the next
-// REMINDER_LEAD_MINUTES. Auth is the standard Vercel cron contract — the
-// platform sends `Authorization: Bearer ${CRON_SECRET}`; with no secret set
-// the route refuses to run (fail-closed). Any external scheduler that knows
-// the secret can hit it too.
+// REMINDER_LEAD_MINUTES. Callers must send `Authorization: Bearer ${CRON_SECRET}`;
+// with no secret set the route refuses to run (fail-closed). If the project
+// moves to Vercel Pro, a vercel.json cron entry works as-is with the same header.
 import { NextResponse } from 'next/server'
 import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { db } from '@/lib/db'
