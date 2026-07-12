@@ -346,6 +346,7 @@
     "availableDesc": "Activities are grouped by type. Tap a title to reveal the details underneath.",
     "itemsCount": "{count} items",
     "chooseDay": "Choose day",
+    "plannerDrawerInfo": "Only dates when the event will take place are listed. If the date you are looking for is not visible, it means the event is not scheduled for that day.",
     "categories": {
       "wellness": "Wellness Activities",
       "sports": "Activities",

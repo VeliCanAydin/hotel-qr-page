@@ -78,22 +78,24 @@ export default function PersonalizedStayPlanner({
   // Known after mount: prerendered HTML can't read the current clock. Until
   // then all stay dates show; past days drop out once the clock is known.
   const [todayKey, setTodayKey] = useState<string | null>(null)
-  useEffect(() => {
-    setTodayKey(getLocalDateKey(new Date()))
-  }, [])
-
-  const days = useMemo(() => {
-    const sorted = sortUniqueDates(stayDates)
-    return todayKey ? sorted.filter((date) => date >= todayKey) : sorted
-  }, [stayDates, todayKey])
-  const groupedEvents = useMemo(() => groupEventsByCategory(events), [events])
-  const eventById = useMemo(() => new Map(events.map((event) => [event.id, event])), [events])
-
   const [plan, setPlan] = useState<PlanState>({})
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [isPickingDay, setIsPickingDay] = useState(false)
   const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    setTodayKey(getLocalDateKey(new Date()))
+  }, [])
+
+  // Filter out events that occurred in the past
+  const activeEvents = useMemo(() => {
+    if (!todayKey) return events
+    return events.filter((event) => event.date >= todayKey)
+  }, [events, todayKey])
+
+  const groupedEvents = useMemo(() => groupEventsByCategory(activeEvents), [activeEvents])
+  const eventById = useMemo(() => new Map(activeEvents.map((event) => [event.id, event])), [activeEvents])
 
   useEffect(() => {
     try {
@@ -156,7 +158,7 @@ export default function PersonalizedStayPlanner({
     setIsPickingDay(false)
   }
 
-  if (!days.length) {
+  if (!activeEvents.length) {
     return (
       <section className="rounded-[2rem] border border-border/60 bg-gradient-to-br from-slate-50 via-background to-emerald-50/50 p-6 shadow-sm dark:from-slate-950 dark:via-background dark:to-emerald-950/20">
         <div className="flex flex-col gap-2">
@@ -251,21 +253,21 @@ export default function PersonalizedStayPlanner({
         showPrimaryAction={!isPickingDay}
       >
         {selectedEvent && isPickingDay ? (
-          <div className="grid gap-2">
-              {days.map((date) => {
-                return (
-                  <button
-                    key={date}
-                    type="button"
-                    onClick={() => assignSelectedEventToDay(date)}
-                    className="rounded-2xl border border-border/60 bg-background px-4 py-4 text-left transition-all hover:border-foreground/15 hover:bg-muted/40"
-                  >
-                    <p className="text-sm font-medium">
-                      {formatDayLabel(date, locale)} · {formatDateLabel(date, locale)}
-                    </p>
-                  </button>
-                )
-              })}
+          <div className="flex flex-col gap-4">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {t("plannerDrawerInfo")}
+            </p>
+            <div className="grid gap-2">
+              <button
+                type="button"
+                onClick={() => assignSelectedEventToDay(selectedEvent.date)}
+                className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4 text-left transition-all hover:bg-primary/10"
+              >
+                <p className="text-sm font-semibold text-primary">
+                  {formatDayLabel(selectedEvent.date, locale)} · {formatDateLabel(selectedEvent.date, locale)}
+                </p>
+              </button>
+            </div>
           </div>
         ) : null}
       </EventDetailsDrawer>

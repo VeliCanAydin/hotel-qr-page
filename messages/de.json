@@ -349,6 +349,7 @@
     "availableDesc": "Aktivitäten sind nach Typ gruppiert. Tippen Sie auf einen Titel, um die Details anzuzeigen.",
     "itemsCount": "{count} Einträge",
     "chooseDay": "Tag wählen",
+    "plannerDrawerInfo": "Es werden nur Termine aufgeführt, an denen die Veranstaltung stattfindet. Wenn das gesuchte Datum nicht sichtbar ist, findet an diesem Tag keine Veranstaltung statt.",
     "categories": {
       "wellness": "Wellness-Aktivitäten",
       "sports": "Aktivitäten",

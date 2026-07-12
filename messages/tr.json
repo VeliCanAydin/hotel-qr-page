@@ -346,6 +346,7 @@
     "availableDesc": "Aktiviteler türe göre gruplanmıştır. Detayları görmek için bir başlığa dokunun.",
     "itemsCount": "{count} öğe",
     "chooseDay": "Gün seç",
+    "plannerDrawerInfo": "Listede yalnızca etkinliğin gerçekleşeceği tarihler yer almaktadır. Aradığınız tarih görünmüyorsa, o gün etkinlik düzenlenmeyecek demektir.",
     "categories": {
       "wellness": "Wellness Aktiviteleri",
       "sports": "Aktiviteler",
