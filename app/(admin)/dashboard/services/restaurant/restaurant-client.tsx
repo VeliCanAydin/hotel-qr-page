@@ -44,7 +44,7 @@ type MenuItemRow = { id: string; restaurantId: string }
 type Category = { id: string; label: string }
 type MenuForm = { name: string; description: string; price: number; isVegetarian: boolean; category: string; allergens?: string[] }
 
-const PROTECTED_IDS = ['a-la-carte', 'main-restaurant', 'snack-restaurant']
+
 const EMPTY_FORM: MenuForm = { name: '', description: '', price: 0, isVegetarian: false, category: '', allergens: [] }
 
 export default function RestaurantClient({
@@ -586,7 +586,7 @@ export default function RestaurantClient({
             </div>
           )}
           <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-between gap-2">
-            {!isAddMode && restaurantForm && !PROTECTED_IDS.includes(restaurantForm.id) && (
+            {!isAddMode && restaurantForm && (
               <Button variant="destructive" size="sm" onClick={() => setConfirmDeleteRestaurantId(restaurantForm.id)}>
                 Delete Restaurant
               </Button>
