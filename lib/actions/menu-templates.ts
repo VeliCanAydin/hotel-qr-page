@@ -72,7 +72,7 @@ export async function saveCurrentMenuAsTemplate(restaurantId: string, name: stri
       price: item.price,
       isVegetarian: item.isVegetarian,
       imageUrl: imageMap[item.id] ?? null,
-      allergens: JSON.stringify(Array.isArray(item.allergens) ? item.allergens : []),
+      allergens: typeof item.allergens === 'string' ? item.allergens : JSON.stringify(item.allergens ?? []),
       orderIndex: index,
     }))
     await db.insert(menuTemplateItems).values(templateItemValues)
@@ -119,7 +119,7 @@ export async function loadMenuTemplate(templateId: string, restaurantId: string)
       category: ti.category,
       price: ti.price,
       isVegetarian: ti.isVegetarian,
-      allergens: JSON.stringify(Array.isArray(ti.allergens) ? ti.allergens : []),
+      allergens: typeof ti.allergens === 'string' ? ti.allergens : JSON.stringify(ti.allergens ?? []),
       restaurantId,
     }))
     await db.insert(menuItems).values(newItems)

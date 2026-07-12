@@ -18,6 +18,10 @@ const ALLOWED = new Set([
   'egg',
   'sesame',
   'fish',
+  'milk',
+  'crustacean',
+  'soybean',
+  'mollusc',
 ])
 
 function fallbackSvg(name: string) {

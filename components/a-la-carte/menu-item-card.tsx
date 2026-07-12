@@ -29,6 +29,7 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
     const locale = useLocale()
     const [detailsOpen, setDetailsOpen] = useState(false)
     const [allergenMeta, setAllergenMeta] = useState<{ id: string; label: string; icon: string }[]>(STATIC_ALLERGENS)
+    const [expandedAllergenId, setExpandedAllergenId] = useState<string | null>(null)
 
     useEffect(() => {
         let mounted = true
@@ -56,12 +57,11 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
 
     return (
         <>
-            <button
-                type="button"
-                onClick={() => setDetailsOpen(true)}
-                className="flex w-full items-center gap-3 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 rounded-md"
-            >
-                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <div className="flex w-full items-center gap-3 py-4 text-left rounded-md">
+                <div 
+                    onClick={() => setDetailsOpen(true)}
+                    className="flex min-w-0 flex-1 flex-col gap-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                >
                     <div className="flex items-baseline justify-between gap-2">
                         <h3 className="flex items-center gap-1.5 font-semibold text-foreground truncate">
                             <span className="truncate">{item.name}</span>
@@ -82,9 +82,50 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
                     <p className="text-sm text-muted-foreground line-clamp-1">
                         {item.description}
                     </p>
+
+                    {allergens.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                            {allergens.map((a) => {
+                                const meta = allergenMeta.find((x) => x.id === a)
+                                const isExpanded = expandedAllergenId === a
+                                return (
+                                    <button
+                                        key={a}
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            setExpandedAllergenId(isExpanded ? null : a)
+                                        }}
+                                        className="inline-flex items-center rounded-full border bg-background hover:bg-muted/50 p-0.5 transition-all duration-300 ease-out shrink-0 select-none cursor-pointer"
+                                    >
+                                        <span className="inline-flex h-5 w-5 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-border shrink-0">
+                                            <img
+                                                src={meta?.icon ?? '/api/allergen-icons/nuts'}
+                                                alt=""
+                                                className="h-full w-full object-contain p-0.5"
+                                            />
+                                        </span>
+                                        <span 
+                                            className="overflow-hidden transition-all duration-300 ease-out flex items-center shrink-0"
+                                            style={{
+                                                maxWidth: isExpanded ? "120px" : "0px",
+                                                opacity: isExpanded ? 1 : 0,
+                                                paddingRight: isExpanded ? "6px" : "0px",
+                                                marginLeft: isExpanded ? "5px" : "0px",
+                                            }}
+                                        >
+                                            <span className="text-[10px] font-semibold text-foreground whitespace-nowrap">
+                                                {meta?.label ?? a}
+                                            </span>
+                                        </span>
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
-                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
-            </button>
+                <ChevronRight onClick={() => setDetailsOpen(true)} className="h-4 w-4 shrink-0 text-muted-foreground/60 cursor-pointer" />
+            </div>
             {showSeparator && <Separator />}
 
             <Drawer open={detailsOpen} onOpenChange={setDetailsOpen}>
