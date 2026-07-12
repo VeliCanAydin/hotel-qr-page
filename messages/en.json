@@ -430,6 +430,7 @@
     "steps": {
       "pending": "Pending",
       "confirmed": "Confirmed",
+      "on_the_way": "On the way",
       "delivered": "Delivered"
     },
     "orderTotal": "Total: €{amount}",

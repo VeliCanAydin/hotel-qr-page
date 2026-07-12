@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { verifyGuestToken, GUEST_SESSION_COOKIE } from '@/lib/auth'
+import { verifyGuestToken, verifyToken, GUEST_SESSION_COOKIE, SESSION_COOKIE } from '@/lib/auth'
 import { findActiveReservation } from '@/lib/reservations'
 
 export async function GET() {
@@ -9,6 +9,22 @@ export async function GET() {
   const cookieStore = await cookies()
 
   try {
+    // 1. Check admin/staff session
+    const adminToken = cookieStore.get(SESSION_COOKIE)?.value
+    if (adminToken) {
+      const payload = await verifyToken(adminToken)
+      if (payload) {
+        return NextResponse.json({
+          guest: {
+            guestName: 'Staff',
+            roomNumber: 'Staff',
+            isStaff: true,
+          },
+        })
+      }
+    }
+
+    // 2. Check guest session
     const token = cookieStore.get(GUEST_SESSION_COOKIE)?.value
 
     if (!token) {

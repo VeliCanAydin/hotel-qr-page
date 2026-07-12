@@ -15,12 +15,13 @@ import {
 import { cn } from "@/lib/utils"
 import { cancelGuestOrder, type OrderItem, type RoomServiceOrder } from "@/lib/actions/room-service-orders"
 
-const STEPS = ["pending", "confirmed", "delivered"] as const
+const STEPS = ["pending", "confirmed", "on_the_way", "delivered"] as const
 
 const STATUS_INDEX: Record<string, number> = {
   pending: 0,
   confirmed: 1,
-  delivered: 2,
+  on_the_way: 2,
+  delivered: 3,
 }
 
 export default function GuestOrderCard({ order }: { order: RoomServiceOrder }) {

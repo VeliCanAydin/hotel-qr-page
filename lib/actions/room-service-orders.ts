@@ -122,7 +122,7 @@ export async function countRoomServiceOrders(): Promise<number> {
   return db.$count(roomServiceOrders)
 }
 
-export type OrderStatus = 'confirmed' | 'delivered' | 'cancelled'
+export type OrderStatus = 'confirmed' | 'on_the_way' | 'delivered' | 'cancelled'
 
 export async function updateOrderStatus(
   orderId: number,

@@ -58,15 +58,37 @@ interface Message {
     timestamp: Date;
 }
 
-export default function AIAssistantClient({ isAuthorized }: { isAuthorized: boolean }) {
+export default function AIAssistantClient() {
     const t = useTranslations('ai');
     const locale = useLocale();
+    const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState<string | null>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        let mounted = true;
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/guest-context');
+                const data = await response.json();
+                if (mounted) {
+                    setIsAuthorized(!!data?.guest);
+                }
+            } catch {
+                if (mounted) {
+                    setIsAuthorized(false);
+                }
+            }
+        }
+        checkSession();
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     useEffect(() => {
         if (scrollAreaRef.current) {
@@ -147,6 +169,14 @@ export default function AIAssistantClient({ isAuthorized }: { isAuthorized: bool
             handleSubmit(e);
         }
     };
+
+    if (isAuthorized === null) {
+        return (
+            <div className="fixed inset-0 top-16 flex items-center justify-center bg-background">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 top-16 flex flex-col">

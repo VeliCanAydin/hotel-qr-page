@@ -433,6 +433,7 @@
     "steps": {
       "pending": "Ausstehend",
       "confirmed": "Bestätigt",
+      "on_the_way": "Unterwegs",
       "delivered": "Geliefert"
     },
     "orderTotal": "Gesamt: €{amount}",

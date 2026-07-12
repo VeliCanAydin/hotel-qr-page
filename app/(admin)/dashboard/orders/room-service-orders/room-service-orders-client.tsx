@@ -21,13 +21,13 @@ import {
 } from "@/components/ui/dialog"
 import {
   Search, CheckCircle2, PackageCheck, XCircle, Loader2,
-  User, ShieldCheck, FileText,
+  User, ShieldCheck, FileText, Truck
 } from "lucide-react"
 import type { RoomServiceOrder, OrderItem } from "@/lib/actions/room-service-orders"
 import { updateOrderStatus } from "@/lib/actions/room-service-orders"
 
-type StatusFilter = "all" | "pending" | "confirmed" | "delivered" | "cancelled"
-type OrderStatus = "confirmed" | "delivered" | "cancelled"
+type StatusFilter = "all" | "pending" | "confirmed" | "on_the_way" | "delivered" | "cancelled"
+type OrderStatus = "confirmed" | "on_the_way" | "delivered" | "cancelled"
 
 type PendingAction = {
   orderId: number
@@ -39,6 +39,7 @@ const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
   { value: "all", label: "All" },
   { value: "pending", label: "Pending" },
   { value: "confirmed", label: "Confirmed" },
+  { value: "on_the_way", label: "On the way" },
   { value: "delivered", label: "Delivered" },
   { value: "cancelled", label: "Cancelled" },
 ]
@@ -46,6 +47,7 @@ const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
 const STATUS_STYLE: Record<string, string> = {
   pending:   "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
   confirmed: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  on_the_way: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300",
   delivered: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
   cancelled: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
 }
@@ -55,6 +57,11 @@ const DIALOG_COPY: Record<OrderStatus, { title: string; description: (room: stri
     title: "Confirm Order",
     description: (room) => `Confirm the order for Room ${room}? The guest will be notified that their order is being prepared.`,
     confirm: "Yes, confirm",
+  },
+  on_the_way: {
+    title: "Mark as On the Way",
+    description: (room) => `Mark the order for Room ${room} as on the way? The guest will be notified that their order has been prepared and is coming.`,
+    confirm: "Yes, on the way",
   },
   delivered: {
     title: "Mark as Delivered",
@@ -304,6 +311,17 @@ export default function RoomServiceOrdersClient({
                     {order.status === "confirmed" && (
                       <Button
                         variant="ghost" size="icon"
+                        className="h-7 w-7 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-950"
+                        onClick={() => openActionDialog(order.id, "on_the_way", order.roomNumber)}
+                        disabled={isPending}
+                        title="Mark as on the way"
+                      >
+                        <Truck className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {order.status === "on_the_way" && (
+                      <Button
+                        variant="ghost" size="icon"
                         className="h-7 w-7 text-green-500 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
                         onClick={() => openActionDialog(order.id, "delivered", order.roomNumber)}
                         disabled={isPending}
@@ -312,7 +330,7 @@ export default function RoomServiceOrdersClient({
                         <PackageCheck className="h-4 w-4" />
                       </Button>
                     )}
-                    {(order.status === "pending" || order.status === "confirmed") && (
+                    {(order.status === "pending" || order.status === "confirmed" || order.status === "on_the_way") && (
                       <Button
                         variant="ghost" size="icon"
                         className="h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"

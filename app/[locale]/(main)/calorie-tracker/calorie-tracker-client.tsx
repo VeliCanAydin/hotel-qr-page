@@ -63,10 +63,11 @@ interface MealAnalysis {
     model_used?: string;
 }
 
-export default function CalorieTrackerClient({ isAuthorized }: { isAuthorized: boolean }) {
+export default function CalorieTrackerClient() {
     const t = useTranslations('calorie');
     const locale = useLocale();
     const [mounted, setMounted] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -94,8 +95,25 @@ export default function CalorieTrackerClient({ isAuthorized }: { isAuthorized: b
     const [todayStr, setTodayStr] = useState('');
 
     useEffect(() => {
+        let mountedActive = true;
         setMounted(true);
         setTodayStr(getLocalDateString());
+
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/guest-context');
+                const data = await response.json();
+                if (mountedActive) {
+                    setIsAuthorized(!!data?.guest);
+                }
+            } catch {
+                if (mountedActive) {
+                    setIsAuthorized(false);
+                }
+            }
+        }
+        checkSession();
+
         // Load data from localStorage
         const storedLogs = localStorage.getItem('guest-calorie-logs');
         const storedGoal = localStorage.getItem('guest-calorie-goal');
@@ -123,6 +141,10 @@ export default function CalorieTrackerClient({ isAuthorized }: { isAuthorized: b
             setGoalInputValue('2000');
             localStorage.setItem('guest-calorie-goal', '2000');
         }
+
+        return () => {
+            mountedActive = false;
+        };
     }, []);
 
     // Save states to localstorage
@@ -136,7 +158,7 @@ export default function CalorieTrackerClient({ isAuthorized }: { isAuthorized: b
         localStorage.setItem('guest-calorie-goal', dailyGoal !== null ? dailyGoal.toString() : 'none');
     }, [dailyGoal, mounted]);
 
-    if (!mounted) {
+    if (!mounted || isAuthorized === null) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

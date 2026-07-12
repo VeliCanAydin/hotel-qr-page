@@ -433,6 +433,7 @@
     "steps": {
       "pending": "В ожидании",
       "confirmed": "Подтверждён",
+      "on_the_way": "В пути",
       "delivered": "Доставлен"
     },
     "orderTotal": "Итого: €{amount}",

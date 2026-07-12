@@ -430,6 +430,7 @@
     "steps": {
       "pending": "Beklemede",
       "confirmed": "Onaylandı",
+      "on_the_way": "Yolda",
       "delivered": "Teslim Edildi"
     },
     "orderTotal": "Toplam: €{amount}",

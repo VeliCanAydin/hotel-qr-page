@@ -15,12 +15,18 @@ const portalUrl = (locale: Locale, path: '' | '/room-service' = '') => `/${local
 
 type PerLocale = Record<Locale, string>
 
-const ORDER_TITLES: Record<'confirmed' | 'delivered' | 'cancelled', PerLocale> = {
+const ORDER_TITLES: Record<'confirmed' | 'on_the_way' | 'delivered' | 'cancelled', PerLocale> = {
   confirmed: {
     en: 'Order confirmed',
     tr: 'Sipariş onaylandı',
     de: 'Bestellung bestätigt',
     ru: 'Заказ подтверждён',
+  },
+  on_the_way: {
+    en: 'Order on the way',
+    tr: 'Sipariş yolda',
+    de: 'Bestellung unterwegs',
+    ru: 'Заказ в пути',
   },
   delivered: {
     en: 'Order delivered',
@@ -36,12 +42,18 @@ const ORDER_TITLES: Record<'confirmed' | 'delivered' | 'cancelled', PerLocale> =
   },
 }
 
-const ORDER_BODIES: Record<'confirmed' | 'delivered' | 'cancelled', Record<Locale, (id: number) => string>> = {
+const ORDER_BODIES: Record<'confirmed' | 'on_the_way' | 'delivered' | 'cancelled', Record<Locale, (id: number) => string>> = {
   confirmed: {
     en: (id) => `Your room service order #${id} is being prepared.`,
     tr: (id) => `#${id} numaralı oda servisi siparişiniz hazırlanıyor.`,
     de: (id) => `Ihre Zimmerservice-Bestellung Nr. ${id} wird zubereitet.`,
     ru: (id) => `Ваш заказ в номер №${id} готовится.`,
+  },
+  on_the_way: {
+    en: (id) => `Your room service order #${id} has been prepared and is on the way.`,
+    tr: (id) => `#${id} numaralı oda servisi siparişiniz hazırlandı ve yola çıktı.`,
+    de: (id) => `Ihre Zimmerservice-Bestellung Nr. ${id} wurde zubereitet und ist unterwegs.`,
+    ru: (id) => `Ваш заказ в номер №${id} подготовлен и уже в пути.`,
   },
   delivered: {
     en: (id) => `Your room service order #${id} has been delivered. Enjoy!`,
@@ -59,7 +71,7 @@ const ORDER_BODIES: Record<'confirmed' | 'delivered' | 'cancelled', Record<Local
 
 export function orderStatusPush(
   rawLocale: string,
-  status: 'confirmed' | 'delivered' | 'cancelled',
+  status: 'confirmed' | 'on_the_way' | 'delivered' | 'cancelled',
   orderId: number,
   cancellationReason?: string,
 ): PushPayload {

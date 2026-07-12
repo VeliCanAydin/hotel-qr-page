@@ -19,16 +19,34 @@ interface LoggedMeal {
     date: string;
 }
 
-export default function CalorieHistoryClient({ isAuthorized }: { isAuthorized: boolean }) {
+export default function CalorieHistoryClient() {
     const t = useTranslations('calorie');
     const locale = useLocale();
     const [mounted, setMounted] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
     const [dailyLogs, setDailyLogs] = useState<LoggedMeal[]>([]);
     const [dailyGoal, setDailyGoal] = useState<number>(2000);
     const [expandedDates, setExpandedDates] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
+        let mountedActive = true;
         setMounted(true);
+
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/guest-context');
+                const data = await response.json();
+                if (mountedActive) {
+                    setIsAuthorized(!!data?.guest);
+                }
+            } catch {
+                if (mountedActive) {
+                    setIsAuthorized(false);
+                }
+            }
+        }
+        checkSession();
+
         const storedLogs = localStorage.getItem('guest-calorie-logs');
         const storedGoal = localStorage.getItem('guest-calorie-goal');
         
@@ -51,9 +69,13 @@ export default function CalorieHistoryClient({ isAuthorized }: { isAuthorized: b
             setDailyGoal(2000);
             localStorage.setItem('guest-calorie-goal', '2000');
         }
+
+        return () => {
+            mountedActive = false;
+        };
     }, []);
 
-    if (!mounted) {
+    if (!mounted || isAuthorized === null) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
