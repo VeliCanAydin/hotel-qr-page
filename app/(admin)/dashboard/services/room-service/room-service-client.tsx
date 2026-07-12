@@ -19,42 +19,52 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
-import { Plus, Pencil, Trash2 } from "lucide-react"
+import { Plus, Pencil, Trash2, X } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
-import { categoryLabels, type RoomServiceItem } from "@/lib/types/room-service"
+import { type RoomServiceItem, type RoomServiceCategory } from "@/lib/types/room-service"
 import {
   createRoomServiceItem,
   updateRoomServiceItem,
   deleteRoomServiceItem,
   setRoomServiceItemAvailability,
+  createRoomServiceCategory,
 } from "@/lib/actions/room-service-items"
-
-type Category = RoomServiceItem["category"]
-type TabValue = Category | "all"
-
-const TABS: { value: TabValue; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "food", label: "Food" },
-  { value: "beverages", label: "Beverages" },
-  { value: "other-services", label: "Other Services" },
-]
 
 const EMPTY_FORM: Omit<RoomServiceItem, "id"> = {
   name: "",
   description: "",
   price: 0,
-  category: "food",
+  category: "",
 }
 
-export default function RoomServiceClient({ initialItems }: { initialItems: RoomServiceItem[] }) {
+export default function RoomServiceClient({
+  initialItems,
+  initialCategories,
+}: {
+  initialItems: RoomServiceItem[]
+  initialCategories: RoomServiceCategory[]
+}) {
   const [items, setItems] = useState<RoomServiceItem[]>(initialItems)
-  const [activeTab, setActiveTab] = useState<TabValue>("all")
+  const [categories, setCategories] = useState<RoomServiceCategory[]>(initialCategories)
+  const [activeTab, setActiveTab] = useState<string>("all")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [editingItem, setEditingItem] = useState<RoomServiceItem | null>(null)
   const [form, setForm] = useState<Omit<RoomServiceItem, "id">>(EMPTY_FORM)
+  const [addingCategory, setAddingCategory] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState("")
+
+  const tabs = useMemo(
+    () => [
+      { value: "all", label: "All" },
+      ...categories.map((c) => ({ value: c.id, label: c.label })),
+    ],
+    [categories]
+  )
+
+  const categoryLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? id
 
   const filtered = useMemo(
     () => (activeTab === "all" ? items : items.filter((i) => i.category === activeTab)),
@@ -69,18 +79,33 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
 
   function openAdd() {
     setEditingItem(null)
-    setForm(EMPTY_FORM)
+    setForm({ ...EMPTY_FORM, category: categories[0]?.id ?? "" })
+    setAddingCategory(false)
     setDialogOpen(true)
   }
 
   function openEdit(item: RoomServiceItem) {
     setEditingItem(item)
     setForm({ name: item.name, description: item.description, price: item.price, category: item.category })
+    setAddingCategory(false)
     setDialogOpen(true)
   }
 
+  function handleAddCategory() {
+    const trimmed = newCategoryName.trim()
+    if (!trimmed) return
+    const id = trimmed.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")
+    if (!categories.some((c) => c.id === id)) {
+      setCategories((prev) => [...prev, { id, label: trimmed, orderIndex: prev.length }])
+      toast.promise(createRoomServiceCategory(id, trimmed), { loading: "Adding...", success: "Category added", error: "Failed" })
+    }
+    setForm((p) => ({ ...p, category: id }))
+    setAddingCategory(false)
+    setNewCategoryName("")
+  }
+
   function handleSave() {
-    if (!form.name.trim()) return
+    if (!form.name.trim() || !form.category) return
     if (editingItem) {
       const updated = { ...editingItem, ...form }
       setItems((prev) => prev.map((i) => (i.id === editingItem.id ? updated : i)))
@@ -130,9 +155,9 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabValue)}>
-        <TabsList>
-          {TABS.map((tab) => (
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="flex-wrap h-auto gap-1">
+          {tabs.map((tab) => (
             <TabsTrigger key={tab.value} value={tab.value} className="gap-2">
               {tab.label}
               <Badge variant="secondary" className="text-xs h-5 px-1.5">{counts[tab.value] ?? 0}</Badge>
@@ -158,7 +183,7 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
                   <TableRow key={item.id} className={item.isAvailable === false ? "opacity-60" : undefined}>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-xs">{categoryLabels[item.category]}</Badge>
+                      <Badge variant="outline" className="text-xs">{categoryLabel(item.category)}</Badge>
                     </TableCell>
                     <TableCell className="tabular-nums">
                       {item.price === 0 ? <Badge variant="secondary">Free</Badge> : `$${item.price.toFixed(2)}`}
@@ -235,20 +260,34 @@ export default function RoomServiceClient({ initialItems }: { initialItems: Room
               </div>
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Select value={form.category} onValueChange={(v) => setForm((p) => ({ ...p, category: v as Category }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="food">Food</SelectItem>
-                    <SelectItem value="beverages">Beverages</SelectItem>
-                    <SelectItem value="other-services">Other Services</SelectItem>
-                  </SelectContent>
-                </Select>
+                {addingCategory ? (
+                  <div className="flex gap-2">
+                    <Input autoFocus value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} placeholder="e.g. Desserts"
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCategory() } }} />
+                    <Button type="button" size="icon" variant="default" onClick={handleAddCategory} disabled={!newCategoryName.trim()}><Plus className="h-4 w-4" /></Button>
+                    <Button type="button" size="icon" variant="ghost" onClick={() => { setAddingCategory(false); setNewCategoryName("") }}><X className="h-4 w-4" /></Button>
+                  </div>
+                ) : (
+                  <Select value={form.category} onValueChange={(v) => {
+                    if (v === "__add_new__") { setAddingCategory(true); setNewCategoryName("") }
+                    else setForm((p) => ({ ...p, category: v }))
+                  }}>
+                    <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                    <SelectContent>
+                      {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>)}
+                      <SelectSeparator />
+                      <SelectItem value="__add_new__">
+                        <span className="flex items-center gap-2 text-muted-foreground"><Plus className="h-3.5 w-3.5" />Add Category...</span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={!form.name.trim()}>
+            <Button onClick={handleSave} disabled={!form.name.trim() || !form.category}>
               {editingItem ? "Save Changes" : "Add Item"}
             </Button>
           </DialogFooter>

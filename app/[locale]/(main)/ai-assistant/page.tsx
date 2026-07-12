@@ -2,11 +2,52 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import { Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
+function AssistantMarkdown({ content }: { content: string }) {
+    return (
+        <div className="text-sm leading-relaxed [&>*+*]:mt-2">
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkBreaks]}
+                components={{
+                    h1: ({ children }) => <h3 className="text-base font-semibold">{children}</h3>,
+                    h2: ({ children }) => <h3 className="text-base font-semibold">{children}</h3>,
+                    h3: ({ children }) => <h4 className="text-sm font-semibold">{children}</h4>,
+                    strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                    ul: ({ children }) => <ul className="list-disc pl-5 space-y-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1">{children}</ol>,
+                    a: ({ href, children }) => (
+                        <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                            {children}
+                        </a>
+                    ),
+                    code: ({ children }) => (
+                        <code className="rounded bg-foreground/10 px-1 py-0.5 font-mono text-xs">{children}</code>
+                    ),
+                    table: ({ children }) => (
+                        <div className="overflow-x-auto">
+                            <table className="w-full border-collapse text-xs [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th]:font-semibold">
+                                {children}
+                            </table>
+                        </div>
+                    ),
+                    blockquote: ({ children }) => (
+                        <blockquote className="border-l-2 border-foreground/20 pl-3 italic">{children}</blockquote>
+                    ),
+                }}
+            >
+                {content}
+            </ReactMarkdown>
+        </div>
+    );
+}
 
 interface Message {
     id: string;
@@ -192,7 +233,11 @@ export default function AIAssistantPage() {
                                                 </div>
                                             )}
 
-                                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                                            {message.role === 'assistant' ? (
+                                                <AssistantMarkdown content={message.content} />
+                                            ) : (
+                                                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                                            )}
                                             <span className="text-xs opacity-70 mt-2 block">
                                                 {message.timestamp.toLocaleTimeString(locale, {
                                                     hour: '2-digit',

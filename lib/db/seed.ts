@@ -4,7 +4,7 @@ loadEnvConfig(process.cwd())
 // Dynamic imports run after env is loaded
 async function seed() {
   const { db } = await import('./index')
-  const { menuItems, roomServiceItems, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, nearbyGuideItems: nearbyGuideItemsTable } = await import('./schema')
+  const { menuItems, roomServiceItems, roomServiceCategories, contentTranslations, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, nearbyGuideItems: nearbyGuideItemsTable } = await import('./schema')
   const { hashPassword } = await import('../auth')
   const { ADMIN_PAGE_PERMISSIONS, DEFAULT_ADMIN_ROLE_PRESETS } = await import('../permissions')
   const { menuItems: menuData } = await import('../data/a-la-carte-menu')
@@ -39,6 +39,30 @@ async function seed() {
     .onConflictDoNothing()
   console.log('Upserted 5 menu categories')
 
+  // Menu category tr/de/ru labels (content_translations; en lives in the base column)
+  const menuCategoryTranslations: Record<string, Record<string, string>> = {
+    appetizers: { tr: 'Başlangıçlar', de: 'Vorspeisen', ru: 'Закуски' },
+    'soups-salads': { tr: 'Çorbalar ve Salatalar', de: 'Suppen & Salate', ru: 'Супы и салаты' },
+    'main-courses': { tr: 'Ana Yemekler', de: 'Hauptgerichte', ru: 'Основные блюда' },
+    sides: { tr: 'Garnitürler', de: 'Beilagen', ru: 'Гарниры' },
+    desserts: { tr: 'Tatlılar', de: 'Desserts', ru: 'Десерты' },
+  }
+  await db
+    .insert(contentTranslations)
+    .values(
+      Object.entries(menuCategoryTranslations).flatMap(([entityId, locales]) =>
+        Object.entries(locales).map(([locale, value]) => ({
+          entityType: 'menu_category',
+          entityId,
+          locale,
+          field: 'label',
+          value,
+        }))
+      )
+    )
+    .onConflictDoNothing()
+  console.log('Upserted menu category translations')
+
   // Allergens (upsert from static list)
   try {
     const { ALLERGENS: staticAllergens } = await import('../data/allergens')
@@ -47,6 +71,34 @@ async function seed() {
       staticAllergens.map((a: any, idx: number) => ({ id: a.id, label: a.label, iconPath: a.icon, orderIndex: idx }))
     ).onConflictDoNothing()
     console.log(`Upserted ${staticAllergens.length} allergens`)
+
+    // Allergen tr/de/ru labels (content_translations; en lives in the base column)
+    const allergenTranslations: Record<string, Record<string, string>> = {
+      nuts: { tr: 'Kuruyemiş', de: 'Schalenfrüchte', ru: 'Орехи' },
+      peanut: { tr: 'Yer Fıstığı', de: 'Erdnüsse', ru: 'Арахис' },
+      gluten: { tr: 'Glüten', de: 'Gluten', ru: 'Глютен' },
+      dairy: { tr: 'Süt Ürünleri', de: 'Milchprodukte', ru: 'Молочные продукты' },
+      shellfish: { tr: 'Kabuklu Deniz Ürünleri', de: 'Krebstiere', ru: 'Ракообразные' },
+      soy: { tr: 'Soya', de: 'Soja', ru: 'Соя' },
+      egg: { tr: 'Yumurta', de: 'Ei', ru: 'Яйцо' },
+      sesame: { tr: 'Susam', de: 'Sesam', ru: 'Кунжут' },
+      fish: { tr: 'Balık', de: 'Fisch', ru: 'Рыба' },
+    }
+    await db
+      .insert(contentTranslations)
+      .values(
+        Object.entries(allergenTranslations).flatMap(([entityId, locales]) =>
+          Object.entries(locales).map(([locale, value]) => ({
+            entityType: 'allergen',
+            entityId,
+            locale,
+            field: 'label',
+            value,
+          }))
+        )
+      )
+      .onConflictDoNothing()
+    console.log('Upserted allergen translations')
   } catch (err) {
     console.warn('Failed to seed allergens table, continuing without it', err)
   }
@@ -64,6 +116,36 @@ async function seed() {
     }))
   )
   console.log(`Inserted ${menuData.length} menu items`)
+
+  // Room service categories (upsert) + their tr/de/ru labels in content_translations
+  await db
+    .insert(roomServiceCategories)
+    .values([
+      { id: 'food', label: 'Food', orderIndex: 0 },
+      { id: 'beverages', label: 'Beverages', orderIndex: 1 },
+      { id: 'other-services', label: 'Other Services', orderIndex: 2 },
+    ])
+    .onConflictDoNothing()
+  const roomServiceCategoryTranslations: Record<string, Record<string, string>> = {
+    food: { tr: 'Yemek', de: 'Speisen', ru: 'Еда' },
+    beverages: { tr: 'İçecekler', de: 'Getränke', ru: 'Напитки' },
+    'other-services': { tr: 'Diğer Hizmetler', de: 'Weitere Services', ru: 'Другие услуги' },
+  }
+  await db
+    .insert(contentTranslations)
+    .values(
+      Object.entries(roomServiceCategoryTranslations).flatMap(([entityId, locales]) =>
+        Object.entries(locales).map(([locale, value]) => ({
+          entityType: 'room_service_category',
+          entityId,
+          locale,
+          field: 'label',
+          value,
+        }))
+      )
+    )
+    .onConflictDoNothing()
+  console.log('Upserted 3 room service categories (+ translations)')
 
   await db.delete(roomServiceItems)
   await db.insert(roomServiceItems).values(

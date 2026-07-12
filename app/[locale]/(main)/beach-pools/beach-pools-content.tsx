@@ -13,66 +13,46 @@ import { Separator } from "@/components/ui/separator"
 import ArtisticGallery from "@/components/beach-pools/artistic-gallery"
 import type { BeachPoolsInfoData } from "@/lib/actions/beach-pools"
 
+// `altKey` resolves to beachPools.alts.* in messages/*.json so alt texts follow the locale
 const beachImages = [
-  {
-    src: "/dosinia_luxury_resort_beach_building.jpeg",
-    alt: "Dosinia beach building by the shore",
-  },
-  {
-    src: "/dosinia_luxury_resort_beach_relax_pool.jpeg",
-    alt: "Relax pool right next to the beach",
-  },
-  {
-    src: "/dosinia_luxury_resort_beach_relax_pool_3.jpeg",
-    alt: "Beach area with loungers and relax pool",
-  },
-  {
-    src: "/DJI_0712.jpeg",
-    alt: "Aerial view of the resort and beachfront",
-  },
-]
+  { src: "/dosinia_luxury_resort_beach_building.jpeg", altKey: "beachBuilding" },
+  { src: "/dosinia_luxury_resort_beach_relax_pool.jpeg", altKey: "beachRelaxPool" },
+  { src: "/dosinia_luxury_resort_beach_relax_pool_3.jpeg", altKey: "beachLoungers" },
+  { src: "/DJI_0712.jpeg", altKey: "aerial" },
+] as const
 
 const poolImages = [
-  {
-    src: "/dosinia_luxury_resort_main_pool_2.jpeg",
-    alt: "Main swimming pool",
-  },
-  {
-    src: "/dosinia_luxury_resort_swimup_pool.png",
-    alt: "Swim-up pool by the garden rooms",
-  },
-  {
-    src: "/dosinia_luxury_resort_relax_pool_4.jpeg",
-    alt: "Relax pool area",
-  },
-]
+  { src: "/dosinia_luxury_resort_main_pool_2.jpeg", altKey: "mainPool" },
+  { src: "/dosinia_luxury_resort_swimup_pool.png", altKey: "swimUpPool" },
+  { src: "/dosinia_luxury_resort_relax_pool_4.jpeg", altKey: "relaxPool" },
+] as const
 
 const galleryImages = [
-  { src: "/575095538_18372313171156394_5179972881440193234_n.jpeg", alt: "Resort social media photo 1" },
-  { src: "/582755746_18374053246156394_6228755626112007029_n.jpeg", alt: "Resort social media photo 2" },
-  { src: "/588773685_18374833636156394_6943793457544007078_n.jpeg", alt: "Resort social media photo 3" },
-  { src: "/DJI_0712.jpeg", alt: "Aerial drone view of the resort" },
-  { src: "/dosinia_luxury_resort_beach_building.jpeg", alt: "Luxury resort beach building view" },
-  { src: "/dosinia_luxury_resort_beach_relax_pool_3.jpeg", alt: "Relax pool near the beach area" },
-  { src: "/dosinia_luxury_resort_beach_relax_pool.jpeg", alt: "Serene beach relax pool" },
-  { src: "/dosinia_luxury_resort_main_building_front_view_main_pool.jpeg", alt: "Main building front view with pool" },
-  { src: "/dosinia_luxury_resort_main_building_side_view_relax_pool.jpeg", alt: "Side view of main building and relax pool" },
-  { src: "/dosinia_luxury_resort_main_pool_2.jpeg", alt: "Main swimming pool view 2" },
-  { src: "/dosinia_luxury_resort_main_pool_3.jpeg", alt: "Main swimming pool view 3" },
-  { src: "/dosinia_luxury_resort_main_pool_6.jpeg", alt: "Main swimming pool view 6" },
-  { src: "/dosinia_luxury_resort_main_pool_7.jpeg", alt: "Main swimming pool view 7" },
-  { src: "/dosinia_luxury_resort_relax_pool_4.jpeg", alt: "Relax pool area view 4" },
-  { src: "/dosinia_luxury_resort_relax_pool_swim_up_rooms.jpeg", alt: "Swim-up rooms connecting to relax pool" },
-  { src: "/dosinia_luxury_resort_swimup_and_relax_pools_3.jpeg", alt: "Swim-up and relax pools intersection" },
-  { src: "/dosinia_luxury_resort_swimup_bird_eye_3.jpeg", alt: "Bird's eye view of swim-up pool" },
-  { src: "/dosinia_luxury_resort_swimup_pool.png", alt: "Swim-up pool overview" },
-  { src: "/dosinia_luxury_resort_swimup_relax_pools_and_garden_building.jpeg", alt: "Garden building with swim-up and relax pools" },
-  { src: "/EVG02802-e1725611418337.jpeg", alt: "Resort event or facility detail 1" },
-  { src: "/EVG02862-e1725611444365.jpeg", alt: "Resort event or facility detail 2" },
-  { src: "/EVG03060-e1725611459196.jpeg", alt: "Resort event or facility detail 3" },
-  { src: "/EVG03293-e1725611480586.jpeg", alt: "Resort event or facility detail 4" },
-  { src: "/plaj.jpeg", alt: "Beautiful sandy beach view" },
-]
+  { src: "/575095538_18372313171156394_5179972881440193234_n.jpeg", altKey: "social" },
+  { src: "/582755746_18374053246156394_6228755626112007029_n.jpeg", altKey: "social" },
+  { src: "/588773685_18374833636156394_6943793457544007078_n.jpeg", altKey: "social" },
+  { src: "/DJI_0712.jpeg", altKey: "aerial" },
+  { src: "/dosinia_luxury_resort_beach_building.jpeg", altKey: "beachBuilding" },
+  { src: "/dosinia_luxury_resort_beach_relax_pool_3.jpeg", altKey: "beachLoungers" },
+  { src: "/dosinia_luxury_resort_beach_relax_pool.jpeg", altKey: "beachRelaxPool" },
+  { src: "/dosinia_luxury_resort_main_building_front_view_main_pool.jpeg", altKey: "mainBuildingFront" },
+  { src: "/dosinia_luxury_resort_main_building_side_view_relax_pool.jpeg", altKey: "mainBuildingSide" },
+  { src: "/dosinia_luxury_resort_main_pool_2.jpeg", altKey: "mainPool" },
+  { src: "/dosinia_luxury_resort_main_pool_3.jpeg", altKey: "mainPool" },
+  { src: "/dosinia_luxury_resort_main_pool_6.jpeg", altKey: "mainPool" },
+  { src: "/dosinia_luxury_resort_main_pool_7.jpeg", altKey: "mainPool" },
+  { src: "/dosinia_luxury_resort_relax_pool_4.jpeg", altKey: "relaxPool" },
+  { src: "/dosinia_luxury_resort_relax_pool_swim_up_rooms.jpeg", altKey: "swimUpRooms" },
+  { src: "/dosinia_luxury_resort_swimup_and_relax_pools_3.jpeg", altKey: "swimUpRelaxPools" },
+  { src: "/dosinia_luxury_resort_swimup_bird_eye_3.jpeg", altKey: "swimUpPool" },
+  { src: "/dosinia_luxury_resort_swimup_pool.png", altKey: "swimUpPool" },
+  { src: "/dosinia_luxury_resort_swimup_relax_pools_and_garden_building.jpeg", altKey: "gardenBuilding" },
+  { src: "/EVG02802-e1725611418337.jpeg", altKey: "facility" },
+  { src: "/EVG02862-e1725611444365.jpeg", altKey: "facility" },
+  { src: "/EVG03060-e1725611459196.jpeg", altKey: "facility" },
+  { src: "/EVG03293-e1725611480586.jpeg", altKey: "facility" },
+  { src: "/plaj.jpeg", altKey: "sandyBeach" },
+] as const
 
 function formatHours(open: string | null, close: string | null) {
   if (!open || !close) return null
@@ -86,7 +66,7 @@ export default async function BeachPoolsContent({ info }: { info: BeachPoolsInfo
       <section className="relative h-[50vh] min-h-100 overflow-hidden">
         <Image
           src="/plaj.jpeg"
-          alt="Beach & Pools Hero"
+          alt={t("alts.hero")}
           fill
           className="object-cover"
           loading="eager"
@@ -126,7 +106,7 @@ export default async function BeachPoolsContent({ info }: { info: BeachPoolsInfo
               {beachImages.map((image, index) => (
                 <CarouselItem key={index}>
                   <div className="relative aspect-video rounded-xl overflow-hidden">
-                    <Image src={image.src} alt={image.alt} fill className="object-cover" />
+                    <Image src={image.src} alt={t(`alts.${image.altKey}`)} fill className="object-cover" />
                   </div>
                 </CarouselItem>
               ))}
@@ -161,7 +141,7 @@ export default async function BeachPoolsContent({ info }: { info: BeachPoolsInfo
               {poolImages.map((image, index) => (
                 <CarouselItem key={index}>
                   <div className="relative aspect-video rounded-xl overflow-hidden">
-                    <Image src={image.src} alt={image.alt} fill className="object-cover" />
+                    <Image src={image.src} alt={t(`alts.${image.altKey}`)} fill className="object-cover" />
                   </div>
                 </CarouselItem>
               ))}
@@ -227,7 +207,7 @@ export default async function BeachPoolsContent({ info }: { info: BeachPoolsInfo
             </p>
           </div>
         </div>
-        <ArtisticGallery images={galleryImages} />
+        <ArtisticGallery images={galleryImages.map((image) => ({ src: image.src, alt: t(`alts.${image.altKey}`) }))} />
       </section>
     </div>
   )

@@ -97,6 +97,12 @@ export const roomServiceItems = pgTable('room_service_items', {
   isAvailable: boolean('is_available').notNull().default(true),
 })
 
+export const roomServiceCategories = pgTable('room_service_categories', {
+  id: text('id').primaryKey(),
+  label: text('label').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
 export const events = pgTable('events', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),

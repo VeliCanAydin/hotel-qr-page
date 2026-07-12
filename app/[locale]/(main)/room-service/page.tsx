@@ -1,10 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ServiceItemCard } from '@/components/room-service/service-item-card'
-import { type RoomServiceItem } from '@/lib/types/room-service'
-import { getPublicRoomServiceItems } from '@/lib/content'
-
-const CATEGORIES = ['food', 'beverages', 'other-services'] as const
+import { getPublicRoomServiceItems, getPublicRoomServiceCategories } from '@/lib/content'
 
 export default async function RoomService({
   params,
@@ -14,10 +11,22 @@ export default async function RoomService({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations('roomService')
-  const items = await getPublicRoomServiceItems(locale)
+  const [items, allCategories] = await Promise.all([
+    getPublicRoomServiceItems(locale),
+    getPublicRoomServiceCategories(locale),
+  ])
 
-  const getByCategory = (category: string) =>
-    items.filter((item) => item.category === category)
+  // Only show categories that actually have items, preserving DB order
+  const itemCategoryIds = new Set(items.map((item) => item.category))
+  const activeCategories = allCategories.filter((c) => itemCategoryIds.has(c.id))
+
+  // Catch any categories in the items that aren't in roomServiceCategories yet
+  const knownIds = new Set(allCategories.map((c) => c.id))
+  const extraCategories = [...itemCategoryIds]
+    .filter((id) => !knownIds.has(id))
+    .map((id) => ({ id, label: id, orderIndex: 999 }))
+
+  const categories = [...activeCategories, ...extraCategories]
 
   return (
     <div className="p-4">
@@ -26,25 +35,27 @@ export default async function RoomService({
         {t('subtitle')}
       </p>
 
-      <Tabs defaultValue="food" className="w-full">
-        <TabsList className="w-full grid grid-cols-3 mb-4">
-          {CATEGORIES.map((category) => (
-            <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">
-              {t(`categories.${category}`)}
+      <Tabs defaultValue={categories[0]?.id} className="w-full">
+        <TabsList className="mb-4 w-full justify-start gap-2 overflow-x-auto">
+          {categories.map((category) => (
+            <TabsTrigger key={category.id} value={category.id} className="text-xs sm:text-sm">
+              {category.label}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {CATEGORIES.map((category) => (
-          <TabsContent key={category} value={category}>
+        {categories.map((category) => (
+          <TabsContent key={category.id} value={category.id}>
             <div className="space-y-0">
-              {getByCategory(category).map((item, index, array) => (
-                <ServiceItemCard
-                  key={item.id}
-                  item={item as RoomServiceItem}
-                  showSeparator={index !== array.length - 1}
-                />
-              ))}
+              {items
+                .filter((item) => item.category === category.id)
+                .map((item, index, array) => (
+                  <ServiceItemCard
+                    key={item.id}
+                    item={item}
+                    showSeparator={index !== array.length - 1}
+                  />
+                ))}
             </div>
           </TabsContent>
         ))}

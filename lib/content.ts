@@ -25,6 +25,7 @@ import {
   menuItemImages,
   menuItems,
   restaurants,
+  roomServiceCategories,
   roomServiceItems,
 } from '@/lib/db/schema'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
@@ -102,6 +103,19 @@ export async function getPublicRoomServiceItems(locale: string) {
   // Sold-out items are hidden from guests; the admin page reads the table directly.
   const rows = await db.select().from(roomServiceItems).where(eq(roomServiceItems.isAvailable, true))
   return translateRows('room_service_item', locale, rows, TRANSLATABLE_ENTITIES.room_service_item.fields)
+}
+
+export async function getPublicRoomServiceCategories(locale: string) {
+  'use cache'
+  cacheTag(CONTENT_TAGS.roomServiceItems, CONTENT_TAGS.translations)
+  cacheLife('hours')
+  const rows = await db.select().from(roomServiceCategories).orderBy(asc(roomServiceCategories.orderIndex))
+  return translateRows(
+    'room_service_category',
+    locale,
+    rows,
+    TRANSLATABLE_ENTITIES.room_service_category.fields,
+  )
 }
 
 export async function getPublicEvents(locale: string) {

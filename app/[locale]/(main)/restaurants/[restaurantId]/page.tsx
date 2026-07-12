@@ -71,8 +71,8 @@ export default async function RestaurantMenuPage({
     <div className="p-4">
       <h2 className="text-3xl font-bold mb-4">{restaurant.name}</h2>
 
-      <Tabs defaultValue={categories[0]?.id}>
-        <TabsList className="mb-4 w-full gap-2 overflow-x-auto">
+      <Tabs defaultValue={categories[0]?.id} className="w-full">
+        <TabsList className="mb-4 w-full justify-start gap-2 overflow-x-auto">
           {categories.map((category) => (
             <TabsTrigger key={category.id} value={category.id}>
               {category.label}

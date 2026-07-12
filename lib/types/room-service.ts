@@ -3,13 +3,13 @@ export interface RoomServiceItem {
     name: string;
     description: string;
     price: number;
-    category: 'food' | 'beverages' | 'other-services';
+    category: string;
     allergens?: string[];
     isAvailable?: boolean;
 }
 
-export const categoryLabels: Record<RoomServiceItem['category'], string> = {
-    'food': 'Food',
-    'beverages': 'Beverages',
-    'other-services': 'Other Services',
+export interface RoomServiceCategory {
+    id: string;
+    label: string;
+    orderIndex: number;
 }

@@ -16,6 +16,7 @@ import {
   menuItems,
   nearbyGuideItems,
   restaurants,
+  roomServiceCategories,
   roomServiceItems,
   spaServices,
   wellnessServices,
@@ -159,6 +160,14 @@ const ENTITY_SOURCES: Record<TranslatableEntityType, () => Promise<SourceRecord[
   },
   menu_category: async () => {
     const rows = await db.select().from(menuCategories).orderBy(asc(menuCategories.orderIndex))
+    return rows.map((row) => ({
+      id: row.id,
+      label: row.label,
+      values: { label: row.label },
+    }))
+  },
+  room_service_category: async () => {
+    const rows = await db.select().from(roomServiceCategories).orderBy(asc(roomServiceCategories.orderIndex))
     return rows.map((row) => ({
       id: row.id,
       label: row.label,

@@ -2,7 +2,8 @@
   "common": {
     "backToHome": "Ana Sayfaya Dön",
     "loading": "Yükleniyor…",
-    "toggleTheme": "Temayı değiştir"
+    "toggleTheme": "Temayı değiştir",
+    "close": "Kapat"
   },
   "header": {
     "changeLanguage": "Dili değiştir",
@@ -32,19 +33,58 @@
     "signInAsStaff": "Personel Olarak Giriş Yap"
   },
   "home": {
-    "hotelInfo": { "title": "Otel Bilgisi", "description": "Otel hakkında" },
-    "restaurants": { "title": "Restoranlar", "description": "Menüler ve yemek seçenekleri" },
-    "kidsCare": { "title": "Çocuk Bakımı", "description": "Çocuk bakım hizmetleri" },
-    "beach": { "title": "Plaj", "description": "Özel plaj erişimi ve bilgileri" },
-    "spa": { "title": "Spa", "description": "Masaj ve bakımlar" },
-    "wellness": { "title": "Wellness", "description": "Fitness, yoga ve aktiviteler" },
-    "roomService": { "title": "Oda Servisi", "description": "Odaya servis" },
-    "calorieTracker": { "title": "Kalori Takibi", "description": "Öğünlerinizi ve günlük kalori alımınızı takip edin" },
-    "aiAssistant": { "title": "AI Asistan", "description": "Anında yardım ve destek" },
-    "events": { "title": "Etkinlikler", "description": "Oteldeki yaklaşan etkinlikler" },
-    "personalizedStay": { "title": "Konaklamanı Kişiselleştir", "description": "Gün gün etkinlik programı oluşturun" },
-    "feedback": { "title": "Geri Bildirim ve Destek", "description": "Görüş paylaşın veya sorun bildirin" },
-    "nearbyGuide": { "title": "Yakın Çevre Rehberi", "description": "En yakın eczane, market ve otobüs durağı" }
+    "hotelInfo": {
+      "title": "Otel Bilgisi",
+      "description": "Otel hakkında"
+    },
+    "restaurants": {
+      "title": "Restoranlar",
+      "description": "Menüler ve yemek seçenekleri"
+    },
+    "kidsCare": {
+      "title": "Çocuk Bakımı",
+      "description": "Çocuk bakım hizmetleri"
+    },
+    "beach": {
+      "title": "Plaj",
+      "description": "Özel plaj erişimi ve bilgileri"
+    },
+    "spa": {
+      "title": "Spa",
+      "description": "Masaj ve bakımlar"
+    },
+    "wellness": {
+      "title": "Wellness",
+      "description": "Fitness, yoga ve aktiviteler"
+    },
+    "roomService": {
+      "title": "Oda Servisi",
+      "description": "Odaya servis"
+    },
+    "calorieTracker": {
+      "title": "Kalori Takibi",
+      "description": "Öğünlerinizi ve günlük kalori alımınızı takip edin"
+    },
+    "aiAssistant": {
+      "title": "AI Asistan",
+      "description": "Anında yardım ve destek"
+    },
+    "events": {
+      "title": "Etkinlikler",
+      "description": "Oteldeki yaklaşan etkinlikler"
+    },
+    "personalizedStay": {
+      "title": "Konaklamanı Kişiselleştir",
+      "description": "Gün gün etkinlik programı oluşturun"
+    },
+    "feedback": {
+      "title": "Geri Bildirim ve Destek",
+      "description": "Görüş paylaşın veya sorun bildirin"
+    },
+    "nearbyGuide": {
+      "title": "Yakın Çevre Rehberi",
+      "description": "En yakın eczane, market ve otobüs durağı"
+    }
   },
   "spa": {
     "badge": "Rahatla & Yenilen",
@@ -103,16 +143,29 @@
     "galleryIntro": "Muhteşem fotoğraflarla plaj ve havuz alanlarımızı keşfedin.",
     "galleryDesktop": "Tam boyutta görmek için herhangi bir görsele tıklayın veya hızlı önizleme için basılı tutun.",
     "galleryMobile": "Tam boyut için dokunun veya hızlı önizleme için basılı tutun.",
-    "galleryReleaseHint": "Kapatmak için bırakın • Galeriyi açmak için dokunun"
+    "galleryReleaseHint": "Kapatmak için bırakın • Galeriyi açmak için dokunun",
+    "alts": {
+      "hero": "Dosinia Luxury Resort'ta plaj ve havuzlar",
+      "beachBuilding": "Sahildeki plaj binası",
+      "beachRelaxPool": "Plajın hemen yanındaki dinlenme havuzu",
+      "beachLoungers": "Şezlonglu plaj alanı ve dinlenme havuzu",
+      "aerial": "Tesisin ve sahilin havadan görünümü",
+      "mainPool": "Ana yüzme havuzu",
+      "swimUpPool": "Swim-up havuz",
+      "relaxPool": "Dinlenme havuzu alanı",
+      "social": "Tesis fotoğrafı",
+      "mainBuildingFront": "Ana binanın havuzlu ön görünümü",
+      "mainBuildingSide": "Ana bina ve dinlenme havuzunun yan görünümü",
+      "swimUpRooms": "Dinlenme havuzuna bağlanan swim-up odalar",
+      "swimUpRelaxPools": "Swim-up ve dinlenme havuzları",
+      "gardenBuilding": "Swim-up ve dinlenme havuzlarıyla bahçe binası",
+      "facility": "Tesis detayı",
+      "sandyBeach": "Kumsal manzarası"
+    }
   },
   "roomService": {
     "title": "Oda Servisi",
     "subtitle": "Odanıza yemek, içecek sipariş edin ve hizmet talep edin.",
-    "categories": {
-      "food": "Yemek",
-      "beverages": "İçecekler",
-      "other-services": "Diğer Hizmetler"
-    },
     "free": "Ücretsiz",
     "add": "Ekle"
   },
@@ -167,7 +220,8 @@
     "notAvailable": "Menü henüz mevcut değil."
   },
   "menuItemCard": {
-    "vegetarian": "VEJETARYEN"
+    "vegetarian": "VEJETARYEN",
+    "allergens": "Alerjenler"
   },
   "events": {
     "title": "Etkinlikler",
@@ -250,7 +304,12 @@
     "targetLabel": "Hedef: {goal} kcal",
     "remaining": "{n} kcal kaldı",
     "overTarget": "{n} kcal hedefin üzerinde",
-    "mealTypes": { "Breakfast": "Kahvaltı", "Lunch": "Öğle Yemeği", "Dinner": "Akşam Yemeği", "Snack": "Atıştırmalık" },
+    "mealTypes": {
+      "Breakfast": "Kahvaltı",
+      "Lunch": "Öğle Yemeği",
+      "Dinner": "Akşam Yemeği",
+      "Snack": "Atıştırmalık"
+    },
     "toastImageFile": "Lütfen bir görsel dosyası yükleyin.",
     "toastChooseFirst": "Lütfen önce bir görsel seçin veya çekin.",
     "toastAnalyzed": "Yemek tabağı başarıyla analiz edildi!",
@@ -298,7 +357,11 @@
   },
   "portal": {
     "welcomeBack": "Tekrar hoş geldiniz",
-    "status": { "confirmed": "Onaylandı", "checked-in": "Giriş Yapıldı", "checked-out": "Çıkış Yapıldı" },
+    "status": {
+      "confirmed": "Onaylandı",
+      "checked-in": "Giriş Yapıldı",
+      "checked-out": "Çıkış Yapıldı"
+    },
     "checkIn": "Giriş",
     "checkOut": "Çıkış",
     "nightsLeft": "{n, plural, other {# gece kaldı}}",
@@ -314,13 +377,32 @@
     "board": "Pansiyon",
     "guests": "Misafirler",
     "childrenSuffix": " + {count, plural, other {# çocuk}}",
-    "boardTypes": { "room-only": "Sadece Oda", "bed-breakfast": "Oda & Kahvaltı", "half-board": "Yarım Pansiyon", "full-board": "Tam Pansiyon", "all-inclusive": "Her Şey Dahil" },
-    "roomTypes": { "standard": "Standart", "deluxe": "Deluxe", "suite": "Suit", "villa": "Villa" },
-    "tabs": { "myStay": "Konaklamam", "roomService": "Oda Servisi", "feedback": "Geri Bildirim" },
+    "boardTypes": {
+      "room-only": "Sadece Oda",
+      "bed-breakfast": "Oda & Kahvaltı",
+      "half-board": "Yarım Pansiyon",
+      "full-board": "Tam Pansiyon",
+      "all-inclusive": "Her Şey Dahil"
+    },
+    "roomTypes": {
+      "standard": "Standart",
+      "deluxe": "Deluxe",
+      "suite": "Suit",
+      "villa": "Villa"
+    },
+    "tabs": {
+      "myStay": "Konaklamam",
+      "roomService": "Oda Servisi",
+      "feedback": "Geri Bildirim"
+    },
     "noOrders": "Henüz sipariş yok",
     "noOrdersDesc": "Oda servisi siparişleriniz verdiğinizde burada görünecek.",
     "orderNumber": "Sipariş #{id}",
-    "steps": { "pending": "Beklemede", "confirmed": "Onaylandı", "delivered": "Teslim Edildi" },
+    "steps": {
+      "pending": "Beklemede",
+      "confirmed": "Onaylandı",
+      "delivered": "Teslim Edildi"
+    },
     "orderTotal": "Toplam: €{amount}",
     "cancelOrder": "Siparişi İptal Et #{id}",
     "cancelConfirm": "Bu siparişi iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
@@ -366,7 +448,12 @@
     "commentPlaceholder": "Neyi sevdiğinizi veya neyi geliştirebileceğimizi söyleyin…",
     "submitFeedback": "Geri Bildirim Gönder",
     "submitting": "Gönderiliyor…",
-    "fbCategories": { "cleanliness": "Temizlik", "staff": "Personel & Hizmet", "comfort": "Konfor", "food": "Yiyecek & İçecek" }
+    "fbCategories": {
+      "cleanliness": "Temizlik",
+      "staff": "Personel & Hizmet",
+      "comfort": "Konfor",
+      "food": "Yiyecek & İçecek"
+    }
   },
   "footer": {
     "makeReservation": "Rezervasyon Yap",
@@ -471,9 +558,27 @@
       "housekeeping": "Kat Hizmetleri",
       "other": "Diğer"
     },
-    "tripTypes": { "business": "İş", "leisure": "Tatil", "family": "Aile", "solo": "Yalnız", "couple": "Çift" },
-    "ratingCategories": { "cleanliness": "Temizlik", "staff": "Personel & Hizmet", "comfort": "Konfor", "value": "Fiyat/Performans", "food": "Yiyecek & İçecek" },
-    "ratingLabels": { "1": "Kötü", "2": "İdare eder", "3": "İyi", "4": "Çok iyi", "5": "Mükemmel" }
+    "tripTypes": {
+      "business": "İş",
+      "leisure": "Tatil",
+      "family": "Aile",
+      "solo": "Yalnız",
+      "couple": "Çift"
+    },
+    "ratingCategories": {
+      "cleanliness": "Temizlik",
+      "staff": "Personel & Hizmet",
+      "comfort": "Konfor",
+      "value": "Fiyat/Performans",
+      "food": "Yiyecek & İçecek"
+    },
+    "ratingLabels": {
+      "1": "Kötü",
+      "2": "İdare eder",
+      "3": "İyi",
+      "4": "Çok iyi",
+      "5": "Mükemmel"
+    }
   },
   "cookiePolicy": {
     "title": "Çerez Politikası",
@@ -500,10 +605,22 @@
     "intro": "Bu bildirim, 6698 sayılı Kişisel Verilerin Korunması Kanunu'nun (\"KVKK\") 10. maddesi uyarınca sunulmaktadır. Veri sorumlusu olarak <strong>Dosinia Luxury Hotel</strong> (Kemer, Antalya, Türkiye), bu web sitesi aracılığıyla paylaştığınız kişisel verileri özenle ve yalnızca aşağıda açıklanan amaçlarla işler.",
     "dataWeProcess": "İşlediğimiz Veriler ve Nedenleri",
     "data": {
-      "identity": { "title": "Kimlik & Konaklama Bilgileri", "detail": "Ad, soyad ve oda numarası — misafir portalına giriş yaptığınızda rezervasyonunuzu doğrulamak ve oda servisi siparişlerini teslim etmek için kullanılır." },
-      "contact": { "title": "İletişim Bilgileri", "detail": "Geri bildiriminizle birlikte vermeyi seçerseniz e-posta adresi — yalnızca yorumlarınızı takip etmek için kullanılır." },
-      "requests": { "title": "Talepler & Geri Bildirim", "detail": "Değerlendirmeler, yorumlar, destek ve şikayet talepleri ve bunlara eklediğiniz fotoğraflar — Misafir İlişkileri ekibimiz tarafından sorunları çözmek ve hizmetlerimizi geliştirmek için kullanılır." },
-      "order": { "title": "Sipariş Bilgileri", "detail": "Oda servisi sipariş içeriği ve teslimat notları — siparişinizi hazırlamak, teslim etmek ve dahili hizmet kayıtları için kullanılır." }
+      "identity": {
+        "title": "Kimlik & Konaklama Bilgileri",
+        "detail": "Ad, soyad ve oda numarası — misafir portalına giriş yaptığınızda rezervasyonunuzu doğrulamak ve oda servisi siparişlerini teslim etmek için kullanılır."
+      },
+      "contact": {
+        "title": "İletişim Bilgileri",
+        "detail": "Geri bildiriminizle birlikte vermeyi seçerseniz e-posta adresi — yalnızca yorumlarınızı takip etmek için kullanılır."
+      },
+      "requests": {
+        "title": "Talepler & Geri Bildirim",
+        "detail": "Değerlendirmeler, yorumlar, destek ve şikayet talepleri ve bunlara eklediğiniz fotoğraflar — Misafir İlişkileri ekibimiz tarafından sorunları çözmek ve hizmetlerimizi geliştirmek için kullanılır."
+      },
+      "order": {
+        "title": "Sipariş Bilgileri",
+        "detail": "Oda servisi sipariş içeriği ve teslimat notları — siparişinizi hazırlamak, teslim etmek ve dahili hizmet kayıtları için kullanılır."
+      }
     },
     "legalBasis": "Verileriniz, KVKK'nın 5. maddesindeki hukuki sebeplere dayanılarak — öncelikle sizinle otel arasındaki konaklama sözleşmesinin ifası ve misafir hizmetlerini geliştirmedeki meşru menfaatimiz gereği — işlenir. Verileriniz açık rızanız olmadan pazarlama amacıyla kullanılmaz; kanunen zorunlu olan veya bu web sitesinin teknik işleyişi (güvenli bulut barındırma ve depolama sağlayıcıları) için gerekli olan haller dışında üçüncü taraflara satılmaz veya paylaşılmaz.",
     "retention": "Saklama Süresi",
@@ -539,12 +656,30 @@
     "paymentP": "Başlıca kredi kartlarını ve nakit (TRY, EUR, USD) kabul ediyoruz. Spa bakımları, à la carte yemekler ve oda servisi gibi ekstralar odanıza yansıtılabilir ve çıkışta ödenebilir.",
     "houseRules": "Ev Kuralları",
     "policies": {
-      "smoking": { "title": "Sigara", "content": "Tüm odalar ve kapalı alanlar sigara içilmeyen alanlardır. Sigara içmek yalnızca belirlenen açık alanlarda serbesttir. Odalarda sigara içilmesi durumunda derin temizlik ücreti alınabilir." },
-      "pets": { "title": "Evcil Hayvanlar", "content": "Sertifikalı rehber/destek hayvanları hariç, otel alanına evcil hayvan alınmaz. Bir destek hayvanıyla geleceksiniz lütfen önceden bize bildirin." },
-      "children": { "title": "Çocuklar & İlave Yataklar", "content": "Her yaştan çocuk misafirimizdir. Bebek beşikleri ve ilave yataklar müsaitliğe bağlıdır — lütfen resepsiyonda veya rezervasyon sırasında talep edin. Kayıtlı misafirler için Çocuk Kulübü hizmetleri mevcuttur." },
-      "quiet": { "title": "Sessiz Saatler", "content": "Tüm misafirlerimizin huzurlu bir konaklama geçirmesi için 24:00 ile 08:00 arasında oda koridorlarında ve bahçe alanlarında gürültüyü en aza indirmenizi rica ederiz." },
-      "pool": { "title": "Havuz & Plaj", "content": "Havuzlar ve özel plaj yalnızca belirtilen saatlerde açıktır; bu saatler dışında yüzmek yasaktır. Çocuklar her zaman bir yetişkin gözetiminde olmalıdır. Havuz ve plaj alanlarında cam eşya kullanımı yasaktır." },
-      "liability": { "title": "Sorumluluk & Değerli Eşyalar", "content": "Lütfen değerli eşyalarınızı oda kasanızda saklayın. Otel, ortak alanlarda gözetimsiz bırakılan eşyalardan sorumlu tutulamaz. Kayıp eşya sorularınız için resepsiyona başvurabilirsiniz." }
+      "smoking": {
+        "title": "Sigara",
+        "content": "Tüm odalar ve kapalı alanlar sigara içilmeyen alanlardır. Sigara içmek yalnızca belirlenen açık alanlarda serbesttir. Odalarda sigara içilmesi durumunda derin temizlik ücreti alınabilir."
+      },
+      "pets": {
+        "title": "Evcil Hayvanlar",
+        "content": "Sertifikalı rehber/destek hayvanları hariç, otel alanına evcil hayvan alınmaz. Bir destek hayvanıyla geleceksiniz lütfen önceden bize bildirin."
+      },
+      "children": {
+        "title": "Çocuklar & İlave Yataklar",
+        "content": "Her yaştan çocuk misafirimizdir. Bebek beşikleri ve ilave yataklar müsaitliğe bağlıdır — lütfen resepsiyonda veya rezervasyon sırasında talep edin. Kayıtlı misafirler için Çocuk Kulübü hizmetleri mevcuttur."
+      },
+      "quiet": {
+        "title": "Sessiz Saatler",
+        "content": "Tüm misafirlerimizin huzurlu bir konaklama geçirmesi için 24:00 ile 08:00 arasında oda koridorlarında ve bahçe alanlarında gürültüyü en aza indirmenizi rica ederiz."
+      },
+      "pool": {
+        "title": "Havuz & Plaj",
+        "content": "Havuzlar ve özel plaj yalnızca belirtilen saatlerde açıktır; bu saatler dışında yüzmek yasaktır. Çocuklar her zaman bir yetişkin gözetiminde olmalıdır. Havuz ve plaj alanlarında cam eşya kullanımı yasaktır."
+      },
+      "liability": {
+        "title": "Sorumluluk & Değerli Eşyalar",
+        "content": "Lütfen değerli eşyalarınızı oda kasanızda saklayın. Otel, ortak alanlarda gözetimsiz bırakılan eşyalardan sorumlu tutulamaz. Kayıp eşya sorularınız için resepsiyona başvurabilirsiniz."
+      }
     },
     "contactBase": "Politikalarla ilgili sorularınız için bize <email></email> adresinden ulaşın.",
     "contactWithPhone": "Politikalarla ilgili sorularınız için bize <email></email> adresinden ulaşın veya <phone></phone> numarasını arayın."

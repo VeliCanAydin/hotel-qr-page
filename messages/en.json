@@ -2,7 +2,8 @@
   "common": {
     "backToHome": "Back to Home",
     "loading": "Loading…",
-    "toggleTheme": "Toggle theme"
+    "toggleTheme": "Toggle theme",
+    "close": "Close"
   },
   "header": {
     "changeLanguage": "Change language",
@@ -32,19 +33,58 @@
     "signInAsStaff": "Sign In as Staff"
   },
   "home": {
-    "hotelInfo": { "title": "Hotel Info", "description": "About the hotel" },
-    "restaurants": { "title": "Restaurants", "description": "Menus and dining options" },
-    "kidsCare": { "title": "Kids Care", "description": "Childcare services" },
-    "beach": { "title": "Beach", "description": "Private beach access and info" },
-    "spa": { "title": "Spa", "description": "Massages and treatments" },
-    "wellness": { "title": "Wellness", "description": "Fitness, yoga and activities" },
-    "roomService": { "title": "Room Service", "description": "In-Room Dining" },
-    "calorieTracker": { "title": "Calorie Tracker", "description": "Track your meals and daily calorie intake" },
-    "aiAssistant": { "title": "AI Assistant", "description": "Instant help and support" },
-    "events": { "title": "Events", "description": "Upcoming events at the hotel" },
-    "personalizedStay": { "title": "Personalize Your Stay", "description": "Build a day-by-day event agenda" },
-    "feedback": { "title": "Feedback & Support", "description": "Share feedback or report an issue" },
-    "nearbyGuide": { "title": "Nearby Guide", "description": "Nearest pharmacy, market, and bus stop" }
+    "hotelInfo": {
+      "title": "Hotel Info",
+      "description": "About the hotel"
+    },
+    "restaurants": {
+      "title": "Restaurants",
+      "description": "Menus and dining options"
+    },
+    "kidsCare": {
+      "title": "Kids Care",
+      "description": "Childcare services"
+    },
+    "beach": {
+      "title": "Beach",
+      "description": "Private beach access and info"
+    },
+    "spa": {
+      "title": "Spa",
+      "description": "Massages and treatments"
+    },
+    "wellness": {
+      "title": "Wellness",
+      "description": "Fitness, yoga and activities"
+    },
+    "roomService": {
+      "title": "Room Service",
+      "description": "In-Room Dining"
+    },
+    "calorieTracker": {
+      "title": "Calorie Tracker",
+      "description": "Track your meals and daily calorie intake"
+    },
+    "aiAssistant": {
+      "title": "AI Assistant",
+      "description": "Instant help and support"
+    },
+    "events": {
+      "title": "Events",
+      "description": "Upcoming events at the hotel"
+    },
+    "personalizedStay": {
+      "title": "Personalize Your Stay",
+      "description": "Build a day-by-day event agenda"
+    },
+    "feedback": {
+      "title": "Feedback & Support",
+      "description": "Share feedback or report an issue"
+    },
+    "nearbyGuide": {
+      "title": "Nearby Guide",
+      "description": "Nearest pharmacy, market, and bus stop"
+    }
   },
   "spa": {
     "badge": "Relax & Rejuvenate",
@@ -103,16 +143,29 @@
     "galleryIntro": "Explore our beautiful beach and pool areas through these stunning photos.",
     "galleryDesktop": "Click on any image to view it in full size, or press and hold for a quick preview.",
     "galleryMobile": "Tap to view full size, or press and hold for a quick preview.",
-    "galleryReleaseHint": "Release to close • Tap to open gallery"
+    "galleryReleaseHint": "Release to close • Tap to open gallery",
+    "alts": {
+      "hero": "Beach and pools at Dosinia Luxury Resort",
+      "beachBuilding": "Beach building by the shore",
+      "beachRelaxPool": "Relax pool right next to the beach",
+      "beachLoungers": "Beach area with loungers and relax pool",
+      "aerial": "Aerial view of the resort and beachfront",
+      "mainPool": "Main swimming pool",
+      "swimUpPool": "Swim-up pool",
+      "relaxPool": "Relax pool area",
+      "social": "Resort photo",
+      "mainBuildingFront": "Main building front view with pool",
+      "mainBuildingSide": "Side view of the main building and relax pool",
+      "swimUpRooms": "Swim-up rooms connecting to the relax pool",
+      "swimUpRelaxPools": "Swim-up and relax pools",
+      "gardenBuilding": "Garden building with swim-up and relax pools",
+      "facility": "Resort facility detail",
+      "sandyBeach": "Sandy beach view"
+    }
   },
   "roomService": {
     "title": "Room Service",
     "subtitle": "Order food, beverages, and request services to your room.",
-    "categories": {
-      "food": "Food",
-      "beverages": "Beverages",
-      "other-services": "Other Services"
-    },
     "free": "Free",
     "add": "Add"
   },
@@ -167,7 +220,8 @@
     "notAvailable": "Menu is not available yet."
   },
   "menuItemCard": {
-    "vegetarian": "VEGETARIAN"
+    "vegetarian": "VEGETARIAN",
+    "allergens": "Allergens"
   },
   "events": {
     "title": "Events",
@@ -250,7 +304,12 @@
     "targetLabel": "Target: {goal} kcal",
     "remaining": "{n} kcal remaining",
     "overTarget": "{n} kcal over target",
-    "mealTypes": { "Breakfast": "Breakfast", "Lunch": "Lunch", "Dinner": "Dinner", "Snack": "Snack" },
+    "mealTypes": {
+      "Breakfast": "Breakfast",
+      "Lunch": "Lunch",
+      "Dinner": "Dinner",
+      "Snack": "Snack"
+    },
     "toastImageFile": "Please upload an image file.",
     "toastChooseFirst": "Please choose or capture an image first.",
     "toastAnalyzed": "Meal plate analyzed successfully!",
@@ -298,7 +357,11 @@
   },
   "portal": {
     "welcomeBack": "Welcome back",
-    "status": { "confirmed": "Confirmed", "checked-in": "Checked In", "checked-out": "Checked Out" },
+    "status": {
+      "confirmed": "Confirmed",
+      "checked-in": "Checked In",
+      "checked-out": "Checked Out"
+    },
     "checkIn": "Check-In",
     "checkOut": "Check-Out",
     "nightsLeft": "{n, plural, one {# night left} other {# nights left}}",
@@ -314,13 +377,32 @@
     "board": "Board",
     "guests": "Guests",
     "childrenSuffix": " + {count, plural, one {# child} other {# children}}",
-    "boardTypes": { "room-only": "Room Only", "bed-breakfast": "Bed & Breakfast", "half-board": "Half Board", "full-board": "Full Board", "all-inclusive": "All Inclusive" },
-    "roomTypes": { "standard": "Standard", "deluxe": "Deluxe", "suite": "Suite", "villa": "Villa" },
-    "tabs": { "myStay": "My Stay", "roomService": "Room Service", "feedback": "Feedback" },
+    "boardTypes": {
+      "room-only": "Room Only",
+      "bed-breakfast": "Bed & Breakfast",
+      "half-board": "Half Board",
+      "full-board": "Full Board",
+      "all-inclusive": "All Inclusive"
+    },
+    "roomTypes": {
+      "standard": "Standard",
+      "deluxe": "Deluxe",
+      "suite": "Suite",
+      "villa": "Villa"
+    },
+    "tabs": {
+      "myStay": "My Stay",
+      "roomService": "Room Service",
+      "feedback": "Feedback"
+    },
     "noOrders": "No orders yet",
     "noOrdersDesc": "Your room service orders will appear here once you place them.",
     "orderNumber": "Order #{id}",
-    "steps": { "pending": "Pending", "confirmed": "Confirmed", "delivered": "Delivered" },
+    "steps": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "delivered": "Delivered"
+    },
     "orderTotal": "Total: €{amount}",
     "cancelOrder": "Cancel Order #{id}",
     "cancelConfirm": "Are you sure you want to cancel this order? This action cannot be undone.",
@@ -366,7 +448,12 @@
     "commentPlaceholder": "Tell us what you loved or what we could improve…",
     "submitFeedback": "Submit Feedback",
     "submitting": "Submitting…",
-    "fbCategories": { "cleanliness": "Cleanliness", "staff": "Staff & Service", "comfort": "Comfort", "food": "Food & Beverage" }
+    "fbCategories": {
+      "cleanliness": "Cleanliness",
+      "staff": "Staff & Service",
+      "comfort": "Comfort",
+      "food": "Food & Beverage"
+    }
   },
   "footer": {
     "makeReservation": "Make a Reservation",
@@ -471,9 +558,27 @@
       "housekeeping": "Housekeeping",
       "other": "Other"
     },
-    "tripTypes": { "business": "Business", "leisure": "Leisure", "family": "Family", "solo": "Solo", "couple": "Couple" },
-    "ratingCategories": { "cleanliness": "Cleanliness", "staff": "Staff & Service", "comfort": "Comfort", "value": "Value for Money", "food": "Food & Beverage" },
-    "ratingLabels": { "1": "Poor", "2": "Fair", "3": "Good", "4": "Very good", "5": "Excellent" }
+    "tripTypes": {
+      "business": "Business",
+      "leisure": "Leisure",
+      "family": "Family",
+      "solo": "Solo",
+      "couple": "Couple"
+    },
+    "ratingCategories": {
+      "cleanliness": "Cleanliness",
+      "staff": "Staff & Service",
+      "comfort": "Comfort",
+      "value": "Value for Money",
+      "food": "Food & Beverage"
+    },
+    "ratingLabels": {
+      "1": "Poor",
+      "2": "Fair",
+      "3": "Good",
+      "4": "Very good",
+      "5": "Excellent"
+    }
   },
   "cookiePolicy": {
     "title": "Cookie Policy",
@@ -500,10 +605,22 @@
     "intro": "This notice is provided pursuant to Article 10 of the Turkish Personal Data Protection Law No. 6698 (\"KVKK\"). As the data controller, <strong>Dosinia Luxury Hotel</strong> (Kemer, Antalya, Türkiye) processes the personal data you share through this website with care and only for the purposes described below.",
     "dataWeProcess": "Data We Process and Why",
     "data": {
-      "identity": { "title": "Identity & Stay Information", "detail": "Name, surname, and room number — used to verify your reservation when you sign in to the guest portal and to deliver room service orders." },
-      "contact": { "title": "Contact Information", "detail": "Email address, if you choose to provide it with your feedback — used only to follow up on your comments." },
-      "requests": { "title": "Requests & Feedback", "detail": "Ratings, comments, support and complaint requests, and any photos you attach to them — used by our Guest Relations team to resolve issues and improve our services." },
-      "order": { "title": "Order Information", "detail": "Room service order contents and delivery notes — used to prepare and deliver your order and for internal service records." }
+      "identity": {
+        "title": "Identity & Stay Information",
+        "detail": "Name, surname, and room number — used to verify your reservation when you sign in to the guest portal and to deliver room service orders."
+      },
+      "contact": {
+        "title": "Contact Information",
+        "detail": "Email address, if you choose to provide it with your feedback — used only to follow up on your comments."
+      },
+      "requests": {
+        "title": "Requests & Feedback",
+        "detail": "Ratings, comments, support and complaint requests, and any photos you attach to them — used by our Guest Relations team to resolve issues and improve our services."
+      },
+      "order": {
+        "title": "Order Information",
+        "detail": "Room service order contents and delivery notes — used to prepare and deliver your order and for internal service records."
+      }
     },
     "legalBasis": "Your data is processed based on the legal grounds in Article 5 of KVKK — primarily the performance of the accommodation contract between you and the hotel, and our legitimate interest in improving guest services. Your data is not used for marketing purposes without your explicit consent, and it is not sold or shared with third parties except where required by law or for the technical operation of this website (secure cloud hosting and storage providers).",
     "retention": "Retention",
@@ -539,12 +656,30 @@
     "paymentP": "We accept major credit cards and cash (TRY, EUR, USD). Extras such as spa treatments, à la carte dining, and room service charges can be billed to your room and settled at check-out.",
     "houseRules": "House Rules",
     "policies": {
-      "smoking": { "title": "Smoking", "content": "All rooms and indoor areas are non-smoking. Smoking is permitted only in designated outdoor areas. A deep-cleaning fee may be charged for smoking in rooms." },
-      "pets": { "title": "Pets", "content": "Pets are not allowed on the hotel premises, with the exception of certified service animals. Please inform us in advance if you will be accompanied by a service animal." },
-      "children": { "title": "Children & Extra Beds", "content": "Children of all ages are welcome. Baby cots and extra beds are subject to availability — please request them at reception or during booking. Kids Club services are available for registered guests." },
-      "quiet": { "title": "Quiet Hours", "content": "To ensure a restful stay for all guests, we kindly ask you to keep noise to a minimum between 24:00 and 08:00 in room corridors and garden areas." },
-      "pool": { "title": "Pool & Beach", "content": "Pools and the private beach are open during posted hours only; swimming outside these hours is not permitted. Children must be supervised by an adult at all times. Glassware is not allowed in pool and beach areas." },
-      "liability": { "title": "Liability & Valuables", "content": "Please store valuables in your in-room safe. The hotel cannot be held responsible for items left unattended in public areas. Lost & found inquiries can be made at reception." }
+      "smoking": {
+        "title": "Smoking",
+        "content": "All rooms and indoor areas are non-smoking. Smoking is permitted only in designated outdoor areas. A deep-cleaning fee may be charged for smoking in rooms."
+      },
+      "pets": {
+        "title": "Pets",
+        "content": "Pets are not allowed on the hotel premises, with the exception of certified service animals. Please inform us in advance if you will be accompanied by a service animal."
+      },
+      "children": {
+        "title": "Children & Extra Beds",
+        "content": "Children of all ages are welcome. Baby cots and extra beds are subject to availability — please request them at reception or during booking. Kids Club services are available for registered guests."
+      },
+      "quiet": {
+        "title": "Quiet Hours",
+        "content": "To ensure a restful stay for all guests, we kindly ask you to keep noise to a minimum between 24:00 and 08:00 in room corridors and garden areas."
+      },
+      "pool": {
+        "title": "Pool & Beach",
+        "content": "Pools and the private beach are open during posted hours only; swimming outside these hours is not permitted. Children must be supervised by an adult at all times. Glassware is not allowed in pool and beach areas."
+      },
+      "liability": {
+        "title": "Liability & Valuables",
+        "content": "Please store valuables in your in-room safe. The hotel cannot be held responsible for items left unattended in public areas. Lost & found inquiries can be made at reception."
+      }
     },
     "contactBase": "For any policy questions, contact us at <email></email>.",
     "contactWithPhone": "For any policy questions, contact us at <email></email> or call <phone></phone>."

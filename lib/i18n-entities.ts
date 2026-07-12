@@ -73,6 +73,10 @@ export const TRANSLATABLE_ENTITIES = {
     label: 'Menu Categories',
     fields: ['label'],
   },
+  room_service_category: {
+    label: 'Room Service Categories',
+    fields: ['label'],
+  },
   allergen: {
     label: 'Allergens',
     fields: ['label'],

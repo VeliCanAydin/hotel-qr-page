@@ -1,12 +1,12 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { roomServiceItems } from '@/lib/db/schema'
+import { roomServiceItems, roomServiceCategories } from '@/lib/db/schema'
 import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/auth'
 import { CONTENT_TAGS } from '@/lib/cache-tags'
 import { deleteTranslationsFor } from '@/lib/translations'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 
 type RoomServiceItemInput = {
   id: string
@@ -41,5 +41,12 @@ export async function deleteRoomServiceItem(id: string) {
 export async function setRoomServiceItemAvailability(id: string, isAvailable: boolean) {
   await requireAdmin('/dashboard/services/room-service')
   await db.update(roomServiceItems).set({ isAvailable }).where(eq(roomServiceItems.id, id))
+  updateTag(CONTENT_TAGS.roomServiceItems)
+}
+
+export async function createRoomServiceCategory(id: string, label: string) {
+  await requireAdmin('/dashboard/services/room-service')
+  const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(roomServiceCategories)
+  await db.insert(roomServiceCategories).values({ id, label, orderIndex: Number(count) }).onConflictDoNothing()
   updateTag(CONTENT_TAGS.roomServiceItems)
 }
