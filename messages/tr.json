@@ -313,6 +313,7 @@
       "Snack": "Atıştırmalık"
     },
     "toastImageFile": "Lütfen bir görsel dosyası yükleyin.",
+    "toastCameraError": "Kamera erişimi sağlanamadı. Lütfen kamera izinlerini kontrol edin.",
     "toastChooseFirst": "Lütfen önce bir görsel seçin veya çekin.",
     "toastAnalyzed": "Yiyecek başarıyla analiz edildi!",
     "toastAnalyzeFailed": "Analiz başarısız. Backend bağlantısını kontrol edin.",

@@ -313,6 +313,7 @@
       "Snack": "Snack"
     },
     "toastImageFile": "Please upload an image file.",
+    "toastCameraError": "Could not access camera. Please check camera permissions.",
     "toastChooseFirst": "Please choose or capture an image first.",
     "toastAnalyzed": "Food analyzed successfully!",
     "toastAnalyzeFailed": "Analysis failed. Check the backend connection.",

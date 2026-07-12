@@ -316,6 +316,7 @@
       "Snack": "Snack"
     },
     "toastImageFile": "Bitte laden Sie eine Bilddatei hoch.",
+    "toastCameraError": "Kamerazugriff fehlgeschlagen. Bitte überprüfen Sie die Kameraberechtigungen.",
     "toastChooseFirst": "Bitte wählen oder machen Sie zuerst ein Bild.",
     "toastAnalyzed": "Speisen erfolgreich analysiert!",
     "toastAnalyzeFailed": "Analyse fehlgeschlagen. Prüfen Sie die Backend-Verbindung.",
