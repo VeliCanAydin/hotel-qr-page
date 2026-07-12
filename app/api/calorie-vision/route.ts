@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifySession } from '@/lib/auth';
 
 /**
  * FastAPI /api/v1/analyze endpoint'inden dönen yapı.
@@ -45,6 +46,15 @@ interface NutritionAnalysisResult {
 
 export async function POST(request: NextRequest) {
     try {
+        // Security: Ensure the request comes from an authenticated guest or staff session
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json(
+                { error: 'Oturum açılması gerekmektedir.' },
+                { status: 401 }
+            );
+        }
+
         const { image_base64, image_mime_type, language } = await request.json();
 
         if (!image_base64) {

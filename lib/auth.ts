@@ -92,3 +92,40 @@ export async function verifyGuestToken(token: string): Promise<GuestTokenPayload
     return null
   }
 }
+
+export async function verifySession(): Promise<{ role: 'guest' | 'staff'; roomNumber?: string; email?: string } | null> {
+  const cookieStore = await cookies()
+
+  // 1. Check admin/staff session
+  const adminToken = cookieStore.get(SESSION_COOKIE)?.value
+  if (adminToken) {
+    const payload = await verifyToken(adminToken)
+    if (payload) {
+      return { role: 'staff', email: payload.email }
+    }
+  }
+
+  // 2. Check guest session
+  const guestToken = cookieStore.get(GUEST_SESSION_COOKIE)?.value
+  if (guestToken) {
+    const payload = await verifyGuestToken(guestToken)
+    if (payload) {
+      // Force-expire when checkout day has passed
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const checkOut = new Date(payload.checkOut)
+      checkOut.setHours(0, 0, 0, 0)
+      if (checkOut >= today) {
+        // Also verify in DB using dynamic import to avoid circular dependency
+        const { findActiveReservation } = await import('@/lib/reservations')
+        const activeRes = await findActiveReservation(payload.reservationCode)
+        if (activeRes) {
+          return { role: 'guest', roomNumber: payload.roomNumber }
+        }
+      }
+    }
+  }
+
+  return null
+}
+

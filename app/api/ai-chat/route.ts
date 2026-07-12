@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LOCALES, type Locale } from '@/i18n/routing';
+import { verifySession } from '@/lib/auth';
 
 interface AIApiResponse {
     session_id: string;
@@ -24,7 +25,17 @@ const REPLY_LANGUAGE_INSTRUCTION: Record<Exclude<Locale, 'en'>, string> = {
 
 export async function POST(request: NextRequest) {
     try {
+        // Security: Ensure the request comes from an authenticated guest or staff session
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json(
+                { error: 'Oturum açılması gerekmektedir.' },
+                { status: 401 }
+            );
+        }
+
         const { message, sessionId, locale: rawLocale } = await request.json();
+
 
         if (!message || typeof message !== 'string') {
             return NextResponse.json(

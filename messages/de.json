@@ -333,7 +333,9 @@
     "goToTracker": "Zum Tracker",
     "mealsLogged": "{count, plural, one {# Mahlzeit protokolliert} other {# Mahlzeiten protokolliert}}",
     "collapse": "Einklappen",
-    "details": "Details"
+    "details": "Details",
+    "lockedNotice": "Bitte <link>melden Sie sich an</link> mit Ihren Zimmerdaten, um den KI-Kalorien-Tracker zu nutzen.",
+    "historyLockedNotice": "Bitte <link>melden Sie sich an</link> mit Ihren Zimmerdaten, um Ihren Kalorienverlauf anzuzeigen."
   },
   "plan": {
     "personalizedStay": "Aufenthalt personalisieren",
@@ -485,7 +487,8 @@
     "placeholder": "Geben Sie Ihre Nachricht ein... (Enter zum Senden, Shift+Enter für neue Zeile)",
     "disclaimer": "Antworten des KI-Assistenten können falsch sein. Bitte überprüfen Sie wichtige Informationen.",
     "you": "SIE",
-    "imageAlt": "Von KI erstelltes Bild"
+    "imageAlt": "Von KI erstelltes Bild",
+    "lockedNotice": "Bitte <link>melden Sie sich an</link> mit Ihren Zimmerdaten, um den KI-Assistenten zu nutzen."
   },
   "fb": {
     "goBack": "Zurück",
