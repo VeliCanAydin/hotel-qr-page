@@ -69,9 +69,11 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
                                 <Leaf className="h-3.5 w-3.5 shrink-0 text-green-600 dark:text-green-500" />
                             )}
                         </h3>
-                        <span className="shrink-0 font-semibold text-foreground">
-                            ${item.price.toFixed(2)}
-                        </span>
+                        {item.price > 0 && (
+                            <span className="shrink-0 font-semibold text-foreground">
+                                ${item.price.toFixed(2)}
+                            </span>
+                        )}
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-1">
                         {item.description}
@@ -96,9 +98,11 @@ export function MenuItemCard({ item, showSeparator = true }: MenuItemCardProps) 
                         <DrawerHeader className="text-left">
                             <div className="flex items-start justify-between gap-3">
                                 <DrawerTitle className="text-xl">{item.name}</DrawerTitle>
-                                <span className="shrink-0 text-xl font-semibold text-foreground">
-                                    ${item.price.toFixed(2)}
-                                </span>
+                                {item.price > 0 && (
+                                    <span className="shrink-0 text-xl font-semibold text-foreground">
+                                        ${item.price.toFixed(2)}
+                                    </span>
+                                )}
                             </div>
                             {item.isVegetarian && (
                                 <Badge
