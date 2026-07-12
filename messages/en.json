@@ -560,6 +560,8 @@
     "photoRequired": "(required — it helps us fix it faster)",
     "changePhoto": "Change photo",
     "addPhoto": "Add a photo",
+    "takePhoto": "Take Photo",
+    "selectGallery": "Choose from Gallery",
     "photoHint": "PNG, JPG or WebP — max 5 MB",
     "yourRoom": "Your room",
     "fullName": "Full name",

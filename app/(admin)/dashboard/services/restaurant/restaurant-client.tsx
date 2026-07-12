@@ -704,7 +704,7 @@ export default function RestaurantClient({
           ) : (
             <>
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 min-w-0">
                   <Button variant={templateCategoryFilter === 'all' ? 'default' : 'outline'} size="sm" onClick={() => setTemplateCategoryFilter('all')}>
                     All ({templateItemCounts.all ?? 0})
                   </Button>

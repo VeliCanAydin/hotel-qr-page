@@ -563,6 +563,8 @@
     "photoRequired": "(обязательно — это поможет нам быстрее всё исправить)",
     "changePhoto": "Изменить фото",
     "addPhoto": "Добавить фото",
+    "takePhoto": "Сделать фото",
+    "selectGallery": "Выбрать из галереи",
     "photoHint": "PNG, JPG или WebP — до 5 МБ",
     "yourRoom": "Ваш номер",
     "fullName": "Полное имя",

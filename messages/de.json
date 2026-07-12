@@ -563,6 +563,8 @@
     "photoRequired": "(erforderlich — hilft uns, es schneller zu beheben)",
     "changePhoto": "Foto ändern",
     "addPhoto": "Foto hinzufügen",
+    "takePhoto": "Foto aufnehmen",
+    "selectGallery": "Aus Galerie auswählen",
     "photoHint": "PNG, JPG oder WebP — max. 5 MB",
     "yourRoom": "Ihr Zimmer",
     "fullName": "Vollständiger Name",

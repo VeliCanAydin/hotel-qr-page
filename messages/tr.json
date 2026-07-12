@@ -560,6 +560,8 @@
     "photoRequired": "(zorunlu — sorunu daha hızlı çözmemize yardımcı olur)",
     "changePhoto": "Fotoğrafı değiştir",
     "addPhoto": "Fotoğraf ekle",
+    "takePhoto": "Fotoğraf Çek",
+    "selectGallery": "Galeriden Seç",
     "photoHint": "PNG, JPG veya WebP — en fazla 5 MB",
     "yourRoom": "Odanız",
     "fullName": "Ad soyad",

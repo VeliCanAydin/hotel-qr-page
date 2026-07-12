@@ -9,6 +9,7 @@ import {
   Bed,
   BrushCleaning,
   CalendarIcon,
+  Camera,
   Check,
   ChevronRight,
   CircleDollarSign,
@@ -359,15 +360,17 @@ export default function FeedbackPage() {
 
   const handleSupportImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
+    event.target.value = "";
+
+    if (!file) return;
+
     setSupportImageFile(file);
+    setSupportImagePreview(URL.createObjectURL(file));
+  };
 
-    if (!file) {
-      setSupportImagePreview("");
-      return;
-    }
-
-    const preview = URL.createObjectURL(file);
-    setSupportImagePreview(preview);
+  const handleSupportImageReset = () => {
+    setSupportImageFile(null);
+    setSupportImagePreview("");
   };
 
   const handleSupportSubmit = async (e: React.FormEvent) => {
@@ -725,7 +728,7 @@ export default function FeedbackPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="support-image" className="text-sm text-muted-foreground">
+            <Label className="text-sm text-muted-foreground">
               {t("photo")} <span className="text-xs">{t("photoRequired")}</span>
             </Label>
             {supportImagePreview ? (
@@ -734,26 +737,44 @@ export default function FeedbackPage() {
                 <img src={supportImagePreview} alt="Uploaded image preview" className="max-h-64 w-full object-contain bg-muted/30" />
                 <div className="flex items-center justify-between border-t px-3 py-2">
                   <span className="truncate text-xs text-muted-foreground">{supportImageFile?.name}</span>
-                  <label
-                    htmlFor="support-image"
+                  <button
+                    type="button"
+                    onClick={handleSupportImageReset}
                     className="cursor-pointer text-xs font-medium underline underline-offset-2 hover:text-primary"
                   >
                     {t("changePhoto")}
-                  </label>
+                  </button>
                 </div>
               </div>
             ) : (
-              <label
-                htmlFor="support-image"
-                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-8 text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
-              >
-                <ImagePlus className="size-6" />
-                <span className="text-sm font-medium">{t("addPhoto")}</span>
-                <span className="text-xs">{t("photoHint")}</span>
-              </label>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <label
+                  htmlFor="support-image-camera"
+                  className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-8 text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+                >
+                  <Camera className="size-6" />
+                  <span className="text-sm font-medium">{t("takePhoto")}</span>
+                </label>
+                <label
+                  htmlFor="support-image-gallery"
+                  className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-8 text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+                >
+                  <ImagePlus className="size-6" />
+                  <span className="text-sm font-medium">{t("selectGallery")}</span>
+                </label>
+              </div>
             )}
+            {!supportImagePreview && <p className="text-xs text-muted-foreground">{t("photoHint")}</p>}
             <input
-              id="support-image"
+              id="support-image-camera"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleSupportImageChange}
+              className="sr-only"
+            />
+            <input
+              id="support-image-gallery"
               type="file"
               accept="image/*"
               onChange={handleSupportImageChange}
