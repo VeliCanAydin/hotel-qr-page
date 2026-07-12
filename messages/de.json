@@ -276,6 +276,8 @@
     "scanning": "Speisen werden gescannt...",
     "takePicture": "Machen Sie ein Foto oder legen Sie eine Datei hier ab",
     "chooseFile": "Datei auswählen",
+    "takePhoto": "Foto aufnehmen",
+    "selectGallery": "Aus Galerie auswählen",
     "changePhoto": "Foto ändern",
     "analyzeMeal": "Mahlzeit analysieren",
     "scanAnother": "Weitere Speisen scannen",

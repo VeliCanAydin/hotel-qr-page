@@ -273,6 +273,8 @@
     "scanning": "Yiyecek taranıyor...",
     "takePicture": "Fotoğraf çekin veya buraya bir dosya bırakın",
     "chooseFile": "Dosya Seç",
+    "takePhoto": "Fotoğraf Çek",
+    "selectGallery": "Galeriden Seç",
     "changePhoto": "Fotoğrafı Değiştir",
     "analyzeMeal": "Yemeği Analiz Et",
     "scanAnother": "Başka Yiyecek Tara",

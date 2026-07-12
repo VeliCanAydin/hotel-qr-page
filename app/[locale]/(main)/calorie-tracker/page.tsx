@@ -84,7 +84,8 @@ export default function CalorieTrackerPage() {
     const [isEditingGoal, setIsEditingGoal] = useState(false);
     const [goalInputValue, setGoalInputValue] = useState('');
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const galleryInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
 
     // Get current local date string (YYYY-MM-DD) safely
     const getLocalDateString = () => {
@@ -378,18 +379,30 @@ export default function CalorieTrackerPage() {
                         <CardContent className="flex flex-col gap-5">
                             {/* Upload Area */}
                             <div 
-                                onClick={() => !isAnalyzing && fileInputRef.current?.click()}
-                                className={`relative border-2 border-dashed rounded-3xl p-6 transition-all cursor-pointer flex flex-col items-center justify-center min-h-[260px] ${
+                                onClick={() => {
+                                    if (selectedImage || isAnalyzing) return;
+                                    galleryInputRef.current?.click();
+                                }}
+                                className={`relative border-2 border-dashed rounded-3xl p-6 transition-all ${
                                     selectedImage 
                                         ? 'border-primary/20 bg-muted/10' 
-                                        : 'border-muted hover:border-[#45a7d7] bg-muted/5 hover:bg-[#45a7d7]/5'
-                                }`}
+                                        : 'border-muted hover:border-[#45a7d7] bg-muted/5 hover:bg-[#45a7d7]/5 cursor-pointer'
+                                } flex flex-col items-center justify-center min-h-[260px]`}
                             >
                                 <input 
                                     type="file" 
-                                    ref={fileInputRef} 
+                                    ref={galleryInputRef} 
                                     onChange={handleImageChange} 
                                     accept="image/*" 
+                                    className="hidden" 
+                                    disabled={isAnalyzing}
+                                />
+                                <input 
+                                    type="file" 
+                                    ref={cameraInputRef} 
+                                    onChange={handleImageChange} 
+                                    accept="image/*" 
+                                    capture="environment"
                                     className="hidden" 
                                     disabled={isAnalyzing}
                                 />
@@ -417,7 +430,7 @@ export default function CalorieTrackerPage() {
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center gap-3 text-center p-4">
+                                    <div className="flex flex-col items-center justify-center gap-3 text-center p-4 w-full">
                                         <div className="p-4 rounded-full bg-[#45a7d7]/10 text-[#45a7d7]">
                                             <Camera className="w-8 h-8" />
                                         </div>
@@ -425,9 +438,32 @@ export default function CalorieTrackerPage() {
                                             <span className="font-bold text-sm">{t('uploadTitle')}</span>
                                             <span className="text-xs text-muted-foreground">{t('takePicture')}</span>
                                         </div>
-                                        <Button variant="outline" size="sm" className="mt-2 rounded-xl border-muted">
-                                            {t('chooseFile')}
-                                        </Button>
+                                        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md mt-2">
+                                            <Button 
+                                                type="button"
+                                                variant="default"
+                                                className="flex-1 bg-[#45a7d7] hover:bg-[#45a7d7]/90 text-white rounded-xl font-bold flex items-center justify-center gap-1.5 py-2.5"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (!isAnalyzing) cameraInputRef.current?.click();
+                                                }}
+                                            >
+                                                <Camera className="w-4 h-4" />
+                                                {t('takePhoto')}
+                                            </Button>
+                                            <Button 
+                                                type="button"
+                                                variant="outline" 
+                                                className="flex-1 rounded-xl border-muted font-bold py-2.5"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (!isAnalyzing) galleryInputRef.current?.click();
+                                                }}
+                                            >
+                                                <Upload className="w-4 h-4 mr-1" />
+                                                {t('selectGallery')}
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
                             </div>

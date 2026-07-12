@@ -273,6 +273,8 @@
     "scanning": "Scanning food...",
     "takePicture": "Take a picture or drop a file here",
     "chooseFile": "Choose File",
+    "takePhoto": "Take Photo",
+    "selectGallery": "Choose from Gallery",
     "changePhoto": "Change Photo",
     "analyzeMeal": "Analyze Meal",
     "scanAnother": "Scan Another Food",
