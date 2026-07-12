@@ -153,6 +153,7 @@ export default function MyPlanView({ events, storageKey }: { events: HotelEvent[
             events={eventsForSelectedDate}
             selectedDate={selectedDate ? toDateObject(selectedDate) : undefined}
             onEventClick={openEventDrawer}
+            alwaysShowNowLine
           />
         ) : (
           <div className="border rounded-lg p-8 text-center text-muted-foreground">

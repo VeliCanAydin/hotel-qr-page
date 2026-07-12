@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { HotelEvent } from "@/lib/types/events";
 import { EventCard } from "./event-card";
 
@@ -8,60 +8,56 @@ interface TimelineProps {
   events: HotelEvent[];
   selectedDate?: Date;
   onEventClick: (event: HotelEvent) => void;
+  alwaysShowNowLine?: boolean;
 }
 
-// Timeline hours from 6 AM to midnight (00:00)
-const TIMELINE_START_HOUR = 6;
+// Full 24-hour timeline
+const TIMELINE_START_HOUR = 0;
 const TIMELINE_END_HOUR = 24;
-const HOUR_HEIGHT = 60; // pixels per hour
+const HOUR_HEIGHT = 64; // pixels per hour
 
-export function Timeline({ events, selectedDate, onEventClick }: TimelineProps) {
+export function Timeline({ events, selectedDate, onEventClick, alwaysShowNowLine = false }: TimelineProps) {
   // Set after mount: prerendered HTML can't read the current clock
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const nowLineRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Set current time on mount, then update every minute
   useEffect(() => {
     setCurrentTime(new Date());
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 60000); // Update every minute
-
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Scroll to current time on mount and when selected date changes
-  useEffect(() => {
-    if (nowLineRef.current && isToday(selectedDate)) {
-      nowLineRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, [selectedDate]);
+  // Check if selected date is today
+  const isToday = useCallback(
+    (date?: Date) => {
+      if (!date || !currentTime) return false;
+      return (
+        date.getDate() === currentTime.getDate() &&
+        date.getMonth() === currentTime.getMonth() &&
+        date.getFullYear() === currentTime.getFullYear()
+      );
+    },
+    [currentTime]
+  );
 
-  // Check if selected date is today (false until the clock is known)
-  const isToday = (date?: Date) => {
-    if (!date || !currentTime) return false;
-    const today = currentTime;
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  };
-
-  // Calculate position of the "now" line
-  const getNowLinePosition = () => {
+  // Calculate pixel position of the "now" line from top of timeline
+  const getNowLinePosition = useCallback(() => {
     if (!currentTime) return 0;
-    const hours = currentTime.getHours();
-    const minutes = currentTime.getMinutes();
-    const totalMinutes = hours * 60 + minutes;
+    const totalMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
     const startMinutes = TIMELINE_START_HOUR * 60;
-    const position = ((totalMinutes - startMinutes) / 60) * HOUR_HEIGHT;
-    return Math.max(0, position);
-  };
+    return Math.max(0, ((totalMinutes - startMinutes) / 60) * HOUR_HEIGHT);
+  }, [currentTime]);
+
+  // Scroll the container so the now line is vertically centered
+  useEffect(() => {
+    if (!containerRef.current || !currentTime) return;
+    const nowPosition = getNowLinePosition();
+    const containerHeight = containerRef.current.clientHeight;
+    containerRef.current.scrollTop = nowPosition - containerHeight / 2;
+  }, [currentTime, selectedDate, getNowLinePosition]);
 
   // Calculate event position and height
   const getEventStyle = (event: HotelEvent) => {
@@ -72,32 +68,36 @@ export function Timeline({ events, selectedDate, onEventClick }: TimelineProps) 
     const endTotalMinutes = endHours * 60 + endMinutes;
     const timelineStartMinutes = TIMELINE_START_HOUR * 60;
 
-    const top =
-      ((startTotalMinutes - timelineStartMinutes) / 60) * HOUR_HEIGHT;
+    const top = ((startTotalMinutes - timelineStartMinutes) / 60) * HOUR_HEIGHT;
     const height = ((endTotalMinutes - startTotalMinutes) / 60) * HOUR_HEIGHT;
 
     return {
       top: `${Math.max(0, top)}px`,
-      height: `${Math.max(HOUR_HEIGHT / 2, height)}px`, // Minimum height for visibility
+      height: `${Math.max(HOUR_HEIGHT / 2, height)}px`,
     };
   };
 
   // Format hour for display (24-hour format)
   const formatHour = (hour: number) => {
+    if (hour === 24) return "00:00";
     return `${hour.toString().padStart(2, "0")}:00`;
   };
 
-  // Generate hours array
+  // Generate hours array (0 through 23, plus 24 as end marker)
   const hours = Array.from(
     { length: TIMELINE_END_HOUR - TIMELINE_START_HOUR + 1 },
     (_, i) => TIMELINE_START_HOUR + i
   );
 
-  const showNowLine = isToday(selectedDate);
+  const showNowLine = alwaysShowNowLine || isToday(selectedDate);
   const nowPosition = getNowLinePosition();
 
   return (
-    <div className="relative border rounded-lg bg-background overflow-auto max-h-[60vh]" ref={timelineRef}>
+    <div
+      ref={containerRef}
+      className="relative border rounded-lg bg-background overflow-auto"
+      style={{ maxHeight: "70vh" }}
+    >
       {/* Timeline grid */}
       <div
         className="relative"
@@ -123,15 +123,14 @@ export function Timeline({ events, selectedDate, onEventClick }: TimelineProps) 
           <EventCard key={event.id} event={event} style={getEventStyle(event)} onClick={onEventClick} />
         ))}
 
-        {/* "Now" line */}
+        {/* "Now" line — always rendered when today is selected so the ref is mounted */}
         {showNowLine && (
           <div
-            ref={nowLineRef}
             className="absolute left-0 right-0 z-20 pointer-events-none"
             style={{ top: `${nowPosition}px` }}
           >
             <div className="relative flex items-center">
-              <div className="w-3 h-3 rounded-full bg-red-500 -ml-1.5" />
+              <div className="w-3 h-3 rounded-full bg-red-500 -ml-1.5 shrink-0" />
               <div className="flex-1 h-0.5 bg-red-500" />
             </div>
           </div>
