@@ -237,7 +237,10 @@
     "callReception": "Call Reception — {phone}",
     "messageWhatsapp": "Message on WhatsApp",
     "visitReception": "Please visit the reception desk to make a reservation.",
-    "whatsappText": "Hello, I would like to reserve a table at {name}."
+    "whatsappText": "Hello, I would like to reserve a table at {name}.",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner"
   },
   "restaurantMenu": {
     "notAvailable": "Menu is not available yet."

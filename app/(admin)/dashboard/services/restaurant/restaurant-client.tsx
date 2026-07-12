@@ -58,10 +58,27 @@ export default function RestaurantClient({
   initialTemplatesByRestaurant: Record<string, TemplateRow[]>
   initialCategories: Category[]
 }) {
-  const [restaurants, setRestaurants] = useState<RestaurantRow[]>(initialRestaurants)
+  const [allRestaurants, setAllRestaurants] = useState<RestaurantRow[]>(initialRestaurants)
+  const restaurants = useMemo(() => {
+    return allRestaurants.filter((r) => !r.id.startsWith('main-restaurant-'))
+  }, [allRestaurants])
   const [categories, setCategories] = useState<Category[]>(initialCategories)
   const [templatesByRestaurant, setTemplatesByRestaurant] = useState<Record<string, TemplateRow[]>>(initialTemplatesByRestaurant)
   const [mainTab, setMainTab] = useState("info")
+
+  // Sub-restaurant meal sessions state (for dynamic editing)
+  type MealSession = {
+    id: string;
+    name: string;
+    openTime: string | null;
+    closeTime: string | null;
+    isNew?: boolean;
+    isDeleted?: boolean;
+  }
+  const [localSessions, setLocalSessions] = useState<MealSession[]>([])
+
+  // Selected sub-restaurant target for loading templates
+  const [selectedMealForLoad, setSelectedMealForLoad] = useState<string>('main-restaurant-breakfast')
 
   // Client-side allergen metadata (fetched from API, fallback to static)
   const [allergensMeta, setAllergensMeta] = useState<{ id: string; label: string; icon: string }[]>(STATIC_ALLERGENS)
@@ -141,7 +158,7 @@ export default function RestaurantClient({
   // ── Restaurant handlers ──
   function openAddRestaurant() {
     setIsAddMode(true)
-    setRestaurantForm({ id: '', name: '', cuisine: '', openTime: null, closeTime: null, description: '', reservation: false, orderIndex: restaurants.length })
+    setRestaurantForm({ id: '', name: '', cuisine: '', openTime: null, closeTime: null, description: '', reservation: false, orderIndex: allRestaurants.length })
     setRestaurantDialogOpen(true)
   }
 
@@ -152,20 +169,74 @@ export default function RestaurantClient({
       openTime: r.openTime?.slice(0, 5) ?? null,
       closeTime: r.closeTime?.slice(0, 5) ?? null,
     })
+
+    if (r.id === 'main-restaurant') {
+      const sessions = allRestaurants
+        .filter(x => x.id.startsWith('main-restaurant-'))
+        .map(x => ({
+          id: x.id,
+          name: x.name,
+          openTime: x.openTime?.slice(0, 5) ?? null,
+          closeTime: x.closeTime?.slice(0, 5) ?? null,
+        }))
+      setLocalSessions(sessions)
+    }
+
     setRestaurantDialogOpen(true)
   }
 
-  function handleRestaurantSave() {
+  async function handleRestaurantSave() {
     if (!restaurantForm?.name.trim()) return
     if (isAddMode) {
       const id = restaurantForm.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       const newR = { ...restaurantForm, id }
-      setRestaurants((prev) => [...prev, newR])
+      setAllRestaurants((prev) => [...prev, newR])
       setTemplatesByRestaurant((prev) => ({ ...prev, [id]: [] }))
       setRestaurantDialogOpen(false)
       toast.promise(createRestaurant(newR), { loading: 'Creating...', success: 'Restaurant created', error: 'Failed to create' })
     } else {
-      setRestaurants((prev) => prev.map((r) => r.id === restaurantForm.id ? restaurantForm : r))
+      let updatedAllRestaurants = [...allRestaurants].map((r) => r.id === restaurantForm.id ? restaurantForm : r)
+
+      if (restaurantForm.id === 'main-restaurant') {
+        for (const session of localSessions) {
+          if (session.isDeleted) {
+            if (!session.isNew) {
+              await deleteRestaurant(session.id).catch(console.error)
+              updatedAllRestaurants = updatedAllRestaurants.filter(x => x.id !== session.id)
+            }
+          } else if (session.isNew) {
+            const subId = `main-restaurant-${session.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
+            const newSub = {
+              id: subId,
+              name: session.name,
+              cuisine: restaurantForm.cuisine,
+              openTime: session.openTime,
+              closeTime: session.closeTime,
+              description: `${session.name} selection`,
+              reservation: false,
+              orderIndex: 20
+            }
+            await createRestaurant(newSub).catch(console.error)
+            updatedAllRestaurants.push(newSub)
+          } else {
+            await updateRestaurant(session.id, {
+              name: session.name,
+              cuisine: restaurantForm.cuisine,
+              openTime: session.openTime,
+              closeTime: session.closeTime,
+              description: `${session.name} selection`,
+              reservation: false,
+            }).catch(console.error)
+            updatedAllRestaurants = updatedAllRestaurants.map(x => 
+              x.id === session.id 
+                ? { ...x, name: session.name, openTime: session.openTime, closeTime: session.closeTime } 
+                : x
+            )
+          }
+        }
+      }
+
+      setAllRestaurants(updatedAllRestaurants)
       setRestaurantDialogOpen(false)
       const { id, ...data } = restaurantForm
       toast.promise(updateRestaurant(id, data), { loading: 'Saving...', success: 'Restaurant updated', error: 'Failed to save' })
@@ -177,7 +248,7 @@ export default function RestaurantClient({
     const id = confirmDeleteRestaurantId
     setConfirmDeleteRestaurantId(null)
     setRestaurantDialogOpen(false)
-    setRestaurants((prev) => prev.filter((r) => r.id !== id))
+    setAllRestaurants((prev) => prev.filter((r) => r.id !== id))
     setTemplatesByRestaurant((prev) => { const n = { ...prev }; delete n[id]; return n })
     toast.promise(deleteRestaurant(id), { loading: 'Deleting...', success: 'Restaurant deleted', error: 'Failed to delete' })
   }
@@ -229,16 +300,22 @@ export default function RestaurantClient({
 
   function openLoadConfirm(templateId: string, restaurantId: string) {
     setPendingLoad({ templateId, restaurantId })
+    if (restaurantId === 'main-restaurant') {
+      const firstSession = allRestaurants.find(x => x.id.startsWith('main-restaurant-'))
+      setSelectedMealForLoad(firstSession?.id ?? 'main-restaurant-breakfast')
+    }
     setLoadConfirmOpen(true)
   }
 
   async function handleLoadTemplate() {
     if (!pendingLoad) return
     const { templateId, restaurantId } = pendingLoad
+    const targetRestaurantId = restaurantId === 'main-restaurant' ? selectedMealForLoad : restaurantId
+
     setLoadingTemplateId(templateId)
     setLoadConfirmOpen(false)
     try {
-      await loadMenuTemplate(templateId, restaurantId)
+      await loadMenuTemplate(templateId, targetRestaurantId)
       toast.success('Menu loaded from template')
     } catch {
       toast.error('Failed to load template')
@@ -555,24 +632,88 @@ export default function RestaurantClient({
                 <Label>Cuisine Type</Label>
                 <Input value={restaurantForm.cuisine} onChange={(e) => setRestaurantForm((p) => p && { ...p, cuisine: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label>Opening Hours</Label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="time"
-                    value={restaurantForm.openTime ?? ''}
-                    onChange={(e) => setRestaurantForm((p) => p && { ...p, openTime: e.target.value || null })}
-                    className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
-                  />
-                  <span className="text-muted-foreground text-sm shrink-0">–</span>
-                  <input
-                    type="time"
-                    value={restaurantForm.closeTime ?? ''}
-                    onChange={(e) => setRestaurantForm((p) => p && { ...p, closeTime: e.target.value || null })}
-                    className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
-                  />
+              {restaurantForm.id === 'main-restaurant' ? (
+                <div className="space-y-4 border-t pt-4 mt-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-sm">Meal Session Hours</h4>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setLocalSessions(prev => [
+                        ...prev,
+                        { id: `new-${Date.now()}`, name: "", openTime: "07:00", closeTime: "11:00", isNew: true }
+                      ])}
+                    >
+                      <Plus className="h-3.5 w-3.5 mr-1" /> Add Session
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {localSessions.filter(s => !s.isDeleted).map((session) => (
+                      <div key={session.id} className="flex gap-2 items-center bg-muted/30 p-2 rounded border">
+                        <div className="flex-1 space-y-1.5">
+                          <Input
+                            placeholder="Session Name (e.g. Late Breakfast)"
+                            value={session.name}
+                            onChange={(e) => setLocalSessions(prev => prev.map(s => s.id === session.id ? { ...s, name: e.target.value } : s))}
+                            className="h-8 text-xs font-semibold"
+                          />
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="time"
+                              value={session.openTime ?? ''}
+                              onChange={(e) => setLocalSessions(prev => prev.map(s => s.id === session.id ? { ...s, openTime: e.target.value } : s))}
+                              className="w-full px-2 py-1 text-xs border rounded bg-background h-8"
+                            />
+                            <span className="text-muted-foreground text-xs">–</span>
+                            <input
+                              type="time"
+                              value={session.closeTime ?? ''}
+                              onChange={(e) => setLocalSessions(prev => prev.map(s => s.id === session.id ? { ...s, closeTime: e.target.value } : s))}
+                              className="w-full px-2 py-1 text-xs border rounded bg-background h-8"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0"
+                          onClick={() => {
+                            if (session.isNew) {
+                              setLocalSessions(prev => prev.filter(s => s.id !== session.id))
+                            } else {
+                              setLocalSessions(prev => prev.map(s => s.id === session.id ? { ...s, isDeleted: true } : s))
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label>Opening Hours</Label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="time"
+                      value={restaurantForm.openTime ?? ''}
+                      onChange={(e) => setRestaurantForm((p) => p && { ...p, openTime: e.target.value || null })}
+                      className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
+                    />
+                    <span className="text-muted-foreground text-sm shrink-0">–</span>
+                    <input
+                      type="time"
+                      value={restaurantForm.closeTime ?? ''}
+                      onChange={(e) => setRestaurantForm((p) => p && { ...p, closeTime: e.target.value || null })}
+                      className="flex-1 px-3 py-2 text-sm border rounded-md bg-background"
+                    />
+                  </div>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label>Description</Label>
                 <Textarea value={restaurantForm.description} onChange={(e) => setRestaurantForm((p) => p && { ...p, description: e.target.value })} rows={3} />
@@ -658,8 +799,29 @@ export default function RestaurantClient({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Load Template</AlertDialogTitle>
-            <AlertDialogDescription>This will replace all current active menu items for this restaurant with the template&apos;s items. This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This will replace all current active menu items for this restaurant session with the template&apos;s items. This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
+          {pendingLoad?.restaurantId === 'main-restaurant' && (
+            <div className="space-y-2 py-3 border-t border-b my-2">
+              <Label className="text-sm font-semibold">Select Target Meal Session</Label>
+              <Select value={selectedMealForLoad} onValueChange={setSelectedMealForLoad}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {allRestaurants
+                    .filter((sub) => sub.id.startsWith('main-restaurant-'))
+                    .map((sub) => (
+                      <SelectItem key={sub.id} value={sub.id}>
+                        {sub.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleLoadTemplate}>Load Template</AlertDialogAction>

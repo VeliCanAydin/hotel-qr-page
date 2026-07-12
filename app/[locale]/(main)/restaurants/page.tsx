@@ -27,8 +27,24 @@ export default async function RestaurantsPage({
   return (
     <div className="p-4">
       <h2 className="text-3xl font-bold mb-4">{t("title")}</h2>
-      {restaurantRows.map((r) => {
+      {restaurantRows
+        .filter((r) => !r.id.startsWith('main-restaurant-'))
+        .map((r) => {
         const hours = [r.openTime?.slice(0, 5), r.closeTime?.slice(0, 5)].filter(Boolean).join(' – ')
+        const mealSlots = r.id === 'main-restaurant'
+          ? restaurantRows
+              .filter((sub) => sub.id.startsWith('main-restaurant-'))
+              .map((sub) => {
+                const subHours = [sub.openTime?.slice(0, 5), sub.closeTime?.slice(0, 5)].filter(Boolean).join(' – ')
+                return {
+                  labelKey: '',
+                  label: sub.name,
+                  hours: subHours,
+                  href: `/restaurants/${sub.id}`,
+                }
+              })
+          : undefined;
+
         return (
           <RestaurantCard
             key={r.id}
@@ -42,6 +58,7 @@ export default async function RestaurantsPage({
             cuisine={r.cuisine}
             contactPhone={hotelInfo.phone}
             contactWhatsapp={hotelInfo.whatsapp}
+            mealSlots={mealSlots}
             highlights={[
               r.reservation ? t("reservationRequired") : t("noReservation"),
               r.cuisine,
@@ -53,3 +70,4 @@ export default async function RestaurantsPage({
     </div>
   )
 }
+

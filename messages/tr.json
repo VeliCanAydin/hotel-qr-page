@@ -237,7 +237,10 @@
     "callReception": "Resepsiyonu Ara — {phone}",
     "messageWhatsapp": "WhatsApp'tan Yaz",
     "visitReception": "Rezervasyon için lütfen resepsiyona uğrayın.",
-    "whatsappText": "Merhaba, {name} restoranında bir masa ayırtmak istiyorum."
+    "whatsappText": "Merhaba, {name} restoranında bir masa ayırtmak istiyorum.",
+    "breakfast": "Kahvaltı",
+    "lunch": "Öğle Yemeği",
+    "dinner": "Akşam Yemeği"
   },
   "restaurantMenu": {
     "notAvailable": "Menü henüz mevcut değil."

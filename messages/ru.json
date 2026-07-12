@@ -240,7 +240,10 @@
     "callReception": "Позвонить на ресепшн — {phone}",
     "messageWhatsapp": "Написать в WhatsApp",
     "visitReception": "Пожалуйста, обратитесь на стойку регистрации для бронирования.",
-    "whatsappText": "Здравствуйте, я хотел бы забронировать столик в {name}."
+    "whatsappText": "Здравствуйте, я хотел бы забронировать столик в {name}.",
+    "breakfast": "Завтрак",
+    "lunch": "Обед",
+    "dinner": "Ужин"
   },
   "restaurantMenu": {
     "notAvailable": "Меню пока недоступно."

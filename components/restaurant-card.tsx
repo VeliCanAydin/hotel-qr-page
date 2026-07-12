@@ -14,7 +14,18 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Clock, Utensils, Phone, MessageCircleMore } from "lucide-react";
+import { Clock, Utensils, Phone, MessageCircleMore, ChevronRight } from "lucide-react";
+
+export interface MealSlot {
+    /** Translation key shown as label (e.g. "breakfast") */
+    labelKey: string;
+    /** Fallback label when translation key is not available */
+    label: string;
+    /** Opening hours string shown next to the button */
+    hours: string;
+    /** Route to navigate to on click */
+    href: string;
+}
 
 interface RestaurantCardProps {
     id: string;
@@ -28,6 +39,8 @@ interface RestaurantCardProps {
     highlights: string[];
     contactPhone?: string;
     contactWhatsapp?: string;
+    /** When provided, replaces the normal drawer content with 3 meal navigation buttons */
+    mealSlots?: MealSlot[];
 }
 
 export default function RestaurantCard({
@@ -42,6 +55,7 @@ export default function RestaurantCard({
     highlights,
     contactPhone,
     contactWhatsapp,
+    mealSlots,
 }: RestaurantCardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isReservationOpen, setIsReservationOpen] = useState(false);
@@ -75,48 +89,83 @@ export default function RestaurantCard({
                                 {description}
                             </DrawerDescription>
                         </DrawerHeader>
-                        <div className="px-4 space-y-4">
-                            {/* Opening Hours */}
-                            <div className="flex items-center gap-3 p-3 bg-muted rounded-xl">
-                                <Clock className="h-5 w-5 text-primary" />
-                                <div>
-                                    <p className="text-sm font-medium">{t("openingHours")}</p>
-                                    <p className="text-sm text-muted-foreground">{openingHours}</p>
+
+                        {mealSlots ? (
+                            /* ── Main Restaurant: 3-meal navigation ── */
+                            <div className="px-4 space-y-3 pb-2">
+                                {mealSlots.map((slot) => (
+                                    <button
+                                        key={slot.href}
+                                        onClick={() => {
+                                            setIsDetailsOpen(false);
+                                            setTimeout(() => router.push(slot.href as any), 300);
+                                        }}
+                                        className="w-full flex items-center justify-between gap-3 rounded-2xl bg-muted px-4 py-4 text-left hover:bg-muted/80 active:scale-[0.98] transition-all"
+                                    >
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="font-semibold text-foreground text-base">
+                                                {slot.labelKey ? t(slot.labelKey) : slot.label}
+                                            </span>
+                                            {slot.hours && (
+                                                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                                    <Clock className="h-3.5 w-3.5 shrink-0" />
+                                                    {slot.hours}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground/60" />
+                                    </button>
+                                ))}
+                            </div>
+                        ) : (
+                            /* ── Standard restaurant: hours + cuisine + highlights ── */
+                            <div className="px-4 space-y-4">
+                                {/* Opening Hours */}
+                                <div className="flex items-center gap-3 p-3 bg-muted rounded-xl">
+                                    <Clock className="h-5 w-5 text-primary" />
+                                    <div>
+                                        <p className="text-sm font-medium">{t("openingHours")}</p>
+                                        <p className="text-sm text-muted-foreground">{openingHours}</p>
+                                    </div>
+                                </div>
+
+                                {/* Cuisine Type */}
+                                <div className="flex items-center gap-3 p-3 bg-muted rounded-xl">
+                                    <Utensils className="h-5 w-5 text-primary" />
+                                    <div>
+                                        <p className="text-sm font-medium">{t("cuisine")}</p>
+                                        <p className="text-sm text-muted-foreground">{cuisine}</p>
+                                    </div>
+                                </div>
+
+                                {/* Highlights */}
+                                <div className="space-y-2">
+                                    <p className="text-sm font-medium">{t("highlights")}</p>
+                                    <ul className="space-y-1">
+                                        {highlights.map((highlight, index) => (
+                                            <li key={index} className="text-sm text-muted-foreground flex items-center gap-2">
+                                                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                                {highlight}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
                             </div>
+                        )}
 
-                            {/* Cuisine Type */}
-                            <div className="flex items-center gap-3 p-3 bg-muted rounded-xl">
-                                <Utensils className="h-5 w-5 text-primary" />
-                                <div>
-                                    <p className="text-sm font-medium">{t("cuisine")}</p>
-                                    <p className="text-sm text-muted-foreground">{cuisine}</p>
-                                </div>
-                            </div>
-
-                            {/* Highlights */}
-                            <div className="space-y-2">
-                                <p className="text-sm font-medium">{t("highlights")}</p>
-                                <ul className="space-y-1">
-                                    {highlights.map((highlight, index) => (
-                                        <li key={index} className="text-sm text-muted-foreground flex items-center gap-2">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                                            {highlight}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
                         <DrawerFooter>
-                            <Button
-                                className="rounded-3xl font-bold"
-                                onClick={() => {
-                                    setIsDetailsOpen(false);
-                                    setTimeout(() => router.push(`/restaurants/${id}`), 300);
-                                }}
-                            >
-                                {t("viewMenu")}
-                            </Button>
+                            {/* Only show "View Menu" for non-meal-slot restaurants */}
+                            {!mealSlots && (
+                                <Button
+                                    className="rounded-3xl font-bold"
+                                    onClick={() => {
+                                        setIsDetailsOpen(false);
+                                        setTimeout(() => router.push(`/restaurants/${id}`), 300);
+                                    }}
+                                >
+                                    {t("viewMenu")}
+                                </Button>
+                            )}
                             {hasReservation && (
                                 <Button
                                     variant="outline"

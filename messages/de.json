@@ -240,7 +240,10 @@
     "callReception": "Empfang anrufen — {phone}",
     "messageWhatsapp": "Per WhatsApp schreiben",
     "visitReception": "Bitte wenden Sie sich für eine Reservierung an die Rezeption.",
-    "whatsappText": "Hallo, ich möchte einen Tisch im {name} reservieren."
+    "whatsappText": "Hallo, ich möchte einen Tisch im {name} reservieren.",
+    "breakfast": "Frühstück",
+    "lunch": "Mittagessen",
+    "dinner": "Abendessen"
   },
   "restaurantMenu": {
     "notAvailable": "Das Menü ist noch nicht verfügbar."
