@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation"
 import { getTranslations, setRequestLocale } from "next-intl/server"
-import { Clock } from "lucide-react"
 import { getPublicBarMenu, getPublicBars } from "@/lib/content"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { MenuItemCard } from "@/components/a-la-carte/menu-item-card"
+import type { MenuItem } from "@/lib/types/menu"
 
 // Prerender the menus of known bars; ones added later render on demand.
 export async function generateStaticParams() {
@@ -23,6 +24,15 @@ export default async function BarMenuPage({
 
   if (!bar) notFound()
 
+  const itemsWithImages: MenuItem[] = items.map((item) => ({
+    id: item.id,
+    name: item.name,
+    description: item.description,
+    price: 0,
+    category: item.category,
+    priceText: item.priceText,
+  }))
+
   // Only show categories that actually have items for this bar, preserving DB
   // order; unknown category ids used by items still get a tab.
   const itemCategoryIds = new Set(items.map((i) => i.category))
@@ -36,8 +46,7 @@ export default async function BarMenuPage({
 
   return (
     <div className="p-4">
-      <h2 className="text-3xl font-bold mb-2">{bar.name}</h2>
-      <p className="text-base text-muted-foreground mb-4">{bar.description}</p>
+      <h2 className="text-3xl font-bold mb-4">{bar.name}</h2>
 
       {items.length === 0 ? (
         <p className="text-muted-foreground mt-8 text-center">{t("notAvailable")}</p>
@@ -54,22 +63,14 @@ export default async function BarMenuPage({
           {categories.map((category) => (
             <TabsContent key={category.id} value={category.id}>
               <div className="divide-y">
-                {items
+                {itemsWithImages
                   .filter((item) => item.category === category.id)
-                  .map((item) => (
-                    <div key={item.id} className="flex items-baseline justify-between gap-3 py-3">
-                      <div className="min-w-0">
-                        <p className="font-semibold text-foreground">{item.name}</p>
-                        {item.description && (
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
-                        )}
-                      </div>
-                      {item.priceText && (
-                        <span className="shrink-0 text-sm font-semibold text-foreground">
-                          {item.priceText}
-                        </span>
-                      )}
-                    </div>
+                  .map((item, index, filtered) => (
+                    <MenuItemCard
+                      key={item.id}
+                      item={item}
+                      showSeparator={index < filtered.length - 1}
+                    />
                   ))}
               </div>
             </TabsContent>

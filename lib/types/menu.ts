@@ -7,4 +7,5 @@ export interface MenuItem {
     category: string;
     image?: string; // blob proxy URL, fetched from menu_item_images table
     allergens?: string[];
+    priceText?: string;
 }
