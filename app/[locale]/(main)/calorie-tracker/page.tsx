@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Flame, Upload, Camera, Trash2, Check, Sparkles, AlertCircle, RefreshCw, BarChart2, Info, ArrowLeft, History, Edit3, X } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -83,10 +83,6 @@ export default function CalorieTrackerPage() {
     // Goal editing states
     const [isEditingGoal, setIsEditingGoal] = useState(false);
     const [goalInputValue, setGoalInputValue] = useState('');
-    const [isCameraActive, setIsCameraActive] = useState(false);
-    const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const galleryInputRef = useRef<HTMLInputElement>(null);
 
     // Get current local date string (YYYY-MM-DD) safely
     const getLocalDateString = () => {
@@ -194,9 +190,11 @@ export default function CalorieTrackerPage() {
         });
     };
 
-    // Handle Image Selection
+    // Handle Image Selection (gallery picker or native camera capture)
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+        // Allow re-selecting the same file to retrigger onChange
+        e.target.value = '';
         if (file) {
             if (!file.type.startsWith('image/')) {
                 toast.error(t('toastImageFile'));
@@ -206,73 +204,6 @@ export default function CalorieTrackerPage() {
             const previewUrl = URL.createObjectURL(file);
             setSelectedImage(previewUrl);
             setAnalysisResult(null); // Reset analysis on new image
-        }
-    };
-
-    const startCamera = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { ideal: 'environment' } },
-                audio: false
-            });
-            setCameraStream(stream);
-            setIsCameraActive(true);
-            
-            setTimeout(() => {
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                    videoRef.current.play().catch(err => console.error("Video play error:", err));
-                }
-            }, 100);
-        } catch (error) {
-            console.error("Camera access failed:", error);
-            toast.error(t('toastCameraError'));
-            // Fallback: trigger gallery selection natively
-            galleryInputRef.current?.click();
-        }
-    };
-
-    const stopCamera = () => {
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(track => track.stop());
-            setCameraStream(null);
-        }
-        setIsCameraActive(false);
-    };
-
-    const capturePhoto = () => {
-        if (!videoRef.current) return;
-        const video = videoRef.current;
-        
-        try {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-                
-                setSelectedImage(dataUrl);
-                setAnalysisResult(null);
-                
-                // Convert dataUrl to File object for the API payload
-                const byteString = atob(dataUrl.split(',')[1]);
-                const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
-                const ab = new ArrayBuffer(byteString.length);
-                const ia = new Uint8Array(ab);
-                for (let i = 0; i < byteString.length; i++) {
-                    ia[i] = byteString.charCodeAt(i);
-                }
-                const blob = new Blob([ab], { type: mimeString });
-                const file = new File([blob], 'captured-food.jpg', { type: mimeString });
-                setImageFile(file);
-            }
-        } catch (err) {
-            console.error("Failed to capture photo:", err);
-            toast.error("Fotoğraf çekilirken bir hata oluştu.");
-        } finally {
-            stopCamera();
         }
     };
 
@@ -373,7 +304,6 @@ export default function CalorieTrackerPage() {
     };
 
     const handleReset = () => {
-        stopCamera();
         setSelectedImage(null);
         setImageFile(null);
         setAnalysisResult(null);
@@ -447,62 +377,14 @@ export default function CalorieTrackerPage() {
                         </CardHeader>
                         <CardContent className="flex flex-col gap-5">
                             {/* Upload Area */}
-                            <div 
+                            <div
                                 className={`relative border-2 border-dashed rounded-3xl p-6 transition-all ${
-                                    selectedImage || isCameraActive
-                                        ? 'border-primary/20 bg-muted/10' 
+                                    selectedImage
+                                        ? 'border-primary/20 bg-muted/10'
                                         : 'border-muted bg-muted/5'
                                 } flex flex-col items-center justify-center min-h-[260px]`}
                             >
-                                {/* Hidden input for JS fallback trigger */}
-                                <input 
-                                    type="file" 
-                                    ref={galleryInputRef} 
-                                    onChange={handleImageChange} 
-                                    accept="image/*" 
-                                    className="hidden" 
-                                    disabled={isAnalyzing}
-                                />
-
-                                {isCameraActive ? (
-                                    <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner bg-black flex items-center justify-center">
-                                        <video 
-                                            ref={videoRef} 
-                                            playsInline 
-                                            muted 
-                                            className="w-full h-full object-cover"
-                                        />
-                                        
-                                        {/* Camera HUD Controls Overlay */}
-                                        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-gradient-to-b from-black/40 via-transparent to-black/60">
-                                            <div className="flex justify-between items-center w-full">
-                                                <span className="text-white text-xs font-semibold bg-black/50 px-2.5 py-1 rounded-full flex items-center gap-1.5 select-none">
-                                                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                                                    LIVE CAMERA
-                                                </span>
-                                                <button 
-                                                    type="button" 
-                                                    onClick={stopCamera}
-                                                    className="p-1.5 rounded-full bg-black/50 hover:bg-black/75 text-white transition cursor-pointer"
-                                                >
-                                                    <X className="w-5 h-5" />
-                                                </button>
-                                            </div>
-
-                                            <div className="flex justify-center items-center w-full">
-                                                {/* Capture Button (Shutter) */}
-                                                <button
-                                                    type="button"
-                                                    onClick={capturePhoto}
-                                                    className="w-16 h-16 rounded-full border-4 border-white bg-red-500 hover:bg-red-600 transition flex items-center justify-center shadow-lg active:scale-95 cursor-pointer"
-                                                    title={t('takePhoto')}
-                                                >
-                                                    <div className="w-12 h-12 rounded-full border border-black/10 bg-white/20" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : selectedImage ? (
+                                {selectedImage ? (
                                     <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner group">
                                         <img 
                                             src={selectedImage} 
@@ -534,17 +416,21 @@ export default function CalorieTrackerPage() {
                                             <span className="text-xs text-muted-foreground">{t('takePicture')}</span>
                                         </div>
                                         <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md mt-2">
-                                            {/* Camera Trigger */}
-                                            <Button 
-                                                type="button"
-                                                variant="default"
-                                                className="flex-1 bg-[#45a7d7] hover:bg-[#45a7d7]/90 text-white rounded-xl font-bold flex items-center justify-center gap-1.5 py-2.5"
-                                                onClick={startCamera}
-                                                disabled={isAnalyzing}
+                                            {/* Camera Trigger — capture="environment" opens the device's native camera app on mobile */}
+                                            <label
+                                                className={`flex-1 relative bg-[#45a7d7] hover:bg-[#45a7d7]/90 text-white rounded-xl font-bold flex items-center justify-center gap-1.5 py-2.5 cursor-pointer text-center select-none text-sm ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}`}
                                             >
                                                 <Camera className="w-4 h-4" />
                                                 {t('takePhoto')}
-                                            </Button>
+                                                <input
+                                                    type="file"
+                                                    onChange={handleImageChange}
+                                                    accept="image/*"
+                                                    capture="environment"
+                                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                                    disabled={isAnalyzing}
+                                                />
+                                            </label>
 
                                             {/* Gallery/File Trigger */}
                                             <label 
