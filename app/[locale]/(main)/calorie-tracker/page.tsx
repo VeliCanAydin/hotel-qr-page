@@ -434,17 +434,17 @@ export default function CalorieTrackerPage() {
 
                             {/* Button actions */}
                             {selectedImage && !isAnalyzing && (
-                                <div className="flex gap-3">
+                                <div className="flex flex-col sm:flex-row gap-3">
                                     <Button 
                                         onClick={handleReset}
                                         variant="outline" 
-                                        className="flex-1 rounded-2xl font-bold border-muted"
+                                        className="w-full sm:flex-1 rounded-2xl font-bold border-muted"
                                     >
                                         {t('changePhoto')}
                                     </Button>
                                     <Button
                                         onClick={handleAnalyze}
-                                        className="flex-1 bg-[#45a7d7] text-white hover:bg-[#45a7d7]/95 rounded-2xl font-bold gap-2"
+                                        className="w-full sm:flex-1 bg-[#45a7d7] text-white hover:bg-[#45a7d7]/95 rounded-2xl font-bold gap-2"
                                     >
                                         <Sparkles className="w-4 h-4 fill-white" />
                                         {t('analyzeMeal')}
@@ -596,14 +596,14 @@ export default function CalorieTrackerPage() {
 
                             {/* Action logger to daily history */}
                             <div className="border-t pt-4 flex flex-col gap-3">
-                                <div className="flex items-center justify-between text-xs">
-                                    <span className="text-muted-foreground font-semibold">{t('logIntoSlot')}</span>
-                                    <div className="flex gap-1">
+                                <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between text-xs">
+                                    <span className="text-muted-foreground font-semibold shrink-0">{t('logIntoSlot')}</span>
+                                    <div className="flex flex-wrap gap-1 w-full sm:w-auto">
                                         {(['Breakfast', 'Lunch', 'Dinner', 'Snack'] as const).map((type) => (
                                             <button
                                                 key={type}
                                                 onClick={() => setSelectedMealType(type)}
-                                                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition ${
+                                                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition flex-1 sm:flex-initial text-center ${
                                                     selectedMealType === type
                                                         ? 'bg-primary text-primary-foreground'
                                                         : 'bg-muted hover:bg-muted-hover text-muted-foreground'
@@ -682,7 +682,7 @@ export default function CalorieTrackerPage() {
                                 <div className="flex flex-col gap-4">
                                     {isEditingGoal ? (
                                         /* Edit Target Inline Form */
-                                        <div className="flex items-center justify-between gap-3 border-b pb-3">
+                                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b pb-3">
                                             <div className="flex items-center gap-2">
                                                 <input 
                                                     type="number"
