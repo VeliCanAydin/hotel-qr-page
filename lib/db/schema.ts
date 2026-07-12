@@ -104,6 +104,25 @@ export const barMenuCategories = pgTable('bar_menu_categories', {
   orderIndex: integer('order_index').notNull().default(0),
 })
 
+// Analogous to menu_templates / menu_template_items, but for bars.
+// Bar template items use priceText (free-form text) instead of a numeric price.
+export const barMenuTemplates = pgTable('bar_menu_templates', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  barId: text('bar_id').notNull().references(() => bars.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const barMenuTemplateItems = pgTable('bar_menu_template_items', {
+  id: text('id').primaryKey(),
+  templateId: text('template_id').notNull().references(() => barMenuTemplates.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description').notNull().default(''),
+  priceText: text('price_text').notNull().default(''),
+  category: text('category').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
 export const menuItems = pgTable('menu_items', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
