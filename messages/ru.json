@@ -44,6 +44,10 @@
       "title": "Рестораны",
       "description": "Меню и варианты питания"
     },
+    "bars": {
+      "title": "Бары",
+      "description": "Бары и часы работы"
+    },
     "kidsCare": {
       "title": "Детский уход",
       "description": "Услуги по уходу за детьми"
@@ -210,6 +214,18 @@
     "reservationRequired": "Требуется бронирование",
     "noReservation": "Бронирование не требуется",
     "openHighlight": "Открыто {hours}"
+  },
+  "bars": {
+    "title": "Бары",
+    "openingHours": "Часы работы",
+    "notAvailable": "Меню пока недоступно."
+  },
+  "barCard": {
+    "details": "Подробнее",
+    "openingHours": "Часы работы",
+    "highlights": "Особенности",
+    "viewPage": "Открыть страницу",
+    "close": "Закрыть"
   },
   "restaurantCard": {
     "details": "Подробнее",

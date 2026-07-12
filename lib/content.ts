@@ -16,6 +16,9 @@ import { asc, eq } from 'drizzle-orm'
 import { cacheLife, cacheTag } from 'next/cache'
 import { db } from '@/lib/db'
 import {
+  barMenuCategories,
+  barMenuItems,
+  bars,
   events,
   hotelInfo,
   kidsActivities,
@@ -94,6 +97,36 @@ export async function getPublicRestaurantMenu(restaurantId: string, locale: stri
     TRANSLATABLE_ENTITIES.menu_category.fields,
   )
   return { restaurant: restaurant ?? null, items: translatedItems, images, categories: translatedCategories }
+}
+
+export async function getPublicBars(locale: string) {
+  'use cache'
+  cacheTag(CONTENT_TAGS.bars, CONTENT_TAGS.translations)
+  cacheLife('hours')
+  const rows = await db.select().from(bars).orderBy(asc(bars.orderIndex))
+  return translateRows('bar', locale, rows, TRANSLATABLE_ENTITIES.bar.fields)
+}
+
+export async function getPublicBarMenu(barId: string, locale: string) {
+  'use cache'
+  cacheTag(CONTENT_TAGS.bars, CONTENT_TAGS.translations)
+  cacheLife('hours')
+  const [barRows, items, categories] = await Promise.all([
+    db.select().from(bars).where(eq(bars.id, barId)).limit(1),
+    db.select().from(barMenuItems).where(eq(barMenuItems.barId, barId)).orderBy(asc(barMenuItems.orderIndex)),
+    db.select().from(barMenuCategories).orderBy(asc(barMenuCategories.orderIndex)),
+  ])
+  const [bar] = await translateRows('bar', locale, barRows, TRANSLATABLE_ENTITIES.bar.fields)
+  return {
+    bar: bar ?? null,
+    items: await translateRows('bar_menu_item', locale, items, TRANSLATABLE_ENTITIES.bar_menu_item.fields),
+    categories: await translateRows(
+      'bar_menu_category',
+      locale,
+      categories,
+      TRANSLATABLE_ENTITIES.bar_menu_category.fields,
+    ),
+  }
 }
 
 export async function getPublicRoomServiceItems(locale: string) {

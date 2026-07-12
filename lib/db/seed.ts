@@ -4,7 +4,7 @@ loadEnvConfig(process.cwd())
 // Dynamic imports run after env is loaded
 async function seed() {
   const { db } = await import('./index')
-  const { menuItems, roomServiceItems, roomServiceCategories, contentTranslations, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, nearbyGuideItems: nearbyGuideItemsTable } = await import('./schema')
+  const { menuItems, roomServiceItems, roomServiceCategories, contentTranslations, events, kidsActivities, adminUsers, adminRoles, adminRolePages, hotelInfo, beachPoolsInfo, spaServices, wellnessServices, restaurants, menuCategories, bars, barMenuItems, barMenuCategories, nearbyGuideItems: nearbyGuideItemsTable } = await import('./schema')
   const { hashPassword } = await import('../auth')
   const { ADMIN_PAGE_PERMISSIONS, DEFAULT_ADMIN_ROLE_PRESETS } = await import('../permissions')
   const { menuItems: menuData } = await import('../data/a-la-carte-menu')
@@ -25,6 +25,47 @@ async function seed() {
     ])
     .onConflictDoNothing()
   console.log('Upserted 3 restaurants')
+
+  // Bars (upsert — safe to re-seed) + description translations
+  const { barSeedData } = await import('../data/bars')
+  await db
+    .insert(bars)
+    .values(barSeedData.map(({ translations: _translations, ...bar }) => bar))
+    .onConflictDoNothing()
+  await db
+    .insert(contentTranslations)
+    .values(
+      barSeedData.flatMap((bar) =>
+        Object.entries(bar.translations).flatMap(([locale, fields]) =>
+          Object.entries(fields).map(([field, value]) => ({
+            entityType: 'bar',
+            entityId: bar.id,
+            locale,
+            field,
+            value,
+          }))
+        )
+      )
+    )
+    .onConflictDoNothing()
+  console.log(`Upserted ${barSeedData.length} bars (+ translations)`)
+
+  // Bar menu categories + items (items are delete+insert like menu_items; the
+  // translations use deterministic item ids, so they survive re-seeds)
+  const { BAR_MENU_CATEGORY_SEED, buildBarMenuSeed } = await import('../data/bar-menus')
+  await db
+    .insert(barMenuCategories)
+    .values(BAR_MENU_CATEGORY_SEED.map(({ translations: _t, ...category }) => category))
+    .onConflictDoNothing()
+  const barMenuSeed = buildBarMenuSeed()
+  await db.delete(barMenuItems)
+  for (let i = 0; i < barMenuSeed.items.length; i += 200) {
+    await db.insert(barMenuItems).values(barMenuSeed.items.slice(i, i + 200))
+  }
+  for (let i = 0; i < barMenuSeed.translations.length; i += 200) {
+    await db.insert(contentTranslations).values(barMenuSeed.translations.slice(i, i + 200)).onConflictDoNothing()
+  }
+  console.log(`Inserted ${barMenuSeed.items.length} bar menu items (+ ${barMenuSeed.translations.length} translations)`)
 
   // Menu categories (upsert)
   await db

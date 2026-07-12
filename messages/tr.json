@@ -41,6 +41,10 @@
       "title": "Restoranlar",
       "description": "Menüler ve yemek seçenekleri"
     },
+    "bars": {
+      "title": "Barlar",
+      "description": "Barlar ve çalışma saatleri"
+    },
     "kidsCare": {
       "title": "Çocuk Bakımı",
       "description": "Çocuk bakım hizmetleri"
@@ -207,6 +211,18 @@
     "reservationRequired": "Rezervasyon gerekli",
     "noReservation": "Rezervasyon gerekmiyor",
     "openHighlight": "Açık {hours}"
+  },
+  "bars": {
+    "title": "Barlar",
+    "openingHours": "Çalışma Saatleri",
+    "notAvailable": "Menü henüz mevcut değil."
+  },
+  "barCard": {
+    "details": "Detaylar",
+    "openingHours": "Çalışma Saatleri",
+    "highlights": "Öne Çıkanlar",
+    "viewPage": "Sayfaya Git",
+    "close": "Kapat"
   },
   "restaurantCard": {
     "details": "Detaylar",

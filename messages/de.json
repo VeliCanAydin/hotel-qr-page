@@ -44,6 +44,10 @@
       "title": "Restaurants",
       "description": "Menüs und Speiseoptionen"
     },
+    "bars": {
+      "title": "Bars",
+      "description": "Bars und Öffnungszeiten"
+    },
     "kidsCare": {
       "title": "Kinderbetreuung",
       "description": "Kinderbetreuungsdienste"
@@ -210,6 +214,18 @@
     "reservationRequired": "Reservierung erforderlich",
     "noReservation": "Keine Reservierung nötig",
     "openHighlight": "Geöffnet {hours}"
+  },
+  "bars": {
+    "title": "Bars",
+    "openingHours": "Öffnungszeiten",
+    "notAvailable": "Die Karte ist noch nicht verfügbar."
+  },
+  "barCard": {
+    "details": "Details",
+    "openingHours": "Öffnungszeiten",
+    "highlights": "Highlights",
+    "viewPage": "Seite ansehen",
+    "close": "Schließen"
   },
   "restaurantCard": {
     "details": "Details",

@@ -23,9 +23,9 @@ interface RestaurantCardProps {
     title: string;
     description: string;
     hasReservation?: boolean;
-    openingHours?: string;
-    cuisine?: string;
-    highlights?: string[];
+    openingHours: string;
+    cuisine: string;
+    highlights: string[];
     contactPhone?: string;
     contactWhatsapp?: string;
 }
@@ -37,9 +37,9 @@ export default function RestaurantCard({
     title,
     description,
     hasReservation = false,
-    openingHours = "12:00 - 22:00",
-    cuisine = "International Cuisine",
-    highlights = ["Fresh ingredients", "Seasonal menu", "Vegetarian options available"],
+    openingHours,
+    cuisine,
+    highlights,
     contactPhone,
     contactWhatsapp,
 }: RestaurantCardProps) {

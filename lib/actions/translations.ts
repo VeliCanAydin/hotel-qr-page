@@ -5,6 +5,9 @@ import { updateTag } from 'next/cache'
 import { db } from '@/lib/db'
 import {
   allergens,
+  barMenuCategories,
+  barMenuItems,
+  bars,
   beachPoolsInfo,
   contentTranslations,
   events,
@@ -105,6 +108,35 @@ const ENTITY_SOURCES: Record<TranslatableEntityType, () => Promise<SourceRecord[
       id: row.id,
       label: `${row.name} — ${restaurantNames.get(row.restaurantId) ?? row.restaurantId}`,
       values: { name: row.name, description: row.description },
+    }))
+  },
+  bar: async () => {
+    const rows = await db.select().from(bars).orderBy(asc(bars.orderIndex))
+    return rows.map((row) => ({
+      id: row.id,
+      label: row.name,
+      values: { name: row.name, description: row.description, highlights: row.highlights },
+    }))
+  },
+  bar_menu_item: async () => {
+    const barRows = await db.select({ id: bars.id, name: bars.name }).from(bars)
+    const barNames = new Map(barRows.map((row) => [row.id, row.name]))
+    const rows = await db
+      .select()
+      .from(barMenuItems)
+      .orderBy(asc(barMenuItems.barId), asc(barMenuItems.category), asc(barMenuItems.orderIndex))
+    return rows.map((row) => ({
+      id: row.id,
+      label: `${row.name} — ${barNames.get(row.barId) ?? row.barId}`,
+      values: { name: row.name, description: row.description },
+    }))
+  },
+  bar_menu_category: async () => {
+    const rows = await db.select().from(barMenuCategories).orderBy(asc(barMenuCategories.orderIndex))
+    return rows.map((row) => ({
+      id: row.id,
+      label: row.label,
+      values: { label: row.label },
     }))
   },
   room_service_item: async () => {

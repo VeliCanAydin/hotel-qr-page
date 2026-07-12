@@ -78,6 +78,13 @@ export const ADMIN_PAGE_PERMISSIONS: AdminPagePermission[] = [
     description: 'A-la-carte and restaurant menu content.',
   },
   {
+    href: '/dashboard/services/bars',
+    key: 'bars',
+    label: 'Bar Menu',
+    section: 'Services',
+    description: 'Bar list, opening hours and drink menus.',
+  },
+  {
     href: '/dashboard/services/room-service',
     key: 'room-service',
     label: 'Room Service',
@@ -164,6 +171,7 @@ export const DEFAULT_ADMIN_ROLE_PRESETS: AdminRolePreset[] = [
     allowedPageKeys: [
       '/dashboard',
       '/dashboard/services/restaurant',
+      '/dashboard/services/bars',
       '/dashboard/services/room-service',
       '/dashboard/orders/room-service-orders',
     ],

@@ -1,10 +1,11 @@
-import { CircleAlert, Utensils, Baby, TreePalm, Flower, Dumbbell, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark, MapPinned, NotebookPen, Flame } from "lucide-react";
+import { CircleAlert, Utensils, Martini, Baby, TreePalm, Flower, Dumbbell, HandPlatter, Bot, CalendarDays, MessageCircleQuestionMark, MapPinned, NotebookPen, Flame } from "lucide-react";
 
 // Home-page cards. `key` maps to the `home` messages namespace
 // (home.<key>.title / home.<key>.description); icon + href stay here.
 export const pages = [
     { icon: CircleAlert, key: "hotelInfo", href: "/hotel-info" },
     { icon: Utensils, key: "restaurants", href: "/restaurants" },
+    { icon: Martini, key: "bars", href: "/bars" },
     { icon: Baby, key: "kidsCare", href: "/kids-care" },
     { icon: TreePalm, key: "beach", href: "/beach-pools" },
     { icon: Flower, key: "spa", href: "/spa" },

@@ -13,7 +13,7 @@ interface AIApiResponse {
 }
 
 const MAX_MESSAGE_LENGTH = 2000;
-const UPSTREAM_TIMEOUT_MS = 20_000;
+const UPSTREAM_TIMEOUT_MS = 30_000;
 
 // The upstream payload has no system-prompt field, so the reply-language
 // instruction rides along with the message (skipped for the English default).

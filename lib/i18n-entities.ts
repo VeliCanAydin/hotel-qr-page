@@ -45,6 +45,19 @@ export const TRANSLATABLE_ENTITIES = {
     label: 'Menu Items',
     fields: ['name', 'description'],
   },
+  bar: {
+    label: 'Bars',
+    fields: ['name', 'description', 'highlights'],
+  },
+  bar_menu_item: {
+    label: 'Bar Menu Items',
+    // priceText is translatable for the "Bottle/Şişe/Flasche" word in paired prices
+    fields: ['name', 'description', 'priceText'],
+  },
+  bar_menu_category: {
+    label: 'Bar Menu Categories',
+    fields: ['label'],
+  },
   room_service_item: {
     label: 'Room Service Items',
     fields: ['name', 'description'],

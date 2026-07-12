@@ -5,6 +5,8 @@ export const CONTENT_TAGS = {
   hotelInfo: 'content:hotel-info',
   restaurants: 'content:restaurants',
   menuItems: 'content:menu-items',
+  // One tag for bars + their menu items/categories — they change together
+  bars: 'content:bars',
   roomServiceItems: 'content:room-service-items',
   events: 'content:events',
   spaServices: 'content:spa-services',

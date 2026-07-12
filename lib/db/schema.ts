@@ -71,6 +71,39 @@ export const restaurants = pgTable('restaurants', {
   orderIndex: integer('order_index').notNull().default(0),
 })
 
+export const bars = pgTable('bars', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description').notNull().default(''),
+  // Comma-separated bullet points for the guest card drawer (like spa tags)
+  highlights: text('highlights').notNull().default(''),
+  image: text('image').notNull().default(''),
+  openTime: time('open_time'),
+  closeTime: time('close_time'),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
+export const barMenuItems = pgTable('bar_menu_items', {
+  id: text('id').primaryKey(),
+  barId: text('bar_id').notNull().references(() => bars.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description').notNull().default(''),
+  // Free-form display price ('' = included in the all-inclusive concept). Bar
+  // prices are € strings, sometimes bottle/glass pairs ("Bottle 190€ · 6cl 19€"),
+  // so a numeric column can't represent them.
+  priceText: text('price_text').notNull().default(''),
+  category: text('category').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
+// Shared across bars, like menu_categories — each bar's menu only shows the
+// categories its own items use.
+export const barMenuCategories = pgTable('bar_menu_categories', {
+  id: text('id').primaryKey(),
+  label: text('label').notNull(),
+  orderIndex: integer('order_index').notNull().default(0),
+})
+
 export const menuItems = pgTable('menu_items', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),

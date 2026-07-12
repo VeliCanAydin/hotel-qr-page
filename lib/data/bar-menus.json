@@ -1,0 +1,2013 @@
+{
+  "resort": "Dosinia Luxury Resort",
+  "bars": [
+    {
+      "bar_name": "The Whippet Inn",
+      "resort": "Dosinia Luxury Resort",
+      "menus": {
+        "Free Drinks Menu": {
+          "included_spirits": {
+            "Beer": [
+              "Tuborg",
+              "Carlsberg",
+              "Blank"
+            ],
+            "Whisky": [
+              "Ballantine's",
+              "Johnnie Walker Red",
+              "J&B",
+              "Long John"
+            ],
+            "Vodka": [
+              "Gilbeys"
+            ],
+            "Gin": [
+              "Gilbeys"
+            ],
+            "Tequila": [
+              "Jose Cuervo"
+            ],
+            "Raki": [
+              "Yeni Raki"
+            ],
+            "Rum": [
+              "Captain Morgan White"
+            ],
+            "Brandy": [
+              "Napoleon"
+            ],
+            "Vermut": [
+              "Dry",
+              "Bianco",
+              "Rosso"
+            ],
+            "Aperatif": [
+              "Irish Cream",
+              "Irish Cream Cappuccino",
+              "Malibu",
+              "Aperitivo",
+              "Campari",
+              "Jagerwelt"
+            ]
+          },
+          "cocktail_menu": [
+            {
+              "name": "Cosmopolitan",
+              "ingredients": "Vodka, Orange Liqueur, Cranberry Syrup, Lemon Juice"
+            },
+            {
+              "name": "Negroni",
+              "ingredients": "Gin, Campari, Vermouth Rosso"
+            },
+            {
+              "name": "Tuxedo",
+              "ingredients": "Gin, Cherry Liqueur, Bianco"
+            },
+            {
+              "name": "Margarita",
+              "ingredients": "Tequila, Orange Liqueur, Lemon Juice"
+            },
+            {
+              "name": "Aperol Spritz",
+              "ingredients": "Aperol, Sparkling Wine, Mineral Water"
+            },
+            {
+              "name": "Banana Banshee",
+              "ingredients": "Banana Liqueur, Coconut Syrup, Pineapple Juice, Milk"
+            },
+            {
+              "name": "Pina Colada",
+              "ingredients": "Rum, Pineapple Juice, Milk, Coconut Syrup"
+            },
+            {
+              "name": "Bloody Mary",
+              "ingredients": "Vodka, Tomato Juice, Lemon Juice, Worcestershire Sauce, Hot Sauce, Salt, Pepper"
+            },
+            {
+              "name": "Sex on the Beach",
+              "ingredients": "Vodka, Tequila, Peach Liqueur, Orange Juice, Grenadine"
+            },
+            {
+              "name": "Daiquiri (Optional Strawberry)",
+              "ingredients": "Rum, Lemon Juice, Sugar Syrup"
+            },
+            {
+              "name": "Mary Pickford",
+              "ingredients": "Tequila, Cherry Liqueur, Pineapple Juice, Grenadine"
+            },
+            {
+              "name": "Southside",
+              "ingredients": "Gin, Lemon Juice, Mint, Mineral Water"
+            },
+            {
+              "name": "Espresso Martini",
+              "ingredients": "Vodka, Coffee Liqueur, Espresso, Sugar Syrup"
+            },
+            {
+              "name": "Mai Tai",
+              "ingredients": "Rum, Orange Liqueur, Almond Liqueur, Orange Juice, Lemon Juice, Grenadine"
+            },
+            {
+              "name": "Unfinished Love",
+              "ingredients": "Aperol, Gin, Vanilla Syrup, Coconut Cream, Lemon Juice"
+            },
+            {
+              "name": "Blue Lagoon",
+              "ingredients": "Vodka, Sprite, Blue Curacao Syrup"
+            },
+            {
+              "name": "Chica Morena",
+              "ingredients": "Malibu, Peach Liqueur, Orange Juice, Strawberry Syrup"
+            },
+            {
+              "name": "Emeralde Pulse",
+              "ingredients": "Gin, Lemon Juice, Green Apple Syrup, Elderflower Syrup, Soda"
+            },
+            {
+              "name": "Kivi Cooler",
+              "ingredients": "Vodka, Rum, Sprite, Kiwi Syrup"
+            },
+            {
+              "name": "Mojito (Regular, Strawberry)",
+              "ingredients": "Rum, Brown Sugar, Lime, Mint, Mineral Water"
+            }
+          ],
+          "soft_drinks": [
+            "Pepsi",
+            "7Up",
+            "Yedigün",
+            "Ice Tea",
+            "Energy Drink",
+            "Soda Water",
+            "Fruit Juices (Orange, Apple, Pineapple, Cherry)"
+          ]
+        },
+        "Paid Spirits Menu": {
+          "categories": {
+            "Beer & Cider": [
+              {
+                "name": "Strongbow Apple Cider 70CL",
+                "price": "8€"
+              },
+              {
+                "name": "Amsterdam",
+                "price": "8€"
+              },
+              {
+                "name": "Duvel",
+                "price": "8€"
+              },
+              {
+                "name": "Weihenstephan Haffeweissbier 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Bud 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Kronenbourg 1664 Blanck 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Corona 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Miller 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Desperados 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Guinness 44CL",
+                "price": "8€"
+              },
+              {
+                "name": "Heineken 33CL",
+                "price": "8€"
+              }
+            ],
+            "Champagne": [
+              {
+                "name": "Zonin Prosecco",
+                "price_bottle": "90€"
+              },
+              {
+                "name": "Martini Asti",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Martini Brut",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Martini Rose",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Martini Prosecco",
+                "price_bottle": "90€"
+              },
+              {
+                "name": "Mumm Gordon Rouge Brut",
+                "price_bottle": "300€"
+              },
+              {
+                "name": "Moet Chandon",
+                "price_bottle": "350€"
+              }
+            ],
+            "Aperatif": [
+              {
+                "name": "Archer's 70CL",
+                "price_bottle": "60€",
+                "price_6cl": "6€"
+              },
+              {
+                "name": "Safari 70CL",
+                "price_bottle": "60€",
+                "price_6cl": "6€"
+              },
+              {
+                "name": "Batida de Coco 70CL",
+                "price_bottle": "50€",
+                "price_6cl": "5€"
+              },
+              {
+                "name": "Sheridan's Liqueur 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Kahlua 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Amaretto Disaronno 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Villa Massa Limoncello 70CL",
+                "price_bottle": "60€",
+                "price_6cl": "6€"
+              },
+              {
+                "name": "Drambuie 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "Cointreau 70CL",
+                "price_bottle": "170€",
+                "price_6cl": "17€"
+              },
+              {
+                "name": "Sambuca Moreno 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              }
+            ],
+            "Tequila": [
+              {
+                "name": "Patron Silver 70CL",
+                "price_bottle": "180€",
+                "price_6cl": "18€"
+              },
+              {
+                "name": "Patron Anejo 70CL",
+                "price_bottle": "190€",
+                "price_6cl": "19€"
+              },
+              {
+                "name": "Olmeca Gold 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Olmeca Dark Chocolate 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Olmeca Altos Plata 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              }
+            ],
+            "Rum": [
+              {
+                "name": "Havana Club 7 Anos 70CL",
+                "price_bottle": "100€",
+                "price_6cl": "10€"
+              },
+              {
+                "name": "Bacardi Carta White Rom 100CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              }
+            ],
+            "Gin": [
+              {
+                "name": "Gordon Pink 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Tanqueray 70CL",
+                "price_bottle": "100€",
+                "price_6cl": "10€"
+              },
+              {
+                "name": "Hendrick's 70CL",
+                "price_bottle": "140€",
+                "price_6cl": "14€"
+              },
+              {
+                "name": "Beafeater Pink 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              }
+            ],
+            "Vodka": [
+              {
+                "name": "Absolut Elyx 70CL",
+                "price_bottle": "130€",
+                "price_6cl": "13€"
+              },
+              {
+                "name": "Absolut Citron 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Grey Goose 70CL",
+                "price_bottle": "150€",
+                "price_6cl": "15€"
+              },
+              {
+                "name": "Belvedere Pure 70CL",
+                "price_bottle": "160€",
+                "price_6cl": "16€"
+              },
+              {
+                "name": "Beluga 70CL",
+                "price_bottle": "150€",
+                "price_6cl": "15€"
+              }
+            ],
+            "Raki": [
+              {
+                "name": "Raki Tekirdağ Altın Seri 100CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Raki Efe Kara 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Raki Altınbaş 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Raki Yunan Plomari Ouzo 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "Raki Efe Göbek 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "Raki Beylerbeyi Göbek 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              }
+            ],
+            "Brandy": [
+              {
+                "name": "Remy Martini VSOP 70CL",
+                "price_bottle": "250€",
+                "price_6cl": "25€"
+              },
+              {
+                "name": "Martel V.S.O.P 70CL",
+                "price_bottle": "250€",
+                "price_6cl": "25€"
+              },
+              {
+                "name": "Martel X.O 70CL",
+                "price_bottle": "380€",
+                "price_6cl": "38€"
+              },
+              {
+                "name": "Hennesy 70CL",
+                "price_bottle": "160€",
+                "price_6cl": "16€"
+              },
+              {
+                "name": "Martel V.S 70CL",
+                "price_bottle": "200€",
+                "price_6cl": "20€"
+              }
+            ],
+            "Whisky": [
+              {
+                "name": "Talisker Single Malt 70CL",
+                "price_bottle": "190€",
+                "price_6cl": "19€"
+              },
+              {
+                "name": "Jack Daniel's 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Glenlivet 18 Y.O 70CL",
+                "price_bottle": "270€",
+                "price_6cl": "27€"
+              },
+              {
+                "name": "Glenlivet 12 Y.O 70CL",
+                "price_bottle": "120€",
+                "price_6cl": "12€"
+              },
+              {
+                "name": "Chivas Regal 18 Y.O 70CL",
+                "price_bottle": "180€",
+                "price_6cl": "18€"
+              },
+              {
+                "name": "Chivas Regal 15 Y.O 70CL",
+                "price_bottle": "140€",
+                "price_6cl": "14€"
+              },
+              {
+                "name": "JW Black Label 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "JW Double Black 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "JW Blue Label 70CL",
+                "price_bottle": "500€",
+                "price_6cl": "50€"
+              },
+              {
+                "name": "Jack Daniel's Single Barrel 70CL",
+                "price_bottle": "120€",
+                "price_6cl": "12€"
+              },
+              {
+                "name": "Jack Daniel's Honey 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Jameson 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              }
+            ],
+            "Wine": [
+              {
+                "name": "Kavaklidere Çankaya",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Kavaklidere Lal",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Kavaklidere Yakut",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Kavaklidere Sultaniye",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Rosato",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Ancyra Sauvignon Blanc",
+                "price_bottle": "50€"
+              },
+              {
+                "name": "Ancyra Kalecik Karasi",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Selection Narince-Emir",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Selection Öküzgözü-Boğazkere",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Blush Pinot Grigio",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Pinot Grigio",
+                "price_bottle": "50€"
+              },
+              {
+                "name": "Montes Classic Series Sauvignon Blanc",
+                "price_bottle": "60€"
+              },
+              {
+                "name": "Montes Estate Malbec",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Le Terre Chianii",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Cotes du Rhone",
+                "price_bottle": "70€"
+              }
+            ],
+            "Cocktails": [
+              {
+                "name": "Playboy Martini",
+                "price": "8€"
+              },
+              {
+                "name": "Down Under Fizz",
+                "price": "8€"
+              },
+              {
+                "name": "Manhattan",
+                "price": "8€"
+              },
+              {
+                "name": "B52",
+                "price": "8€"
+              },
+              {
+                "name": "Porn Star Martini",
+                "price": "8€"
+              },
+              {
+                "name": "Marakuyya",
+                "price": "8€"
+              },
+              {
+                "name": "God Father",
+                "price": "8€"
+              },
+              {
+                "name": "White Lady",
+                "price": "8€"
+              },
+              {
+                "name": "Gin Passion",
+                "price": "8€"
+              },
+              {
+                "name": "New York Sour",
+                "price": "8€"
+              },
+              {
+                "name": "White Lady Bloody Brain",
+                "price": "8€"
+              },
+              {
+                "name": "Brandy Alexander",
+                "price": "12€"
+              },
+              {
+                "name": "Lynchburg Lemonade",
+                "price": "8€"
+              },
+              {
+                "name": "Whisky Sour",
+                "price": "8€"
+              },
+              {
+                "name": "Citronella Cooler",
+                "price": "8€"
+              },
+              {
+                "name": "Jagger Boom",
+                "price": null
+              },
+              {
+                "name": "Red Bull",
+                "price": "5€"
+              }
+            ]
+          },
+          "note": "The origin of the 'Whippet' is somewhat obscure; the breed descends from greyhounds and was popularised in the Midlands and North of England, historically associated with racing in mining communities."
+        }
+      }
+    },
+    {
+      "bar_name": "Beach Bar",
+      "menus": {
+        "Alcohols Included in the Concept": {
+          "included_spirits": {
+            "Beer": [
+              "Tuborg"
+            ],
+            "Whisky": [
+              "Passport",
+              "Long John"
+            ],
+            "Vodka": [
+              "Gilbeys"
+            ],
+            "Gin": [
+              "Gilbeys"
+            ],
+            "Tequila": [
+              "Jose Cuervo"
+            ],
+            "Raki": [
+              "Yeni Raki"
+            ],
+            "Rum": [
+              "Captain Morgan White"
+            ],
+            "Brandy": [
+              "Napoleon"
+            ],
+            "Vermut": [
+              "Dry",
+              "Bianco",
+              "Rosso"
+            ],
+            "Aperatif": [
+              "Irish Cream",
+              "Irish Cream Cappuccino",
+              "Malibu",
+              "Aperitivo",
+              "Campari"
+            ],
+            "Champagne": [
+              "Sparkling White"
+            ],
+            "Wine": [
+              "Red Wine",
+              "White Wine",
+              "Rose Wine",
+              "Pomegranate (Nar) Wine",
+              "Black Mulberry (Karadut) Wine"
+            ]
+          },
+          "cocktail_menu": [
+            {
+              "name": "Cosmopolitan",
+              "ingredients": "Vodka, Orange Liqueur, Cranberry Syrup, Lemon Juice"
+            },
+            {
+              "name": "Negroni",
+              "ingredients": "Gin, Campari, Vermouth Rosso"
+            },
+            {
+              "name": "Tuxedo",
+              "ingredients": "Gin, Cherry Liqueur, Bianco"
+            },
+            {
+              "name": "Margarita",
+              "ingredients": "Tequila, Orange Liqueur, Lemon Juice"
+            },
+            {
+              "name": "Aperol Spritz",
+              "ingredients": "Aperol, Sparkling Wine, Mineral Water"
+            },
+            {
+              "name": "Banana Banshee",
+              "ingredients": "Banana Liqueur, Coconut Syrup, Pineapple Juice, Milk"
+            },
+            {
+              "name": "Pina Colada",
+              "ingredients": "Rum, Pineapple Juice, Milk, Coconut Syrup"
+            },
+            {
+              "name": "Bloody Mary",
+              "ingredients": "Vodka, Tomato Juice, Lemon Juice, Worcestershire Sauce, Hot Sauce, Salt, Pepper"
+            },
+            {
+              "name": "Sex on the Beach",
+              "ingredients": "Vodka, Tequila, Peach Liqueur, Orange Juice, Grenadine"
+            },
+            {
+              "name": "Daiquiri (Optional Strawberry)",
+              "ingredients": "Rum, Lemon Juice, Sugar Syrup"
+            },
+            {
+              "name": "Mary Pickford",
+              "ingredients": "Tequila, Cherry Liqueur, Pineapple Juice, Grenadine"
+            },
+            {
+              "name": "Southside",
+              "ingredients": "Gin, Lemon Juice, Mint, Mineral Water"
+            },
+            {
+              "name": "Espresso Martini",
+              "ingredients": "Vodka, Coffee Liqueur, Espresso, Sugar Syrup"
+            },
+            {
+              "name": "Mai Tai",
+              "ingredients": "Rum, Orange Liqueur, Almond Liqueur, Orange Juice, Lemon Juice, Grenadine"
+            },
+            {
+              "name": "Unfinished Love",
+              "ingredients": "Aperol, Gin, Vanilla Syrup, Coconut Cream, Lemon Juice"
+            },
+            {
+              "name": "Blue Lagoon",
+              "ingredients": "Vodka, Sprite, Blue Curacao Syrup"
+            },
+            {
+              "name": "Chica Morena",
+              "ingredients": "Malibu, Peach Liqueur, Orange Juice, Strawberry Syrup"
+            },
+            {
+              "name": "Emeralde Pulse",
+              "ingredients": "Gin, Lemon Juice, Green Apple Syrup, Elderflower Syrup, Soda"
+            },
+            {
+              "name": "Kivi Cooler",
+              "ingredients": "Vodka, Rum, Sprite, Kiwi Syrup"
+            },
+            {
+              "name": "Mojito (Regular, Strawberry)",
+              "ingredients": "Rum, Brown Sugar, Lime, Mint, Mineral Water"
+            }
+          ],
+          "soft_drinks": [
+            "Pepsi",
+            "7Up",
+            "Yedigün",
+            "Ice Tea",
+            "Energy Drink",
+            "Soda Water",
+            "Fruit Juices (Orange, Apple, Pineapple, Cherry)"
+          ]
+        }
+      }
+    },
+    {
+      "bar_name": "Coffee House",
+      "menus": {
+        "Coffee & Tea Menu": {
+          "categories": {
+            "Traditional": [
+              {
+                "name": "Turkish Coffee",
+                "name_tr": "Türk Kahvesi"
+              },
+              {
+                "name": "Black Tea",
+                "name_tr": "Çay"
+              }
+            ],
+            "Herbal Teas": [
+              {
+                "name": "Chamomile Tea",
+                "name_tr": "Papatya Çayı"
+              },
+              {
+                "name": "Linden Tea",
+                "name_tr": "Ihlamur Çayı"
+              },
+              {
+                "name": "Blackberry Tea",
+                "name_tr": "Böğürtlen Çayı"
+              },
+              {
+                "name": "Apple-Cinnamon Tea",
+                "name_tr": "Elma-Tarçın Çayı"
+              },
+              {
+                "name": "Mint-Lemon Tea",
+                "name_tr": "Nane-Limon Çayı"
+              },
+              {
+                "name": "Rosehip Tea",
+                "name_tr": "Kuşburnu Çayı"
+              },
+              {
+                "name": "Winter Tea",
+                "name_tr": "Kış Çayı"
+              },
+              {
+                "name": "Green Tea",
+                "name_tr": "Yeşil Çay"
+              },
+              {
+                "name": "Sage Tea",
+                "name_tr": "Ada Çayı"
+              }
+            ],
+            "Nescafe - Black Coffee": [
+              "Ristretto",
+              "Espresso",
+              "Double Espresso",
+              "Lungo",
+              "Americano",
+              "Filter Coffee"
+            ],
+            "Nescafe - Speciality Coffee": [
+              "Espresso Macchiato",
+              "Cappuccino",
+              "Caffe Latte",
+              "Flat White",
+              "Mocha"
+            ],
+            "Nescafe - Iced Coffee": [
+              "Iced Americano",
+              "Iced Caffe Latte",
+              "Iced Chocolate"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "bar_name": "D Bar",
+      "menus": {
+        "Alcoholic Beverages Included in the Concept": {
+          "included_spirits": {
+            "Beer": [
+              "Tuborg"
+            ],
+            "Whisky": [
+              "Ballentine's",
+              "J&B Rare",
+              "JW Red Label",
+              "Long John",
+              "Passport"
+            ],
+            "Vodka": [
+              "Smirnoff",
+              "Gilbeys"
+            ],
+            "Gin": [
+              "Gordon",
+              "Gilbeys"
+            ],
+            "Tequila": [
+              "Jose Cuervo",
+              "Sierra"
+            ],
+            "Raki": [
+              "Yeni Raki",
+              "Efe Raki"
+            ],
+            "Rum": [
+              "Havana",
+              "Captain Morgan White"
+            ],
+            "Brandy": [
+              "Napoleon"
+            ],
+            "Vermut": [
+              "Garrone Dry",
+              "Garrone Bianco",
+              "Garrone Rosso"
+            ],
+            "Aperatif": [
+              "Irish Cream",
+              "Irish Cream Cappuccino",
+              "Malibu",
+              "Aperitivo",
+              "Campari",
+              "Jägerwelt"
+            ],
+            "Champagne": [
+              "Sparkling Wine"
+            ],
+            "Wine": [
+              "Red Wine",
+              "White Wine",
+              "Rose Wine",
+              "Pomegranate (Nar) Wine",
+              "Black Mulberry (Karadut) Wine"
+            ]
+          }
+        },
+        "Cocktail Menu": {
+          "cocktail_menu": [
+            {
+              "name": "Cosmopolitan",
+              "ingredients": "Vodka, Orange Liqueur, Cranberry Syrup, Lemon Juice"
+            },
+            {
+              "name": "Negroni",
+              "ingredients": "Gin, Campari, Vermouth Rosso"
+            },
+            {
+              "name": "Tuxedo",
+              "ingredients": "Gin, Cherry Liqueur, Bianco"
+            },
+            {
+              "name": "Margarita",
+              "ingredients": "Tequila, Orange Liqueur, Lemon Juice"
+            },
+            {
+              "name": "Aperol Spritz",
+              "ingredients": "Aperol, Sparkling Wine, Mineral Water"
+            },
+            {
+              "name": "Banana Banshee",
+              "ingredients": "Banana Liqueur, Coconut Syrup, Pineapple Juice, Milk"
+            },
+            {
+              "name": "Pina Colada",
+              "ingredients": "Rum, Pineapple Juice, Milk, Coconut Syrup"
+            },
+            {
+              "name": "Bloody Mary",
+              "ingredients": "Vodka, Tomato Juice, Lemon Juice, Worcestershire Sauce, Hot Sauce, Salt, Pepper"
+            },
+            {
+              "name": "Sex on the Beach",
+              "ingredients": "Vodka, Tequila, Peach Liqueur, Orange Juice, Grenadine"
+            },
+            {
+              "name": "Daiquiri (Optional Strawberry)",
+              "ingredients": "Rum, Lemon Juice, Sugar Syrup"
+            },
+            {
+              "name": "Mary Pickford",
+              "ingredients": "Tequila, Cherry Liqueur, Pineapple Juice, Grenadine"
+            },
+            {
+              "name": "Southside",
+              "ingredients": "Gin, Lemon Juice, Mint, Mineral Water"
+            },
+            {
+              "name": "Espresso Martini",
+              "ingredients": "Vodka, Coffee Liqueur, Espresso, Sugar Syrup"
+            },
+            {
+              "name": "Mai Tai",
+              "ingredients": "Rum, Orange Liqueur, Almond Liqueur, Orange Juice, Lemon Juice, Grenadine"
+            },
+            {
+              "name": "Unfinished Love",
+              "ingredients": "Aperol, Gin, Vanilla Syrup, Coconut Cream, Lemon Juice"
+            },
+            {
+              "name": "Blue Lagoon",
+              "ingredients": "Vodka, Sprite, Blue Curacao Syrup"
+            },
+            {
+              "name": "Chica Morena",
+              "ingredients": "Malibu, Peach Liqueur, Orange Juice, Strawberry Syrup"
+            },
+            {
+              "name": "Emeralde Pulse",
+              "ingredients": "Gin, Lemon Juice, Green Apple Syrup, Elderflower Syrup, Soda"
+            },
+            {
+              "name": "Kivi Cooler",
+              "ingredients": "Vodka, Rum, Sprite, Kiwi Syrup"
+            },
+            {
+              "name": "Mojito (Regular, Strawberry)",
+              "ingredients": "Rum, Brown Sugar, Lime, Mint, Mineral Water"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "bar_name": "Flamingo Bar",
+      "menus": {
+        "Kids Corner": {
+          "categories": {
+            "Haribo Moktails": [
+              {
+                "name": "Baby Shark",
+                "ingredients": "Haribo Fishes, Pineapple Juice, Sprite, Blue Curacao"
+              },
+              {
+                "name": "Anaconda",
+                "ingredients": "Haribo Anaconda, Apple Juice, Lemonade, Sprite, Kiwi Syrup"
+              },
+              {
+                "name": "Sunrise",
+                "ingredients": "Haribo Cherry, Pineapple Juice, Sprite, Grenadine, Blue Curacao"
+              },
+              {
+                "name": "Cinderella",
+                "ingredients": "Haribo Strawberry, Orange Juice, Pineapple Juice, Lemonade, Strawberry Syrup"
+              }
+            ],
+            "Moktails": [
+              {
+                "name": "Pinana",
+                "ingredients": "Bobajoy Fruit Balls, Fresh Banana, Pineapple Juice, Coconut Syrup"
+              },
+              {
+                "name": "Mojito (Regular, Strawberry, Kiwi)",
+                "ingredients": "Lemon, Mint, Sugar, Sprite"
+              },
+              {
+                "name": "Peach Sunshine",
+                "ingredients": "Peach Juice, Lemonade, Soda Water, Grenadine"
+              },
+              {
+                "name": "Passion Kids",
+                "ingredients": "Pineapple Juice, Passion Fruit, Lemonade"
+              }
+            ],
+            "Ice Cream / Dondurma": [
+              "Chocolate - Çikolata",
+              "Strawberry - Çilek",
+              "Lemon - Limon",
+              "Vanilla - Vanilya"
+            ],
+            "Lemonade / Limonata": [
+              "Lemonade",
+              "Strawberry Lemonade - Çilek",
+              "Mint Lemonade - Nane"
+            ],
+            "Milkshake": [
+              "Chocolate - Çikolata",
+              "Strawberry - Çilek",
+              "Banana - Muz",
+              "Caramel - Karamel"
+            ],
+            "Frozen": [
+              "Strawberry - Çilek",
+              "Mango - Mango",
+              "Passionflower - Çarkifelek",
+              "Forest Fruits - Orman Meyveli"
+            ],
+            "Soft Drinks": [
+              "Pepsi",
+              "7Up",
+              "Yedigün",
+              "Ice Tea",
+              "Energy Drink",
+              "Soda Water",
+              "Fruit Juices (Orange, Apple, Pineapple, Cherry)"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "bar_name": "Irish Bar",
+      "menus": {
+        "Alcohols Included in the Concept": {
+          "included_spirits": {
+            "Beer": [
+              "Tuborg",
+              "Carlsberg"
+            ],
+            "Whisky": [
+              "Ballentine's",
+              "Johnie Walker Red",
+              "J&B",
+              "Long John"
+            ],
+            "Vodka": [
+              "Gilbeys"
+            ],
+            "Gin": [
+              "Gilbeys"
+            ],
+            "Tequila": [
+              "Jose Cuervo"
+            ],
+            "Raki": [
+              "Yeni Raki"
+            ],
+            "Rum": [
+              "Captain Morgan White"
+            ],
+            "Brandy": [
+              "Napoleon"
+            ],
+            "Vermut": [
+              "Dry",
+              "Bianco",
+              "Rosso"
+            ],
+            "Aperatif": [
+              "Irish Cream",
+              "Irish Cream Cappuccino",
+              "Malibu",
+              "Aperitivo",
+              "Campari",
+              "Jagerwelt"
+            ],
+            "Champagne": [
+              "Sparkling Wine"
+            ],
+            "Wine": [
+              "Red Wine",
+              "White Wine",
+              "Rose Wine",
+              "Pomegranate (Nar) Wine",
+              "Black Mulberry (Karadut) Wine"
+            ]
+          },
+          "cocktail_menu": [
+            {
+              "name": "Cosmopolitan",
+              "ingredients": "Vodka, Orange Liqueur, Cranberry Syrup, Lemon Juice"
+            },
+            {
+              "name": "Negroni",
+              "ingredients": "Gin, Campari, Vermouth Rosso"
+            },
+            {
+              "name": "Tuxedo",
+              "ingredients": "Gin, Cherry Liqueur, Bianco"
+            },
+            {
+              "name": "Margarita",
+              "ingredients": "Tequila, Orange Liqueur, Lemon Juice"
+            },
+            {
+              "name": "Aperol Spritz",
+              "ingredients": "Aperol, Sparkling Wine, Mineral Water"
+            },
+            {
+              "name": "Banana Banshee",
+              "ingredients": "Banana Liqueur, Coconut Syrup, Pineapple Juice, Milk"
+            },
+            {
+              "name": "Pina Colada",
+              "ingredients": "Rum, Pineapple Juice, Milk, Coconut Syrup"
+            },
+            {
+              "name": "Bloody Mary",
+              "ingredients": "Vodka, Tomato Juice, Lemon Juice, Worcestershire Sauce, Hot Sauce, Salt, Pepper"
+            },
+            {
+              "name": "Sex on the Beach",
+              "ingredients": "Vodka, Tequila, Peach Liqueur, Orange Juice, Grenadine"
+            },
+            {
+              "name": "Daiquiri (Optional Strawberry)",
+              "ingredients": "Rum, Lemon Juice, Sugar Syrup"
+            },
+            {
+              "name": "Mary Pickford",
+              "ingredients": "Tequila, Cherry Liqueur, Pineapple Juice, Grenadine"
+            },
+            {
+              "name": "Southside",
+              "ingredients": "Gin, Lemon Juice, Mint, Mineral Water"
+            },
+            {
+              "name": "Espresso Martini",
+              "ingredients": "Vodka, Coffee Liqueur, Espresso, Sugar Syrup"
+            },
+            {
+              "name": "Mai Tai",
+              "ingredients": "Rum, Orange Liqueur, Almond Liqueur, Orange Juice, Lemon Juice, Grenadine"
+            },
+            {
+              "name": "Unfinished Love",
+              "ingredients": "Aperol, Gin, Vanilla Syrup, Coconut Cream, Lemon Juice"
+            },
+            {
+              "name": "Blue Lagoon",
+              "ingredients": "Vodka, Sprite, Blue Curacao Syrup"
+            },
+            {
+              "name": "Chica Morena",
+              "ingredients": "Malibu, Peach Liqueur, Orange Juice, Strawberry Syrup"
+            },
+            {
+              "name": "Emeralde Pulse",
+              "ingredients": "Gin, Lemon Juice, Green Apple Syrup, Elderflower Syrup, Soda"
+            },
+            {
+              "name": "Kivi Cooler",
+              "ingredients": "Vodka, Rum, Sprite, Kiwi Syrup"
+            },
+            {
+              "name": "Mojito (Regular, Strawberry)",
+              "ingredients": "Rum, Brown Sugar, Lime, Mint, Mineral Water"
+            }
+          ],
+          "soft_drinks": [
+            "Pepsi",
+            "7Up",
+            "Yedigün",
+            "Ice Tea",
+            "Energy Drink",
+            "Soda Water",
+            "Fruit Juices (Orange, Apple, Pineapple, Cherry)"
+          ]
+        }
+      }
+    },
+    {
+      "bar_name": "Irish Pub",
+      "menus": {
+        "Paid Spirits Menu": {
+          "categories": {
+            "Beer & Cider": [
+              {
+                "name": "Strongbow Apple Cider 70CL",
+                "price": "8€"
+              },
+              {
+                "name": "Amsterdam",
+                "price": "8€"
+              },
+              {
+                "name": "Duvel",
+                "price": "8€"
+              },
+              {
+                "name": "Weihenstephan Haffeweissbier 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Bud 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Kronenbourg 1664 Blanck 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Corona 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Miller 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Desperados 33CL",
+                "price": "8€"
+              },
+              {
+                "name": "Guinness 44CL",
+                "price": "8€"
+              },
+              {
+                "name": "Heineken 33CL",
+                "price": "8€"
+              }
+            ],
+            "Champagne": [
+              {
+                "name": "Zonin Prosecco",
+                "price_bottle": "90€"
+              },
+              {
+                "name": "Martini Asti",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Martini Brut",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Martini Rose",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Martini Prosecco",
+                "price_bottle": "90€"
+              },
+              {
+                "name": "Mumm Gordon Rouge Brut",
+                "price_bottle": "300€"
+              },
+              {
+                "name": "Moet Chandon",
+                "price_bottle": "350€"
+              }
+            ],
+            "Aperatif": [
+              {
+                "name": "Archer's 70CL",
+                "price_bottle": "60€",
+                "price_6cl": "6€"
+              },
+              {
+                "name": "Safari 70CL",
+                "price_bottle": "60€",
+                "price_6cl": "6€"
+              },
+              {
+                "name": "Batida de Coco 70CL",
+                "price_bottle": "50€",
+                "price_6cl": "5€"
+              },
+              {
+                "name": "Sheridan's Liqueur 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Kahlua 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Amaretto Disaronno 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Villa Massa Limoncello 70CL",
+                "price_bottle": "60€",
+                "price_6cl": "6€"
+              },
+              {
+                "name": "Drambuie 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "Cointreau 70CL",
+                "price_bottle": "170€",
+                "price_6cl": "17€"
+              },
+              {
+                "name": "Sambuca Moreno 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              }
+            ],
+            "Tequila": [
+              {
+                "name": "Patron Silver 70CL",
+                "price_bottle": "180€",
+                "price_6cl": "18€"
+              },
+              {
+                "name": "Patron Anejo 70CL",
+                "price_bottle": "190€",
+                "price_6cl": "19€"
+              },
+              {
+                "name": "Olmeca Gold 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Olmeca Dark Chocolate 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Olmeca Altos Plata 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              }
+            ],
+            "Rum": [
+              {
+                "name": "Havana Club 7 Anos 70CL",
+                "price_bottle": "100€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "Bacardi Carta White Rom 100CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              }
+            ],
+            "Gin": [
+              {
+                "name": "Gordon Pink 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Tanqueray 70CL",
+                "price_bottle": "100€",
+                "price_6cl": "10€"
+              },
+              {
+                "name": "Hendrick's 70CL",
+                "price_bottle": "140€",
+                "price_6cl": "14€"
+              },
+              {
+                "name": "Beafeater Pink 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              }
+            ],
+            "Vodka": [
+              {
+                "name": "Absolut Elyx 70CL",
+                "price_bottle": "130€",
+                "price_6cl": "13€"
+              },
+              {
+                "name": "Absolut Citron 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Grey Goose 70CL",
+                "price_bottle": "150€",
+                "price_6cl": "15€"
+              },
+              {
+                "name": "Belvedere Pure 70CL",
+                "price_bottle": "160€",
+                "price_6cl": "16€"
+              },
+              {
+                "name": "Beluga 70CL",
+                "price_bottle": "150€",
+                "price_6cl": "15€"
+              }
+            ],
+            "Raki": [
+              {
+                "name": "Raki Tekirdağ Altın Seri 100CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Raki Efe Kara 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Raki Altınbaş 70CL",
+                "price_bottle": "70€",
+                "price_6cl": "7€"
+              },
+              {
+                "name": "Raki Yunan Plomari Ouzo 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "Raki Efe Göbek 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "Raki Beylerbeyi Göbek 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              }
+            ],
+            "Brandy": [
+              {
+                "name": "Remy Martini VSOP 70CL",
+                "price_bottle": "250€",
+                "price_6cl": "25€"
+              },
+              {
+                "name": "Martel V.S.O.P 70CL",
+                "price_bottle": "250€",
+                "price_6cl": "25€"
+              },
+              {
+                "name": "Martel X.O 70CL",
+                "price_bottle": "380€",
+                "price_6cl": "38€"
+              },
+              {
+                "name": "Hennesy 70CL",
+                "price_bottle": "160€",
+                "price_6cl": "16€"
+              },
+              {
+                "name": "Martel V.S 70CL",
+                "price_bottle": "200€",
+                "price_6cl": "20€"
+              }
+            ],
+            "Whisky": [
+              {
+                "name": "Talisker Single Malt 70CL",
+                "price_bottle": "190€",
+                "price_6cl": "19€"
+              },
+              {
+                "name": "Jack Daniel's 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Glenlivet 18 Y.O 70CL",
+                "price_bottle": "270€",
+                "price_6cl": "27€"
+              },
+              {
+                "name": "Glenlivet 12 Y.O 70CL",
+                "price_bottle": "120€",
+                "price_6cl": "12€"
+              },
+              {
+                "name": "Chivas Regal 18 Y.O 70CL",
+                "price_bottle": "180€",
+                "price_6cl": "18€"
+              },
+              {
+                "name": "Chivas Regal 15 Y.O 70CL",
+                "price_bottle": "140€",
+                "price_6cl": "14€"
+              },
+              {
+                "name": "JW Black Label 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "JW Double Black 70CL",
+                "price_bottle": "90€",
+                "price_6cl": "9€"
+              },
+              {
+                "name": "JW Blue Label 70CL",
+                "price_bottle": "500€",
+                "price_6cl": "50€"
+              },
+              {
+                "name": "Jack Daniel's Single Barrel 70CL",
+                "price_bottle": "120€",
+                "price_6cl": "12€"
+              },
+              {
+                "name": "Jack Daniel's Honey 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              },
+              {
+                "name": "Jameson 70CL",
+                "price_bottle": "80€",
+                "price_6cl": "8€"
+              }
+            ],
+            "Wine": [
+              {
+                "name": "Kavaklidere Çankaya",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Kavaklidere Lal",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Kavaklidere Yakut",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Kavaklidere Sultaniye",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Rosato",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Ancyra Sauvignon Blanc",
+                "price_bottle": "50€"
+              },
+              {
+                "name": "Ancyra Kalecik Karasi",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Selection Narince-Emir",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Selection Öküzgözü-Boğazkere",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Blush Pinot Grigio",
+                "price_bottle": "40€"
+              },
+              {
+                "name": "Pinot Grigio",
+                "price_bottle": "50€"
+              },
+              {
+                "name": "Montes Classic Series Sauvignon Blanc",
+                "price_bottle": "60€"
+              },
+              {
+                "name": "Montes Estate Malbec",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Le Terre Chianii",
+                "price_bottle": "80€"
+              },
+              {
+                "name": "Cotes du Rhone",
+                "price_bottle": "70€"
+              }
+            ],
+            "Cocktails": [
+              {
+                "name": "Playboy Martini",
+                "price": "8€"
+              },
+              {
+                "name": "Down Under Fizz",
+                "price": "8€"
+              },
+              {
+                "name": "Manhattan",
+                "price": "8€"
+              },
+              {
+                "name": "B52",
+                "price": "8€"
+              },
+              {
+                "name": "Porn Star Martini",
+                "price": "8€"
+              },
+              {
+                "name": "Marakuyya",
+                "price": "8€"
+              },
+              {
+                "name": "God Father",
+                "price": "8€"
+              },
+              {
+                "name": "White Lady",
+                "price": "8€"
+              },
+              {
+                "name": "Gin Passion",
+                "price": "8€"
+              },
+              {
+                "name": "New York Sour",
+                "price": "8€"
+              },
+              {
+                "name": "White Lady Bloody Brain",
+                "price": "8€"
+              },
+              {
+                "name": "Brandy Alexander",
+                "price": "12€"
+              },
+              {
+                "name": "Lynchburg Lemonade",
+                "price": "8€"
+              },
+              {
+                "name": "Whisky Sour",
+                "price": "8€"
+              },
+              {
+                "name": "Citronella Cooler",
+                "price": "8€"
+              },
+              {
+                "name": "Jagger Boom",
+                "price": null
+              },
+              {
+                "name": "Red Bull",
+                "price": "5€"
+              }
+            ]
+          }
+        },
+        "Alcohols Included in the Concept": {
+          "included_spirits": {
+            "Beer": [
+              "Tuborg",
+              "Carlsberg"
+            ],
+            "Whisky": [
+              "Ballentine's",
+              "Long John"
+            ],
+            "Vodka": [
+              "Gilbeys"
+            ],
+            "Gin": [
+              "Gilbeys"
+            ],
+            "Tequila": [
+              "Sierra"
+            ],
+            "Raki": [
+              "Yeni Raki"
+            ],
+            "Rum": [
+              "Captain Morgan White"
+            ],
+            "Brandy": [
+              "Napoleon"
+            ],
+            "Vermut": [
+              "Martini Dry",
+              "Martini Bianco",
+              "Martini Rosso"
+            ],
+            "Aperatif": [
+              "Baileys",
+              "Malibu",
+              "Aperol",
+              "Campari"
+            ],
+            "Champagne": [
+              "Bella Dora"
+            ],
+            "Wine": [
+              "Red Wine",
+              "White Wine",
+              "Pomegranate (Nar) Wine",
+              "Black Mulberry (Karadut) Wine"
+            ]
+          },
+          "cocktail_menu": [
+            {
+              "name": "Cosmopolitan",
+              "ingredients": "Vodka, Orange Liqueur, Cranberry Syrup, Lemon Juice"
+            },
+            {
+              "name": "Negroni",
+              "ingredients": "Gin, Campari, Vermouth Rosso"
+            },
+            {
+              "name": "Tuxedo",
+              "ingredients": "Gin, Cherry Liqueur, Bianco"
+            },
+            {
+              "name": "Margarita",
+              "ingredients": "Tequila, Orange Liqueur, Lemon Juice"
+            },
+            {
+              "name": "Aperol Spritz",
+              "ingredients": "Aperol, Sparkling Wine, Mineral Water"
+            },
+            {
+              "name": "Banana Banshee",
+              "ingredients": "Banana Liqueur, Coconut Syrup, Pineapple Juice, Milk"
+            },
+            {
+              "name": "Pina Colada",
+              "ingredients": "Rum, Pineapple Juice, Milk, Coconut Syrup"
+            },
+            {
+              "name": "Bloody Mary",
+              "ingredients": "Vodka, Tomato Juice, Lemon Juice, Worcestershire Sauce, Hot Sauce, Salt, Pepper"
+            },
+            {
+              "name": "Sex on the Beach",
+              "ingredients": "Vodka, Tequila, Peach Liqueur, Orange Juice, Grenadine"
+            },
+            {
+              "name": "Daiquiri (Optional Strawberry)",
+              "ingredients": "Rum, Lemon Juice, Sugar Syrup"
+            },
+            {
+              "name": "Mary Pickford",
+              "ingredients": "Tequila, Cherry Liqueur, Pineapple Juice, Grenadine"
+            },
+            {
+              "name": "Southside",
+              "ingredients": "Gin, Lemon Juice, Mint, Mineral Water"
+            },
+            {
+              "name": "Espresso Martini",
+              "ingredients": "Vodka, Coffee Liqueur, Espresso, Sugar Syrup"
+            },
+            {
+              "name": "Mai Tai",
+              "ingredients": "Rum, Orange Liqueur, Almond Liqueur, Orange Juice, Lemon Juice, Grenadine"
+            },
+            {
+              "name": "Unfinished Love",
+              "ingredients": "Aperol, Gin, Vanilla Syrup, Coconut Cream, Lemon Juice"
+            },
+            {
+              "name": "Blue Lagoon",
+              "ingredients": "Vodka, Sprite, Blue Curacao Syrup"
+            },
+            {
+              "name": "Chica Morena",
+              "ingredients": "Malibu, Peach Liqueur, Orange Juice, Strawberry Syrup"
+            },
+            {
+              "name": "Emeralde Pulse",
+              "ingredients": "Gin, Lemon Juice, Green Apple Syrup, Elderflower Syrup, Soda"
+            },
+            {
+              "name": "Kivi Cooler",
+              "ingredients": "Vodka, Rum, Sprite, Kiwi Syrup"
+            },
+            {
+              "name": "Mojito (Regular, Strawberry)",
+              "ingredients": "Rum, Brown Sugar, Lime, Mint, Mineral Water"
+            }
+          ],
+          "soft_drinks": [
+            "Pepsi",
+            "7Up",
+            "Yedigün",
+            "Ice Tea",
+            "Energy Drink",
+            "Soda Water",
+            "Fruit Juices (Orange, Apple, Pineapple, Cherry)"
+          ]
+        }
+      }
+    },
+    {
+      "bar_name": "Marin Bar",
+      "menus": {
+        "Alcoholic Included in the Concept": {
+          "included_spirits": {
+            "Beer": [
+              "Tuborg"
+            ],
+            "Whisky": [
+              "Chivas Regal",
+              "Jack Daniel's",
+              "Ballentine's",
+              "J&B Rare",
+              "Johnie Walker - Red Label",
+              "Teacher's",
+              "Long John"
+            ],
+            "Vodka": [
+              "Absolute",
+              "Smirnoff",
+              "Gilbeys"
+            ],
+            "Gin": [
+              "Gordon",
+              "Stamford",
+              "Gilbeys"
+            ],
+            "Tequila": [
+              "Jose Cuervo",
+              "Sierra"
+            ],
+            "Raki": [
+              "Yeni Raki",
+              "Efe Raki"
+            ],
+            "Rum": [
+              "Havana",
+              "Captain Morgan White"
+            ],
+            "Brandy": [
+              "Napoleon"
+            ],
+            "Vermut": [
+              "Garrone Dry",
+              "Garrone Bianco",
+              "Garrone Rosso"
+            ],
+            "Aperatif": [
+              "Baileys",
+              "Irish Cream",
+              "Irish Cream Cappuccino",
+              "Malibu",
+              "Aperol",
+              "Aperitivo",
+              "Campari",
+              "Jägermeister",
+              "Jagerwelt"
+            ],
+            "Champagne": [
+              "Sparkling Wine"
+            ],
+            "Wine": [
+              "Red Wine",
+              "White Wine",
+              "Rose Wine",
+              "Pomegranate (Nar) Wine",
+              "Black Mulberry (Karadut) Wine"
+            ]
+          },
+          "cocktail_menu": [
+            {
+              "name": "Cosmopolitan",
+              "ingredients": "Vodka, Orange Liqueur, Cranberry Syrup, Lemon Juice"
+            },
+            {
+              "name": "Negroni",
+              "ingredients": "Gin, Campari, Vermouth Rosso"
+            },
+            {
+              "name": "Tuxedo",
+              "ingredients": "Gin, Cherry Liqueur, Bianco"
+            },
+            {
+              "name": "Margarita",
+              "ingredients": "Tequila, Orange Liqueur, Lemon Juice"
+            },
+            {
+              "name": "Aperol Spritz",
+              "ingredients": "Aperol, Sparkling Wine, Mineral Water"
+            },
+            {
+              "name": "Banana Banshee",
+              "ingredients": "Banana Liqueur, Coconut Syrup, Pineapple Juice, Milk"
+            },
+            {
+              "name": "Pina Colada",
+              "ingredients": "Rum, Pineapple Juice, Milk, Coconut Syrup"
+            },
+            {
+              "name": "Bloody Mary",
+              "ingredients": "Vodka, Tomato Juice, Lemon Juice, Worcestershire Sauce, Hot Sauce, Salt, Pepper"
+            },
+            {
+              "name": "Sex on the Beach",
+              "ingredients": "Vodka, Tequila, Peach Liqueur, Orange Juice, Grenadine"
+            },
+            {
+              "name": "Daiquiri (Optional Strawberry)",
+              "ingredients": "Rum, Lemon Juice, Sugar Syrup"
+            },
+            {
+              "name": "Mary Pickford",
+              "ingredients": "Tequila, Cherry Liqueur, Pineapple Juice, Grenadine"
+            },
+            {
+              "name": "Southside",
+              "ingredients": "Gin, Lemon Juice, Mint, Mineral Water"
+            },
+            {
+              "name": "Espresso Martini",
+              "ingredients": "Vodka, Coffee Liqueur, Espresso, Sugar Syrup"
+            },
+            {
+              "name": "Mai Tai",
+              "ingredients": "Rum, Orange Liqueur, Almond Liqueur, Orange Juice, Lemon Juice, Grenadine"
+            },
+            {
+              "name": "Unfinished Love",
+              "ingredients": "Aperol, Gin, Vanilla Syrup, Coconut Cream, Lemon Juice"
+            },
+            {
+              "name": "Blue Lagoon",
+              "ingredients": "Vodka, Sprite, Blue Curacao Syrup"
+            },
+            {
+              "name": "Chica Morena",
+              "ingredients": "Malibu, Peach Liqueur, Orange Juice, Strawberry Syrup"
+            },
+            {
+              "name": "Emeralde Pulse",
+              "ingredients": "Gin, Lemon Juice, Green Apple Syrup, Elderflower Syrup, Soda"
+            },
+            {
+              "name": "Kivi Cooler",
+              "ingredients": "Vodka, Rum, Sprite, Kiwi Syrup"
+            },
+            {
+              "name": "Mojito (Regular, Strawberry)",
+              "ingredients": "Rum, Brown Sugar, Lime, Mint, Mineral Water"
+            }
+          ],
+          "frozen": [
+            "Strawberry",
+            "Forest Fruit"
+          ],
+          "milkshake": [
+            "Chocolate",
+            "Strawberry"
+          ],
+          "soft_drinks": [
+            "Pepsi",
+            "7Up",
+            "Yedigün",
+            "Ice Tea",
+            "Energy Drink",
+            "Soda Water",
+            "Fruit Juices (Orange, Apple, Pineapple, Cherry)"
+          ]
+        }
+      }
+    }
+  ]
+}

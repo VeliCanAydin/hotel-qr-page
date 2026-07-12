@@ -1,7 +1,5 @@
 import RestaurantCard from "@/components/restaurant-card"
-import { Suspense } from "react"
 import { getTranslations, setRequestLocale } from "next-intl/server"
-import RestaurantCardSkeleton from "@/components/restaurant-card-skeleton"
 import { getPublicHotelInfo, getPublicRestaurants } from "@/lib/content"
 
 
@@ -29,27 +27,29 @@ export default async function RestaurantsPage({
   return (
     <div className="p-4">
       <h2 className="text-3xl font-bold mb-4">{t("title")}</h2>
-      {restaurantRows.map((r) => (
-        <Suspense key={r.id} fallback={<RestaurantCardSkeleton />}>
+      {restaurantRows.map((r) => {
+        const hours = [r.openTime?.slice(0, 5), r.closeTime?.slice(0, 5)].filter(Boolean).join(' – ')
+        return (
           <RestaurantCard
+            key={r.id}
             id={r.id}
             src={RESTAURANT_IMAGES[r.id] ?? DEFAULT_IMAGE}
             alt={r.name}
             title={r.name}
             description={r.description}
             hasReservation={r.reservation}
-            openingHours={r.openTime && r.closeTime ? `${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` : r.openTime?.slice(0, 5) || r.closeTime?.slice(0, 5) || ''}
+            openingHours={hours}
             cuisine={r.cuisine}
             contactPhone={hotelInfo.phone}
             contactWhatsapp={hotelInfo.whatsapp}
             highlights={[
               r.reservation ? t("reservationRequired") : t("noReservation"),
               r.cuisine,
-              r.openTime && r.closeTime ? t("openHighlight", { hours: `${r.openTime.slice(0, 5)} – ${r.closeTime.slice(0, 5)}` }) : '',
+              hours ? t("openHighlight", { hours }) : '',
             ].filter(Boolean)}
           />
-        </Suspense>
-      ))}
+        )
+      })}
     </div>
   )
 }
