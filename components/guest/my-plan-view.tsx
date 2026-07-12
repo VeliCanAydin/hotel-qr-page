@@ -1,16 +1,11 @@
 "use client"
 
-import { Link } from "@/i18n/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { parseISO } from "date-fns"
 import { formatMonthDay, formatWeekdayShort } from "@/lib/dates"
-import { ArrowLeft, CheckCircle2 } from "lucide-react"
-
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CheckCircle2 } from "lucide-react"
+import { EventDetailsDrawer, Timeline } from "@/components/events"
 import type { HotelEvent } from "@/lib/types/events"
 
 type PlanState = Record<string, string[]>
@@ -27,11 +22,19 @@ function sortDates(dates: string[]) {
   return [...new Set(dates)].sort((left, right) => left.localeCompare(right))
 }
 
+function toDateObject(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("-").map(Number)
+  return new Date(y, m - 1, d, 12, 0, 0)
+}
+
 export default function MyPlanView({ events, storageKey }: { events: HotelEvent[]; storageKey: string }) {
   const t = useTranslations("plan")
   const locale = useLocale()
   const [plan, setPlan] = useState<PlanState>({})
   const [hydrated, setHydrated] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   useEffect(() => {
     try {
@@ -47,84 +50,123 @@ export default function MyPlanView({ events, storageKey }: { events: HotelEvent[
   }, [storageKey])
 
   const eventById = useMemo(() => new Map(events.map((event) => [event.id, event])), [events])
-  const assignedDays = useMemo(() => sortDates(Object.keys(plan).filter((date) => (plan[date] ?? []).length > 0)), [plan])
+
+  const assignedDays = useMemo(
+    () => sortDates(Object.keys(plan).filter((date) => (plan[date] ?? []).length > 0)),
+    [plan]
+  )
+
+  // Auto-select the first assigned day
+  useEffect(() => {
+    if (hydrated && assignedDays.length > 0 && !selectedDate) {
+      setSelectedDate(assignedDays[0])
+    }
+  }, [hydrated, assignedDays, selectedDate])
+
+  const eventsForSelectedDate = useMemo(() => {
+    if (!selectedDate) return []
+    const assignedIds = plan[selectedDate] ?? []
+    return assignedIds.map((id) => eventById.get(id)).filter((e): e is HotelEvent => !!e)
+  }, [selectedDate, plan, eventById])
+
+  const selectedEvent = useMemo(
+    () => (selectedEventId ? (eventById.get(selectedEventId) ?? null) : null),
+    [eventById, selectedEventId]
+  )
+
+  function openEventDrawer(event: HotelEvent) {
+    setSelectedEventId(event.id)
+    setDrawerOpen(true)
+  }
+
+  function handleDrawerOpenChange(nextOpen: boolean) {
+    setDrawerOpen(nextOpen)
+    if (!nextOpen) {
+      setSelectedEventId(null)
+    }
+  }
+
+  if (!hydrated) {
+    return (
+      <div className="mx-auto flex max-w-2xl flex-col gap-6 p-3 sm:p-4">
+        <div className="flex gap-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-12 w-28 animate-pulse rounded-lg border bg-muted" />
+          ))}
+        </div>
+        <div className="h-96 animate-pulse rounded-lg border bg-muted" />
+      </div>
+    )
+  }
+
+  if (assignedDays.length === 0) {
+    return (
+      <div className="mx-auto flex max-w-2xl flex-col gap-6 p-3 sm:p-4">
+        <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
+          <CheckCircle2 className="mx-auto mb-3 size-7 text-muted-foreground" />
+          <p className="text-base font-medium">{t("noActivities")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("noActivitiesDesc")}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm text-muted-foreground">{t("personalizedStay")}</p>
-          <h1 className="text-3xl font-bold tracking-tight">{t("myPlan")}</h1>
-        </div>
-
-        <Button asChild variant="outline" className="rounded-full">
-          <Link href="/personalized-stay">
-            <ArrowLeft className="mr-2 size-4" />
-            {t("back")}
-          </Link>
-        </Button>
+    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-3 sm:p-4">
+      {/* Date tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {assignedDays.map((date) => {
+          const isActive = selectedDate === date
+          return (
+            <button
+              key={date}
+              type="button"
+              onClick={() => setSelectedDate(date)}
+              className={`flex shrink-0 flex-col items-center gap-0.5 rounded-xl border px-4 py-2.5 text-left transition-all ${
+                isActive
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border/60 bg-background hover:border-foreground/20 hover:bg-muted/40"
+              }`}
+            >
+              <span className="text-xs font-medium leading-none">
+                {formatDayLabel(date, locale)}
+              </span>
+              <span className="text-sm font-semibold leading-snug">
+                {formatDateLabel(date, locale)}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
-      <Card className="border-border/60 shadow-none">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">{t("assignedDays")}</CardTitle>
-          <CardDescription>{t("assignedDaysDesc")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!hydrated ? (
-            <div className="py-10 text-center text-sm text-muted-foreground">{t("loadingPlan")}</div>
-          ) : assignedDays.length > 0 ? (
-            <Accordion type="single" collapsible className="w-full space-y-3">
-              {assignedDays.map((date) => {
-                const assignedIds = plan[date] ?? []
+      {/* Events list for selected date */}
+      <div className="flex-1 min-w-0">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold">{t("assignedDays")}</h2>
+          <p className="text-muted-foreground text-sm">
+            {t("itemsCount", { count: eventsForSelectedDate.length })}
+          </p>
+        </div>
 
-                return (
-                  <AccordionItem key={date} value={date} className="overflow-hidden rounded-2xl border border-border/60">
-                    <AccordionTrigger className="px-4 py-4 hover:no-underline">
-                      <div className="flex w-full items-center justify-between gap-3 pr-2">
-                        <p className="text-sm font-medium">
-                          {formatDayLabel(date, locale)} · {formatDateLabel(date, locale)}
-                        </p>
-                        <Badge variant="secondary" className="rounded-full">
-                          {assignedIds.length}
-                        </Badge>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-4">
-                      <ul className="space-y-2 text-sm text-muted-foreground">
-                        {assignedIds.map((id) => {
-                          const event = eventById.get(id)
-                          if (!event) return null
+        {eventsForSelectedDate.length > 0 ? (
+          <Timeline
+            events={eventsForSelectedDate}
+            selectedDate={selectedDate ? toDateObject(selectedDate) : undefined}
+            onEventClick={openEventDrawer}
+          />
+        ) : (
+          <div className="border rounded-lg p-8 text-center text-muted-foreground">
+            <p>{t("noActivities")}</p>
+          </div>
+        )}
+      </div>
 
-                          return (
-                            <li key={id} className="rounded-2xl border border-border/60 bg-muted/20 px-4 py-3">
-                              <div className="flex items-start gap-2">
-                                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-500" />
-                                <div>
-                                  <p className="font-medium text-foreground">{event.title}</p>
-                                  <p>
-                                    {event.startTime} - {event.endTime} · {event.location}
-                                  </p>
-                                </div>
-                              </div>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
-                )
-              })}
-            </Accordion>
-          ) : (
-            <div className="rounded-2xl border border-dashed border-border/60 p-8 text-center">
-              <CheckCircle2 className="mx-auto mb-3 size-6 text-muted-foreground" />
-              <p className="text-base font-medium">{t("noActivities")}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{t("noActivitiesDesc")}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <EventDetailsDrawer
+        event={selectedEvent}
+        open={drawerOpen}
+        onOpenChange={handleDrawerOpenChange}
+        showPrimaryAction={false}
+      />
     </div>
   )
 }
