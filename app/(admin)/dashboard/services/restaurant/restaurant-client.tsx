@@ -60,7 +60,7 @@ export default function RestaurantClient({
 }) {
   const [allRestaurants, setAllRestaurants] = useState<RestaurantRow[]>(initialRestaurants)
   const restaurants = useMemo(() => {
-    return allRestaurants.filter((r) => !r.id.startsWith('main-restaurant-'))
+    return allRestaurants.filter((r) => !r.id.startsWith('main-restaurant-') && !r.id.startsWith('a-la-carte-'))
   }, [allRestaurants])
   const [categories, setCategories] = useState<Category[]>(initialCategories)
   const [templatesByRestaurant, setTemplatesByRestaurant] = useState<Record<string, TemplateRow[]>>(initialTemplatesByRestaurant)
@@ -170,9 +170,9 @@ export default function RestaurantClient({
       closeTime: r.closeTime?.slice(0, 5) ?? null,
     })
 
-    if (r.id === 'main-restaurant') {
+    if (r.id === 'main-restaurant' || r.id === 'a-la-carte') {
       const sessions = allRestaurants
-        .filter(x => x.id.startsWith('main-restaurant-'))
+        .filter(x => x.id.startsWith(`${r.id}-`))
         .map(x => ({
           id: x.id,
           name: x.name,
@@ -197,7 +197,8 @@ export default function RestaurantClient({
     } else {
       let updatedAllRestaurants = [...allRestaurants].map((r) => r.id === restaurantForm.id ? restaurantForm : r)
 
-      if (restaurantForm.id === 'main-restaurant') {
+      if (restaurantForm.id === 'main-restaurant' || restaurantForm.id === 'a-la-carte') {
+        const prefix = restaurantForm.id
         for (const session of localSessions) {
           if (session.isDeleted) {
             if (!session.isNew) {
@@ -205,7 +206,7 @@ export default function RestaurantClient({
               updatedAllRestaurants = updatedAllRestaurants.filter(x => x.id !== session.id)
             }
           } else if (session.isNew) {
-            const subId = `main-restaurant-${session.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
+            const subId = `${prefix}-${session.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
             const newSub = {
               id: subId,
               name: session.name,
@@ -300,9 +301,9 @@ export default function RestaurantClient({
 
   function openLoadConfirm(templateId: string, restaurantId: string) {
     setPendingLoad({ templateId, restaurantId })
-    if (restaurantId === 'main-restaurant') {
-      const firstSession = allRestaurants.find(x => x.id.startsWith('main-restaurant-'))
-      setSelectedMealForLoad(firstSession?.id ?? 'main-restaurant-breakfast')
+    if (restaurantId === 'main-restaurant' || restaurantId === 'a-la-carte') {
+      const firstSession = allRestaurants.find(x => x.id.startsWith(`${restaurantId}-`))
+      setSelectedMealForLoad(firstSession?.id ?? `${restaurantId}-breakfast`)
     }
     setLoadConfirmOpen(true)
   }
@@ -310,7 +311,7 @@ export default function RestaurantClient({
   async function handleLoadTemplate() {
     if (!pendingLoad) return
     const { templateId, restaurantId } = pendingLoad
-    const targetRestaurantId = restaurantId === 'main-restaurant' ? selectedMealForLoad : restaurantId
+    const targetRestaurantId = (restaurantId === 'main-restaurant' || restaurantId === 'a-la-carte') ? selectedMealForLoad : restaurantId
 
     setLoadingTemplateId(templateId)
     setLoadConfirmOpen(false)
@@ -632,17 +633,19 @@ export default function RestaurantClient({
                 <Label>Cuisine Type</Label>
                 <Input value={restaurantForm.cuisine} onChange={(e) => setRestaurantForm((p) => p && { ...p, cuisine: e.target.value })} />
               </div>
-              {restaurantForm.id === 'main-restaurant' ? (
+              {restaurantForm.id === 'main-restaurant' || restaurantForm.id === 'a-la-carte' ? (
                 <div className="space-y-4 border-t pt-4 mt-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-sm">Meal Session Hours</h4>
+                    <h4 className="font-semibold text-sm">
+                      {restaurantForm.id === 'main-restaurant' ? 'Meal Session Hours' : 'Cuisine & Theme Sessions'}
+                    </h4>
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => setLocalSessions(prev => [
                         ...prev,
-                        { id: `new-${Date.now()}`, name: "", openTime: "07:00", closeTime: "11:00", isNew: true }
+                        { id: `new-${Date.now()}`, name: "", openTime: restaurantForm.id === 'main-restaurant' ? "07:00" : "19:00", closeTime: restaurantForm.id === 'main-restaurant' ? "11:00" : "22:00", isNew: true }
                       ])}
                     >
                       <Plus className="h-3.5 w-3.5 mr-1" /> Add Session
@@ -654,7 +657,7 @@ export default function RestaurantClient({
                       <div key={session.id} className="flex gap-2 items-center bg-muted/30 p-2 rounded border">
                         <div className="flex-1 space-y-1.5">
                           <Input
-                            placeholder="Session Name (e.g. Late Breakfast)"
+                            placeholder={restaurantForm.id === 'main-restaurant' ? "Session Name (e.g. Late Breakfast)" : "Cuisine Name (e.g. Italian)"}
                             value={session.name}
                             onChange={(e) => setLocalSessions(prev => prev.map(s => s.id === session.id ? { ...s, name: e.target.value } : s))}
                             className="h-8 text-xs font-semibold"
@@ -803,16 +806,18 @@ export default function RestaurantClient({
               This will replace all current active menu items for this restaurant session with the template&apos;s items. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          {pendingLoad?.restaurantId === 'main-restaurant' && (
+          {(pendingLoad?.restaurantId === 'main-restaurant' || pendingLoad?.restaurantId === 'a-la-carte') && (
             <div className="space-y-2 py-3 border-t border-b my-2">
-              <Label className="text-sm font-semibold">Select Target Meal Session</Label>
+              <Label className="text-sm font-semibold">
+                {pendingLoad.restaurantId === 'main-restaurant' ? 'Select Target Meal Session' : 'Select Target Cuisine Menu'}
+              </Label>
               <Select value={selectedMealForLoad} onValueChange={setSelectedMealForLoad}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {allRestaurants
-                    .filter((sub) => sub.id.startsWith('main-restaurant-'))
+                    .filter((sub) => sub.id.startsWith(`${pendingLoad.restaurantId}-`))
                     .map((sub) => (
                       <SelectItem key={sub.id} value={sub.id}>
                         {sub.name}

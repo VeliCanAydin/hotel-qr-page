@@ -28,12 +28,12 @@ export default async function RestaurantsPage({
     <div className="p-4">
       <h2 className="text-3xl font-bold mb-4">{t("title")}</h2>
       {restaurantRows
-        .filter((r) => !r.id.startsWith('main-restaurant-'))
+        .filter((r) => !r.id.startsWith('main-restaurant-') && !r.id.startsWith('a-la-carte-'))
         .map((r) => {
         const hours = [r.openTime?.slice(0, 5), r.closeTime?.slice(0, 5)].filter(Boolean).join(' – ')
-        const mealSlots = r.id === 'main-restaurant'
+        const mealSlots = r.id === 'main-restaurant' || r.id === 'a-la-carte'
           ? restaurantRows
-              .filter((sub) => sub.id.startsWith('main-restaurant-'))
+              .filter((sub) => sub.id.startsWith(`${r.id}-`))
               .map((sub) => {
                 const subHours = [sub.openTime?.slice(0, 5), sub.closeTime?.slice(0, 5)].filter(Boolean).join(' – ')
                 return {
