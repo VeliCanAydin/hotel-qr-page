@@ -14,7 +14,7 @@ export const pages = [
     { icon: Flame, key: "calorieTracker", href: "/calorie-tracker" },
     { icon: Bot, key: "aiAssistant", href: "/ai-assistant" },
     { icon: CalendarDays, key: "events", href: "/events" },
-    { icon: NotebookPen, key: "personalizedStay", href: "/personalized-stay" },
+    // { icon: NotebookPen, key: "personalizedStay", href: "/personalized-stay" },
     { icon: MessageCircleQuestionMark, key: "feedback", href: "/feedback" },
     { icon: MapPinned, key: "nearbyGuide", href: "/nearby-guide" },
 ] as const;
