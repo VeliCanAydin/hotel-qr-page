@@ -109,7 +109,14 @@
     "reservation": "Бронирование",
     "reservationRequired": "Требуется бронирование",
     "noReservation": "Бронирование не требуется",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "makeReservation": "Забронировать",
+    "reserveTitle": "Забронировать {name}",
+    "reserveDesc": "Бронирование осуществляется нашей стойкой регистрации. Свяжитесь с нами по телефону или WhatsApp, и мы организуем все для вас.",
+    "callReception": "Позвонить на ресепшн — {phone}",
+    "messageWhatsapp": "Написать в WhatsApp",
+    "visitReception": "Пожалуйста, обратитесь на ресепшн для бронирования.",
+    "whatsappText": "Здравствуйте, я хотел бы забронировать услугу {name}."
   },
   "hotelInfo": {
     "title": "Информация об отеле",

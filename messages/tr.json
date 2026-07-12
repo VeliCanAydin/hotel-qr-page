@@ -106,7 +106,14 @@
     "reservation": "Rezervasyon",
     "reservationRequired": "Rezervasyon gerekli",
     "noReservation": "Rezervasyon gerekmiyor",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "makeReservation": "Rezervasyon Yap",
+    "reserveTitle": "{name} için Rezervasyon Yap",
+    "reserveDesc": "Rezervasyonlar resepsiyon ekibimiz tarafından yönetilir. Telefon veya WhatsApp'tan bize ulaşın, sizin için ayarlayalım.",
+    "callReception": "Resepsiyonu Ara — {phone}",
+    "messageWhatsapp": "WhatsApp'tan Yaz",
+    "visitReception": "Rezervasyon için lütfen resepsiyona uğrayın.",
+    "whatsappText": "Merhaba, {name} hizmeti için rezervasyon yaptırmak istiyorum."
   },
   "hotelInfo": {
     "title": "Otel Bilgileri",

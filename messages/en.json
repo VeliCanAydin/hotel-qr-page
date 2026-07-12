@@ -106,7 +106,14 @@
     "reservation": "Reservation",
     "reservationRequired": "Reservation required",
     "noReservation": "No reservation needed",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "makeReservation": "Make a Reservation",
+    "reserveTitle": "Book for {name}",
+    "reserveDesc": "Reservations are managed by our reception team. Contact us via phone or WhatsApp, and we will set it up for you.",
+    "callReception": "Call Reception — {phone}",
+    "messageWhatsapp": "Message on WhatsApp",
+    "visitReception": "Please visit the reception desk to make a reservation.",
+    "whatsappText": "Hello, I would like to book a session for {name}."
   },
   "hotelInfo": {
     "title": "Hotel Information",

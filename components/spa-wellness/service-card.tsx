@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ImageOff } from "lucide-react";
+import { ImageOff, Phone, MessageCircleMore } from "lucide-react";
 import {
     Drawer,
     DrawerClose,
@@ -12,7 +13,7 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -27,10 +28,14 @@ type ServiceCardProps = {
         reservationRequired: boolean;
         badges?: string[];
     };
+    contactPhone?: string;
+    contactWhatsapp?: string;
 };
 
-export default function ServiceCard({ data }: ServiceCardProps) {
+export default function ServiceCard({ data, contactPhone, contactWhatsapp }: ServiceCardProps) {
+    const [isReservationOpen, setIsReservationOpen] = useState(false);
     const t = useTranslations("serviceCard");
+    
     return (
         <div className="overflow-hidden">
             {/* Image Section */}
@@ -53,8 +58,13 @@ export default function ServiceCard({ data }: ServiceCardProps) {
             <div className="flex flex-col p-4 gap-3 border rounded-bl-3xl rounded-br-3xl">
                 <h1 className="font-bold text-lg">{data.title}</h1>
                 <p className="text-muted-foreground">{data.description}</p>
+                
                 <Drawer>
-                    <DrawerTrigger asChild><Button variant="default" className="rounded-3xl font-bold px-5">{t("details")}</Button></DrawerTrigger>
+                    <DrawerTrigger asChild>
+                        <Button variant="default" className="rounded-3xl font-bold px-5">
+                            {t("details")}
+                        </Button>
+                    </DrawerTrigger>
                     <DrawerContent>
                         <DrawerHeader>
                             <DrawerTitle>{t("detailsTitle", { title: data.title })}</DrawerTitle>
@@ -85,9 +95,67 @@ export default function ServiceCard({ data }: ServiceCardProps) {
                                 </div>
                             )}
                         </div>
+                        <DrawerFooter className="flex flex-col sm:flex-row gap-2">
+                            {data.reservationRequired && (
+                                <Button
+                                    variant="default"
+                                    className="w-full sm:flex-1 rounded-3xl font-bold"
+                                    onClick={() => setIsReservationOpen(true)}
+                                >
+                                    {t("makeReservation")}
+                                </Button>
+                            )}
+                            <DrawerClose asChild>
+                                <Button variant="outline" className="w-full sm:flex-1 rounded-3xl">
+                                    {t("cancel")}
+                                </Button>
+                            </DrawerClose>
+                        </DrawerFooter>
+                    </DrawerContent>
+                </Drawer>
+
+                {/* Reservation Drawer */}
+                <Drawer open={isReservationOpen} onOpenChange={setIsReservationOpen}>
+                    <DrawerContent>
+                        <DrawerHeader>
+                            <DrawerTitle>{t("reserveTitle", { name: data.title })}</DrawerTitle>
+                            <DrawerDescription>
+                                {t("reserveDesc")}
+                            </DrawerDescription>
+                        </DrawerHeader>
+                        <div className="px-4 space-y-3">
+                            {contactPhone && (
+                                <a href={`tel:${contactPhone.replace(/\D/g, "")}`} className="block">
+                                    <Button className="w-full rounded-3xl font-bold">
+                                        <Phone className="h-4 w-4 mr-2" />
+                                        {t("callReception", { phone: contactPhone })}
+                                    </Button>
+                                </a>
+                            )}
+                            {contactWhatsapp && (
+                                <a
+                                    href={`https://api.whatsapp.com/send/?phone=${contactWhatsapp.replace(/\D/g, "")}&text=${encodeURIComponent(t("whatsappText", { name: data.title }))}&type=phone_number&app_absent=0`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block"
+                                >
+                                    <Button variant="outline" className="w-full rounded-3xl font-bold">
+                                        <MessageCircleMore className="h-4 w-4 mr-2" />
+                                        {t("messageWhatsapp")}
+                                    </Button>
+                                </a>
+                            )}
+                            {!contactPhone && !contactWhatsapp && (
+                                <p className="text-sm text-muted-foreground text-center">
+                                    {t("visitReception")}
+                                </p>
+                            )}
+                        </div>
                         <DrawerFooter>
                             <DrawerClose asChild>
-                                <Button variant="outline">{t("cancel")}</Button>
+                                <Button variant="ghost" className="rounded-3xl">
+                                    {t("cancel")}
+                                </Button>
                             </DrawerClose>
                         </DrawerFooter>
                     </DrawerContent>

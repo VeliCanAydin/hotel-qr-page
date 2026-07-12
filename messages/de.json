@@ -109,7 +109,14 @@
     "reservation": "Reservierung",
     "reservationRequired": "Reservierung erforderlich",
     "noReservation": "Keine Reservierung nötig",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "makeReservation": "Reservieren",
+    "reserveTitle": "Reservierung für {name}",
+    "reserveDesc": "Reservierungen werden von unserem Rezeptionsteam verwaltet. Kontaktieren Sie uns per Telefon oder WhatsApp, und wir richten es für Sie ein.",
+    "callReception": "Rezeption anrufen — {phone}",
+    "messageWhatsapp": "Per WhatsApp senden",
+    "visitReception": "Bitte wenden Sie sich an die Rezeption, um eine Reservierung vorzunehmen.",
+    "whatsappText": "Hallo, ich möchte eine Reservierung für {name} vornehmen."
   },
   "hotelInfo": {
     "title": "Hotelinformationen",

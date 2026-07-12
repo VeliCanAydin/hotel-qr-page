@@ -2,7 +2,7 @@ import Image from "next/image"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Badge } from "@/components/ui/badge"
 import ServiceCard from "@/components/spa-wellness/service-card"
-import { getPublicWellnessServices } from "@/lib/content"
+import { getPublicWellnessServices, getPublicHotelInfo } from "@/lib/content"
 
 export default async function WellnessPage({
   params,
@@ -12,7 +12,10 @@ export default async function WellnessPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("wellness")
-  const services = await getPublicWellnessServices(locale)
+  const [services, hotelInfo] = await Promise.all([
+    getPublicWellnessServices(locale),
+    getPublicHotelInfo(locale),
+  ])
 
   return (
     <div className="min-h-screen">
@@ -55,6 +58,8 @@ export default async function WellnessPage({
                 isPaid: service.isPaid,
                 reservationRequired: service.requiresReservation,
               }}
+              contactPhone={hotelInfo.phone}
+              contactWhatsapp={hotelInfo.whatsapp}
             />
           ))}
         </div>

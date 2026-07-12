@@ -2,7 +2,7 @@ import Image from "next/image"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Badge } from "@/components/ui/badge"
 import ServiceCard from "@/components/spa-wellness/service-card"
-import { getPublicSpaServices } from "@/lib/content"
+import { getPublicSpaServices, getPublicHotelInfo } from "@/lib/content"
 
 export default async function SpaPage({
   params,
@@ -12,7 +12,10 @@ export default async function SpaPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations("spa")
-  const services = await getPublicSpaServices(locale)
+  const [services, hotelInfo] = await Promise.all([
+    getPublicSpaServices(locale),
+    getPublicHotelInfo(locale),
+  ])
 
   return (
     <div className="min-h-screen">
@@ -56,6 +59,8 @@ export default async function SpaPage({
                 reservationRequired: service.requiresReservation,
                 badges: service.tags ? service.tags.split(',').filter(Boolean).map((t) => t.trim()) : undefined,
               }}
+              contactPhone={hotelInfo.phone}
+              contactWhatsapp={hotelInfo.whatsapp}
             />
           ))}
         </div>
