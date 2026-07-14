@@ -114,6 +114,33 @@ export default function AIAssistantClient() {
         setInput('');
         setIsLoading(true);
 
+        const assistantId = (Date.now() + 1).toString();
+        let assistantContent = '';
+
+        // İlk token geldiğinde boş asistan balonu eklenir; sonraki token'lar
+        // aynı mesajın içeriğine eklenerek kelime kelime yazma efekti oluşur.
+        const appendToAssistant = (text: string) => {
+            if (!text) return;
+            if (!assistantContent) {
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        id: assistantId,
+                        role: 'assistant' as const,
+                        content: text,
+                        timestamp: new Date(),
+                    },
+                ]);
+            } else {
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        m.id === assistantId ? { ...m, content: assistantContent + text } : m
+                    )
+                );
+            }
+            assistantContent += text;
+        };
+
         try {
             const response = await fetch('/api/ai-chat', {
                 method: 'POST',
@@ -127,36 +154,56 @@ export default function AIAssistantClient() {
                 }),
             });
 
-            if (!response.ok) {
+            if (!response.ok || !response.body) {
                 throw new Error('API request failed');
             }
 
-            const data = await response.json();
+            // NDJSON akışı: her satır bir event ({type: metadata|token|final|error}).
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let streamErrorContent: string | null = null;
 
-            if (data.sessionId) {
-                setSessionId(data.sessionId);
-            }
-
-            const assistantMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                role: 'assistant',
-                content: data.response || t('noResponse'),
-                imagePath: data.imagePath,
-                timestamp: new Date(),
+            const handleLine = (line: string) => {
+                if (!line.trim()) return;
+                let event;
+                try {
+                    event = JSON.parse(line);
+                } catch {
+                    return;
+                }
+                if (event.type === 'token') {
+                    appendToAssistant(event.content ?? '');
+                } else if (event.type === 'error') {
+                    streamErrorContent = event.content || null;
+                } else if (event.session_id) {
+                    // metadata ve final event'leri session_id taşır
+                    setSessionId(event.session_id);
+                }
             };
 
-            setMessages((prev) => [...prev, assistantMessage]);
+            for (;;) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() ?? '';
+                lines.forEach(handleLine);
+            }
+            handleLine(buffer);
+
+            if (streamErrorContent && !assistantContent) {
+                appendToAssistant(streamErrorContent);
+            } else if (!assistantContent) {
+                appendToAssistant(t('noResponse'));
+            }
         } catch (error) {
             console.error('Chat error:', error);
 
-            const errorMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                role: 'assistant',
-                content: t('errorMessage'),
-                timestamp: new Date(),
-            };
-
-            setMessages((prev) => [...prev, errorMessage]);
+            // Akış yarıda kesildiyse gelen kısmı koru; hiç içerik yoksa hata mesajı göster.
+            if (!assistantContent) {
+                appendToAssistant(t('errorMessage'));
+            }
         } finally {
             setIsLoading(false);
             textareaRef.current?.focus();
@@ -290,7 +337,7 @@ export default function AIAssistantClient() {
                                     </div>
                                 ))}
 
-                                {isLoading && (
+                                {isLoading && messages[messages.length - 1]?.role === 'user' && (
                                     <div className="flex gap-3 justify-start">
                                         <Avatar className="w-8 h-8 mt-1 shrink-0">
                                             <AvatarFallback className="bg-primary text-primary-foreground text-xs">
