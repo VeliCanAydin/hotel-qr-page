@@ -31,22 +31,24 @@ function ensureVapid(): boolean {
 
 /** Sends to every device subscribed for the stay. Never throws — push is a
  *  best-effort side effect of staff actions. Expired subscriptions (404/410
- *  from the push service) are pruned. */
+ *  from the push service) are pruned. Returns the number of devices the
+ *  notification was actually delivered to. */
 export async function sendPushToReservation(
   reservationCode: string,
   payload: PushPayload
-): Promise<void> {
+): Promise<number> {
   try {
-    if (!ensureVapid()) return
+    if (!ensureVapid()) return 0
 
     const subscriptions = await db
       .select()
       .from(pushSubscriptions)
       .where(eq(pushSubscriptions.reservationCode, reservationCode))
-    if (!subscriptions.length) return
+    if (!subscriptions.length) return 0
 
     const body = JSON.stringify(payload)
     const gone: number[] = []
+    let sent = 0
 
     await Promise.allSettled(
       subscriptions.map(async (sub) => {
@@ -55,6 +57,7 @@ export async function sendPushToReservation(
             { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
             body
           )
+          sent++
         } catch (err) {
           const statusCode = (err as { statusCode?: number }).statusCode
           if (statusCode === 404 || statusCode === 410) {
@@ -69,20 +72,23 @@ export async function sendPushToReservation(
     if (gone.length) {
       await db.delete(pushSubscriptions).where(inArray(pushSubscriptions.id, gone))
     }
+    return sent
   } catch (err) {
     console.error('[push] sendPushToReservation failed:', err)
+    return 0
   }
 }
 
 /** Broadcasts a hotel-wide announcement (new event, event reminder) to every
  *  device of every in-house guest. `payloads` is keyed by locale — each device
  *  gets the text matching its reservation's language, falling back to `en`.
- *  Never throws; expired subscriptions are pruned like in the targeted send. */
+ *  Never throws; expired subscriptions are pruned like in the targeted send.
+ *  Returns the number of devices the notification was delivered to. */
 export async function sendPushToActiveGuests(
   payloads: Partial<Record<string, PushPayload>>
-): Promise<void> {
+): Promise<number> {
   try {
-    if (!ensureVapid()) return
+    if (!ensureVapid()) return 0
 
     const today = todayISO()
     const rows = await db
@@ -105,9 +111,10 @@ export async function sendPushToActiveGuests(
           gte(reservations.checkOut, today)
         )
       )
-    if (!rows.length) return
+    if (!rows.length) return 0
 
     const gone: number[] = []
+    let sent = 0
 
     await Promise.allSettled(
       rows.map(async (sub) => {
@@ -118,6 +125,7 @@ export async function sendPushToActiveGuests(
             { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
             JSON.stringify(payload)
           )
+          sent++
         } catch (err) {
           const statusCode = (err as { statusCode?: number }).statusCode
           if (statusCode === 404 || statusCode === 410) {
@@ -132,8 +140,10 @@ export async function sendPushToActiveGuests(
     if (gone.length) {
       await db.delete(pushSubscriptions).where(inArray(pushSubscriptions.id, gone))
     }
+    return sent
   } catch (err) {
     console.error('[push] sendPushToActiveGuests failed:', err)
+    return 0
   }
 }
 

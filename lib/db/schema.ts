@@ -381,3 +381,18 @@ export const pushSubscriptions = pgTable('push_subscriptions', {
 }, (table) => [
   index('push_subscriptions_reservation_code_idx').on(table.reservationCode),
 ])
+
+// Audit log of staff-composed push notifications sent from the admin
+// Notifications page. Stores the English base text only — locale variants are
+// delivery-time detail, the log is for "who sent what to whom".
+export const adminNotifications = pgTable('admin_notifications', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  body: text('body').notNull(),
+  url: text('url').notNull(),                              // locale-less guest path, e.g. '/portal'
+  target: text('target').notNull(),                        // 'all' | reservation code
+  targetLabel: text('target_label').notNull().default(''), // display label frozen at send time
+  sentCount: integer('sent_count').notNull().default(0),   // devices actually delivered to
+  sentBy: text('sent_by').notNull().default(''),           // admin email
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})

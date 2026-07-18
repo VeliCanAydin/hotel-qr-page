@@ -127,6 +127,13 @@ export const ADMIN_PAGE_PERMISSIONS: AdminPagePermission[] = [
     description: 'Guest support requests and complaint follow-up.',
   },
   {
+    href: '/dashboard/guests/notifications',
+    key: 'notifications',
+    label: 'Notifications',
+    section: 'Operations',
+    description: 'Send custom push notifications to in-house guests.',
+  },
+  {
     href: '/dashboard/settings/access-control',
     key: 'access-control',
     label: 'Access Control',
@@ -186,6 +193,7 @@ export const DEFAULT_ADMIN_ROLE_PRESETS: AdminRolePreset[] = [
       '/dashboard/guests/list',
       '/dashboard/guests/feedback',
       '/dashboard/guests/support-requests',
+      '/dashboard/guests/notifications',
     ],
     isSystem: true,
   },
